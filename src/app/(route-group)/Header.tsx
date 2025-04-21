@@ -79,9 +79,6 @@ const Header = () => {
               <li onClick={() => navigate('/profile')}>
                 <a>My Profile</a>
               </li>
-              <li onClick={() => navigate('/requested-listings')}>
-                <a>Requested Listings</a>
-              </li>
               <li onClick={() => navigate('/installed-listings')}>
                 <a>Installed Listings</a>
               </li>

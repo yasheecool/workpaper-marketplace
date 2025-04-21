@@ -121,7 +121,7 @@ const Listings = () => {
 };
 export default Listings;
 
-//TODO:
+//Properly format them TODO:
 //In the RHS Card
 //Version History
 //Creation Date
