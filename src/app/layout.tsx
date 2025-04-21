@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
         {children}
-        <footer className='bg-gray-100 py-18'>
+        <footer className='bg-gray-50 py-18'>
           <div className='max-w-7xl px-4 mx-auto w-[90vw]'>
             <p className='text-3xl'>Footer</p>
           </div>

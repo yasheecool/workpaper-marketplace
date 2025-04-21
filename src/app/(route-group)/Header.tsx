@@ -1,17 +1,23 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 const Header = () => {
   const router = useRouter();
+  const pathname = usePathname();
+
+  const navigate = (destinationRoute: string) => {
+    console.log(pathname, destinationRoute);
+    if (pathname !== destinationRoute) router.push(destinationRoute);
+  };
 
   return (
     <header className='border-b-[0.5px] border-gray-500 bg-white py-1 text-gray-800'>
-      <nav className='w-[92.5vw] max-w-7xl px-4 mx-auto py-2 flex flex-row items-center justify-between'>
+      <nav className='w-[95vw] max-w-7xl px-4 mx-auto py-2 flex flex-row items-center justify-between'>
         <div
           className='flex items-center cursor-pointer'
-          onClick={() => router.push('/')}
+          onClick={() => navigate('/marketplace')}
         >
           <Image
             src={'./workpapers_logo.svg'}
@@ -44,8 +50,12 @@ const Header = () => {
             Firm Selection
           </button>
 
-          <details className='dropdown dropdown-center'>
-            <summary className='btn m-0 border-l-1 border-blk bg-white border-0 rounded-none  hover:shadow-sm hover:bg-gray-100'>
+          <div className='dropdown dropdown-hover dropdown-center'>
+            <div
+              tabIndex={0}
+              role='button'
+              className='btn m-0 border-l-1 border-blk bg-white border-0 rounded-none  hover:shadow-sm hover:bg-gray-100'
+            >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
@@ -61,25 +71,32 @@ const Header = () => {
                 />
               </svg>
               Username
-            </summary>
-            <ul className='menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm'>
-              <li>
+            </div>
+            <ul
+              tabIndex={0}
+              className='dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm'
+            >
+              <li onClick={() => navigate('/profile')}>
                 <a>My Profile</a>
               </li>
-              <li>
+              <li onClick={() => navigate('/requested-listings')}>
                 <a>Requested Listings</a>
               </li>
-              <li>
+              <li onClick={() => navigate('/installed-listings')}>
                 <a>Installed Listings</a>
               </li>
-              <li>
+              <li onClick={() => navigate('/saved-listings')}>
                 <a>Saved Listings</a>
               </li>
-              <li>
+
+              {/* TODO:
+                Clear context of current user and go back to landing page
+               */}
+              <li onClick={() => navigate('/')}>
                 <a>Logout</a>
               </li>
             </ul>
-          </details>
+          </div>
         </div>
       </nav>
     </header>

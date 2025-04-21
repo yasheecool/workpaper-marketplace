@@ -1,16 +1,17 @@
 import Image from 'next/image';
+import ListingCard from './ListingCard';
 
 const Marketplace = () => {
   return (
     <>
-      <section className='bg-lavender py-18 relative overflow-hidden z-0 text-gray-800'>
-        <div className='w-[92.5vw] max-w-7xl px-4 mx-auto z-10 flex flex-col items-center'>
-          <div className='absolute right-[-10px] top-[-40px] w-80 h-100 lg:h-80 lg:top-[-10px]'>
+      <section className='bg-lavender py-18 relative overflow-hidden z-0 text-gray-800 h-[340px]'>
+        <div className='w-[95vw] max-w-7xl px-4 mx-auto z-10 flex flex-col items-center'>
+          <div className='absolute right-0 top-0 w-80 h-full'>
             <Image
               src='/workpapers_outline.svg'
               alt='cimplico workpapers logo'
               fill
-              className='object-contain z-[-1]'
+              className='object-contain z-[-1] scale-105 opacity-75'
             />
           </div>
           <h1 className='text-5xl text-center font-semibold  mb-2 capitalize'>
@@ -44,187 +45,127 @@ const Marketplace = () => {
       </section>
 
       <section className='py-18 bg-gray-50 text-gray-800'>
-        <div className='max-w-7xl w-[92.5vw] px-4 mx-auto grid grid-cols-[minmax(275px,_3fr)_7fr] gap-8'>
-          <div className='flex flex-col gap-4'>
-            <fieldset className='fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4 min-w-[275px] '>
+        <div className='max-w-7xl w-[95vw] px-4 mx-auto grid grid-cols-1 gap-6 min-[992px]:grid-cols-[275px_1fr] items-start'>
+          <div className='flex-col gap-4  hidden min-[992px]:flex'>
+            <fieldset className='fieldset bg-base-100 border-base-300 rounded-box border p-4  w-full'>
               <legend className='fieldset-legend text-lg'>Content Type</legend>
               <label className='label text-base'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Reports
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Checklist
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Procedure
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Calculations
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Worksheet
               </label>
             </fieldset>
 
-            <fieldset className='fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4 '>
+            <fieldset className='fieldset bg-base-100 border-base-300 rounded-box border p-4  w-full'>
               <legend className='fieldset-legend text-lg'>
                 Workpaper Type
               </legend>
               <label className='label text-base'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Compliance
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Fringe Benefits Tax
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Income Tax Return
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1 '
                 />
                 Business Activity Statement
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Tax Planning
               </label>
             </fieldset>
 
-            <fieldset className='fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4 min-w-[275px] '>
+            <fieldset className='fieldset bg-base-100 border-base-300 rounded-box border p-4 w-full'>
               <legend className='fieldset-legend text-lg'>Region</legend>
               <label className='label text-base'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Australia
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 New Zealand
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 United Kingdom
               </label>
               <label className='label text-base mb-1'>
                 <input
                   type='checkbox'
-                  className='checkbox-sm checkbox checkbox-primary mr-1'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
                 />
                 Republic of Ireland
               </label>
             </fieldset>
           </div>
 
-          <div className='pt-6 flex flex-col gap-8'>
-            <div className='grid grid-cols-[1fr_1fr_minmax(150px,_1fr)] gap-4 p-4 border border-gray-300 rounded-md cursor-pointer hover:shadow-md transition-shadow ease-in-out'>
-              <div className='relative bg-base-300 p-4'>
-                <Image src={'./undraw_approve.svg'} alt='listing image' fill />
-              </div>
-              <div>
-                <h2 className='font-semibold'>End of Year GST Checklist</h2>
-                <p className='text-xs mb-4 text-gray-600'>
-                  By Cimplico Pvt Ltd.
-                </p>
-                <ul className='text-sm flex flex-col gap-2 text-gray-600'>
-                  <li className='pl-2'>
-                    Verified by relevant accounting bodies.
-                  </li>
-                  <li className='pl-2'>
-                    Make EOY GST checks a breeze - currently used by over 500
-                    firms.
-                  </li>
-                  <li className='pl-2'>
-                    Highly customizable, always ensuring your needs.
-                  </li>
-                </ul>
-              </div>
-
-              <div className='relative flex items-center flex-col justify-center gap-4'>
-                <button className='btn w-full bg-secondary-500 text-white hover:bg-secondary-700'>
-                  Add To Firm
-                </button>
-                <button className='btn w-full bg-gray-100 text-secondary-500 border-secondary-500 hover:bg-gray-200'>
-                  Save Listing
-                </button>
-              </div>
-            </div>
-
-            <div className='grid grid-cols-[1fr_1fr_minmax(150px,_1fr)] gap-4 p-4 border border-gray-300 rounded-md cursor-pointer hover:shadow-md transition-shadow ease-in-out'>
-              <div className='relative bg-base-300 p-4'>
-                <Image src={'./undraw_approve.svg'} alt='listing image' fill />
-              </div>
-              <div>
-                <h2 className='font-semibold'>End of Year GST Checklist</h2>
-                <p className='text-xs mb-4 text-gray-600'>
-                  By Cimplico Pvt Ltd.
-                </p>
-                <ul className='text-sm flex flex-col gap-2 text-gray-600'>
-                  <li className='pl-2'>
-                    Verified by relevant accounting bodies.
-                  </li>
-                  <li className='pl-2'>
-                    Make EOY GST checks a breeze - currently used by over 500
-                    firms.
-                  </li>
-                  <li className='pl-2'>
-                    Highly customizable, always ensuring your needs.
-                  </li>
-                </ul>
-              </div>
-
-              <div className='relative flex items-center flex-col justify-center gap-4'>
-                <button className='btn w-full bg-secondary-500 text-white hover:bg-secondary-700'>
-                  Add To Firm
-                </button>
-                <button className='btn w-full bg-gray-100 text-secondary-500 border-secondary-500 hover:bg-gray-200'>
-                  Save Listing
-                </button>
-              </div>
-            </div>
+          <div className='pt-6 grid grid-cols-1 gap-8'>
+            <button className='btn bg-secondary-500 text-white justify-self-end min-[992px]:hidden hover:bg-secondary-700'>
+              Filter
+            </button>
+            <ListingCard />
+            <ListingCard />
           </div>
         </div>
       </section>
