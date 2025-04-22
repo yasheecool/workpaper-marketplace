@@ -5,25 +5,30 @@ const InstalledListings = () => {
         <h1 className='text-2xl font-semibold'>Your Listings </h1>
         <div className='flex items-center gap-4'>
           <p>Filters:</p>
-          <fieldset className='fieldset'>
-            <legend className='fieldset-legend'>For the Firm:</legend>
-            <select defaultValue='Pick a browser' className='select'>
-              <option disabled={true}>Select a Firm</option>
+          <label className='select'>
+            <span className='label'>Installed/Requested By:</span>
+            <select>
               <option>Firm 1</option>
               <option>Firm 2</option>
               <option>Firm 3</option>
             </select>
-            <span className='label opacity-0'>Optional</span>
-          </fieldset>
-          <fieldset className='fieldset'>
-            <legend className='fieldset-legend'>Status is</legend>
-            <select defaultValue='Pick a browser' className='select'>
-              <option disabled={true}>Select Status</option>
+          </label>
+          <label className='select'>
+            <span className='label'>Status is:</span>
+            <select>
               <option>Installed</option>
               <option>Requested</option>
             </select>
-            <span className='label opacity-0'>Optional</span>
-          </fieldset>
+          </label>
+          <label className='select'>
+            <span className='label'>Listing Type:</span>
+            <select>
+              <option>Procedure</option>
+              <option>Calculation</option>
+              <option>Worksheet</option>
+              <option>Report</option>
+            </select>
+          </label>
         </div>
 
         <div className='overflow-x-auto'>
@@ -74,10 +79,4 @@ const InstalledListings = () => {
 };
 export default InstalledListings;
 
-//Listing Name
-//installed/request date
-//Content TYpe
-//Vendor name
-//actions
-//
-//Filter by firm and status - installed or requested
+//Additional sorting functionality by date can be added

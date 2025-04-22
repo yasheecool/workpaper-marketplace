@@ -158,6 +158,38 @@ const Marketplace = () => {
                 Republic of Ireland
               </label>
             </fieldset>
+
+            <fieldset className='fieldset bg-base-100 border-base-300 rounded-box border p-4 w-full'>
+              <legend className='fieldset-legend text-lg'>Entity Type</legend>
+              <label className='label text-base'>
+                <input
+                  type='checkbox'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
+                />
+                Company
+              </label>
+              <label className='label text-base mb-1'>
+                <input
+                  type='checkbox'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
+                />
+                Individual
+              </label>
+              <label className='label text-base mb-1'>
+                <input
+                  type='checkbox'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
+                />
+                Partnership
+              </label>
+              <label className='label text-base mb-1'>
+                <input
+                  type='checkbox'
+                  className='checkbox-xs checkbox checkbox-primary mr-1'
+                />
+                Trust
+              </label>
+            </fieldset>
           </div>
 
           <div className='pt-6 grid grid-cols-1 gap-8'>

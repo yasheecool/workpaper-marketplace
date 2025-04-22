@@ -46,7 +46,7 @@ const ListingCard = () => {
           <button className='btn w-full bg-secondary-500 text-white hover:bg-secondary-700'>
             Install
           </button>
-          <button className='btn w-full bg-gray-100 text-secondary-500 border-secondary-500 hover:bg-gray-200'>
+          <button className='btn w-full bg-transparent text-secondary-500 border-secondary-500 hover:bg-base-300'>
             Save Listing
           </button>
         </div>
