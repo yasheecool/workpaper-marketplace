@@ -5,7 +5,7 @@ const Marketplace = () => {
   return (
     <>
       <section className='bg-lavender py-18 relative overflow-hidden z-0 text-gray-800 h-[340px]'>
-        <div className='w-[95vw] max-w-7xl px-4 mx-auto z-10 flex flex-col items-center'>
+        <div className='section-container z-10 flex flex-col items-center'>
           <div className='absolute right-0 top-0 w-80 h-full'>
             <Image
               src='/workpapers_outline.svg'

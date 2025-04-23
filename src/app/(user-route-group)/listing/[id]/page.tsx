@@ -2,17 +2,14 @@
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 
-const Listings = () => {
+const ProductListing = () => {
   const { id } = useParams();
   console.log(id);
   return (
     <section className='py-8  text-gray-800'>
-      <div
-        className='max-w-7xl mx-auto w-[95vw] grid gap-6 px-4
-      grid-rows-[auto_380px_1fr_auto] lg:grid-cols-[7fr_minmax(275px,3fr)] lg:grid-rows-[380px_auto] lg:items-start'
-      >
+      <div className='section-container grid gap-6 grid-rows-[auto_380px_1fr_auto] lg:grid-cols-[7fr_minmax(275px,3fr)] lg:grid-rows-[380px_auto] lg:items-start'>
         <div className='flex flex-col gap-10 lg:order-2'>
-          <div className=' grid grid-cols-[1fr_auto] gap-4   rounded-md bg-gray-100 p-4'>
+          <div className=' grid grid-cols-[1fr_auto] gap-4 rounded-md bg-gray-100 p-4'>
             <h1 className='text-2xl font-semibold'>
               GST Tax Reconciliation Checklist
             </h1>
@@ -119,7 +116,7 @@ const Listings = () => {
     </section>
   );
 };
-export default Listings;
+export default ProductListing;
 
 //Properly format them TODO:
 //In the RHS Card

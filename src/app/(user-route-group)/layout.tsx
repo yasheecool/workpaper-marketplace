@@ -1,9 +1,13 @@
-import Header from './Header';
+import Header from '@/components/Header';
+import UserHeaderNav from './UserHeaderNav';
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <Header />
+      <Header>
+        <UserHeaderNav />
+      </Header>
+
       <main>{children}</main>
     </>
   );

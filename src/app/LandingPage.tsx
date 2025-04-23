@@ -1,24 +1,14 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Header from '@/components/Header';
 
 const LandingPage = () => {
   const router = useRouter();
   return (
     <>
-      <header className='border-b-[0.5px] border-gray-500'>
-        <nav className='w-[95vw] max-w-7xl px-4 mx-auto py-6 max-h-[70px] flex flex-row items-center'>
-          <Image
-            src={'./workpapers_logo.svg'}
-            alt='logo'
-            height={27.5}
-            width={27.5}
-            className='inline-block mr-3 cursor-pointer'
-          />
-          <span className='text-2xl cursor-pointer text-gray-800 tracking-wide font-semibold'>
-            marketplace
-          </span>
-
+      <Header
+        children={
           <div className='flex items-center gap-4 ml-auto'>
             <button
               className='btn bg-transparent text-secondary-500 border-1 border-secondary-500 hover:bg-gray-100'
@@ -30,12 +20,12 @@ const LandingPage = () => {
               Sign Up
             </button>
           </div>
-        </nav>
-      </header>
+        }
+      />
 
-      <main>
+      <main className='min-h-[calc(100vh-70px)]'>
         <section className='bg-linear-to-br from-[#c9ccffa0] to-[#edd7fbba]  py-20 lg:py-28'>
-          <div className='w-[95vw] max-w-7xl mx-auto px-4 flex flex-col items-center gap-8 lg:flex-row '>
+          <div className='section-container flex flex-col items-center gap-8 lg:flex-row '>
             <div className='flex flex-col items-center lg:items-start'>
               <h1 className='text-gray-800 text-4xl mb-4 font-semibold tracking-tight md:text-5xl text-center lg:text-6xl lg:text-start lg:tracking-[-2px]'>
                 Explore Verified Workpaper Content
@@ -48,7 +38,10 @@ const LandingPage = () => {
                 <button className='btn bg-secondary-500 text-white hover:bg-secondary-600 mr-2'>
                   Sign Up
                 </button>
-                <button className='mr-2 btn text-secondary-500 bg-transparent  border-secondary-500  hover:bg-gray-100'>
+                <button
+                  className='mr-2 btn text-secondary-500 bg-transparent  border-secondary-500  hover:bg-gray-100'
+                  onClick={() => router.push('/marketplace')}
+                >
                   Log In
                 </button>
               </div>
@@ -83,7 +76,7 @@ const LandingPage = () => {
 
         <section className='bg-gray-100 py-18'></section>
         <section className='py-18'>
-          <div className='w-[95vw] max-w-7xl px-4 mx-auto'>
+          <div className='section-container'>
             <h2 className='text-gray-800 text-3xl tracking-tight'>
               Browse verified workpaper content
             </h2>
@@ -92,7 +85,7 @@ const LandingPage = () => {
         </section>
 
         <section className='bg-linear-to-br from-[#c9ccffa0] to-[#edd7fbba] py-20'>
-          <div className='w-[95vw] max-w-3xl mx-auto px-4 grid gap-6 grid-rows-2 sm:grid-cols-2 sm:grid-rows-none'>
+          <div className='section-container max-w-3xl grid gap-6 grid-rows-2 sm:grid-cols-2 sm:grid-rows-none'>
             <div className='flex flex-col gap-4'>
               <div className='flex items-center'>
                 <Image

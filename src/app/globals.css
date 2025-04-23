@@ -1,5 +1,8 @@
 @import 'tailwindcss';
-@plugin "daisyui";
+
+@plugin "daisyui" {
+  themes: light --default;
+}
 
 @theme {
   --color-primary-100: #8675bf;
@@ -24,4 +27,13 @@
 
   --color-lavender: #c9ccff;
   --color-blk: #1d1d1d;
+}
+
+@layer components {
+  .section-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    width: 95vw;
+  }
 }

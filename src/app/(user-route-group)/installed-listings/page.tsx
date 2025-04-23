@@ -1,18 +1,12 @@
 const InstalledListings = () => {
   return (
     <section className='py-8'>
-      <div className='max-w-7xl py-4 w-[95vw] mx-auto flex flex-col gap-6'>
-        <h1 className='text-2xl font-semibold'>Your Listings </h1>
+      <div className='section-container flex flex-col gap-6'>
+        <h1 className='text-2xl font-semibold'>
+          Installed and Requested Listings{' '}
+        </h1>
         <div className='flex items-center gap-4'>
           <p>Filters:</p>
-          <label className='select'>
-            <span className='label'>Installed/Requested By:</span>
-            <select>
-              <option>Firm 1</option>
-              <option>Firm 2</option>
-              <option>Firm 3</option>
-            </select>
-          </label>
           <label className='select'>
             <span className='label'>Status is:</span>
             <select>
@@ -80,3 +74,19 @@ const InstalledListings = () => {
 export default InstalledListings;
 
 //Additional sorting functionality by date can be added
+
+// - Vendors
+//     1. Vendor can update their firms's profile details.
+//     2. Vendor can manage firm-level whitelists
+//     3. Vendor can create listings
+//     4. Vendor can modify existing listings
+//         1. Vendor also needs to add a comment about what’s changed when modifying listing.
+//     5. Vendor can also modify whitelisting of each listing.
+//     6. Vendor can see and approve whitelist requests
+
+// Global Whitelist -> Can be applied to listing
+
+//Listing States
+//Open: Anyone can access
+//Limited: Anyone can view, but only whitelisted firms can add content to their firm. They can also request to be whitelisted.
+//Closed: Only whitelisted users can see and add the content
