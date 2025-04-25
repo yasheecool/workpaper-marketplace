@@ -1,6 +1,11 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 const FirmSelection = () => {
+  const router = useRouter();
+
   return (
     <>
       <header className='border-b-[0.5px] border-gray-500'>
@@ -17,33 +22,34 @@ const FirmSelection = () => {
           </span>
         </nav>
       </header>
-      <main>
-        <section className='py-10 bg-base-200 text-gray-800'>
-          <div className='section-container max-w-4xl bg-white border-[0.5px] rounded-sm py-8 px-16 flex flex-col gap-8'>
-            <p className='col-span-2 text-2xl text-secondary-600'>
-              Select a firm to continue
-            </p>
-            <div className='grid grid-cols-[auto_1fr] gap-4'>
-              <input
-                type='radio'
-                name='radio-1'
-                className='radio'
-                defaultChecked
-              />
-              <label>Cimplico Pty Ltd</label>
-              <input type='radio' name='radio-1' className='radio' />
-              <label>Clear Accounting Pty Ltd</label>
-              <input type='radio' name='radio-1' className='radio' />
-              <label>Audit & Co.</label>
+      <main className='h-[calc(100vh-140px)] bg-base-200 py-14 text-gray-800'>
+        <div className='section-container max-w-4xl bg-white border-[0.5px] rounded-sm py-8 px-16 flex flex-col gap-8'>
+          <p className='col-span-2 text-2xl text-secondary-600'>
+            Select a firm to continue
+          </p>
+          <div className='grid grid-cols-[auto_1fr] gap-4'>
+            <input
+              type='radio'
+              name='radio-1'
+              className='radio'
+              defaultChecked
+            />
+            <label>Cimplico Pty Ltd</label>
+            <input type='radio' name='radio-1' className='radio' />
+            <label>Clear Accounting Pty Ltd</label>
+            <input type='radio' name='radio-1' className='radio' />
+            <label>Audit & Co.</label>
 
-              <div className='flex justify-center items-center col-span-2 mt-4'>
-                <button className='btn text-white bg-secondary-500 hover:bg-secondary-700'>
-                  Continue with this firm
-                </button>
-              </div>
+            <div className='flex justify-center items-center col-span-2 mt-4'>
+              <button
+                className='btn text-white bg-secondary-500 hover:bg-secondary-700'
+                onClick={() => router.push('/marketplace')}
+              >
+                Continue with this firm
+              </button>
             </div>
           </div>
-        </section>
+        </div>
       </main>
     </>
   );

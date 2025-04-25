@@ -1,7 +1,7 @@
 'use client';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
-const UserHeaderNav = () => {
+const VendorHeaderNav = () => {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -11,13 +11,7 @@ const UserHeaderNav = () => {
 
   return (
     <div className='flex items-center'>
-      <p className='text-sm link link-hover text-gray-600 hover:text-gray-800'>
-        Become a Vendor
-      </p>
-      <button
-        className='btn flex items-center bg-white border-none rounded-none hover:shadow-sm hover:bg-gray-100'
-        onClick={() => router.push('/firm-selection')}
-      >
+      <button className='btn flex items-center bg-white border-none rounded-none hover:shadow-sm hover:bg-gray-100'>
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'
@@ -61,23 +55,13 @@ const UserHeaderNav = () => {
           tabIndex={0}
           className='dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm text-sm'
         >
-          <li onClick={() => navigate('/profile')}>
-            <a>My Profile</a>
-          </li>
-
-          <li onClick={() => navigate('/installed-listings')}>
-            <a>Installed Listings</a>
-          </li>
-          <li onClick={() => navigate('/saved-listings')}>
-            <a>Saved Listings</a>
-          </li>
-          <li onClick={() => navigate('/vendor')}>
+          <li onClick={() => navigate('/marketplace')}>
             <a>Switch View</a>
           </li>
 
           {/* TODO:
-          Clear context of current user and go back to landing page
-         */}
+        Clear context of current user and go back to landing page
+       */}
           <li onClick={() => navigate('/')}>
             <a>Logout</a>
           </li>
@@ -86,4 +70,4 @@ const UserHeaderNav = () => {
     </div>
   );
 };
-export default UserHeaderNav;
+export default VendorHeaderNav;

@@ -1,9 +1,19 @@
+'use client';
+import { useRouter } from 'next/navigation';
+
 const VendorListings = () => {
+  const router = useRouter();
+
   return (
-    <div className='p-4 flex flex-col gap-8'>
-      <div className='flex items-center justify-between gap-2 '>
+    <div className='p-4 flex flex-col gap-8 overflow-x-hidden'>
+      <div className='flex items-center justify-between gap-2'>
         <h1 className='text-2xl font-semibold'>Your Listings</h1>
-        <button className='btn bg-secondary-500 text-white hover:bg-secondary-700 rounded-md'>
+        <button
+          className='btn bg-secondary-500 text-white hover:bg-secondary-700 rounded-md'
+          onClick={() => {
+            router.push('/vendor/create');
+          }}
+        >
           Create Listing
         </button>
       </div>
@@ -21,14 +31,14 @@ const VendorListings = () => {
         </label>
       </div>
 
-      <div className='overflow-x-auto'>
+      <div>
         <table className='table'>
           <thead>
             <tr>
               <th></th>
               <th>Listing Name</th>
               <th>Type</th>
-              <th>Last Updated</th>
+              <th>Updated</th>
               {/* <th>Last Updated By</th> */}
               <th>Visibility Type</th>
               <th>Actions</th>

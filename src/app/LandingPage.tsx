@@ -12,7 +12,7 @@ const LandingPage = () => {
           <div className='flex items-center gap-4 ml-auto'>
             <button
               className='btn bg-transparent text-secondary-500 border-1 border-secondary-500 hover:bg-gray-100'
-              onClick={() => router.push('/marketplace')}
+              onClick={() => router.push('/firm-selection')}
             >
               Log In
             </button>
@@ -40,7 +40,7 @@ const LandingPage = () => {
                 </button>
                 <button
                   className='mr-2 btn text-secondary-500 bg-transparent  border-secondary-500  hover:bg-gray-100'
-                  onClick={() => router.push('/marketplace')}
+                  onClick={() => router.push('/firm-selection')}
                 >
                   Log In
                 </button>
