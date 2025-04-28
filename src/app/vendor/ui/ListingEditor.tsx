@@ -75,7 +75,21 @@ const ListingEditor = () => {
         </label>
       </fieldset>
 
+      <fieldset className='flex flex-col gap-1 px-4 border-l-3 border-primary-500 py-1 justify-center '>
+        <label className='select'>
+          <span className='label'>Access Settings</span>
+          <select defaultValue='Select visibility type' className='select'>
+            <option disabled={true}>Select access type</option>
+            <option>Public</option>
+            <option>Request Access</option>
+            <option>Pre-configured firms only</option>
+            <option>Private (invite only)</option>
+          </select>
+        </label>
+      </fieldset>
+
       <div className='flex flex-col gap-1 px-4 border-l-3 border-primary-500 py-1 justify-center '>
+        Image
         <input type='file' className='file-input' />
       </div>
     </form>

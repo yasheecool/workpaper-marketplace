@@ -104,3 +104,6 @@ class WorkpapersAPI {
     });
   }
 }
+
+//admin can see vendor requests - reject, approve with an optional note. Also see some contact details
+//admin can view active firms on the marketplace, also being able to view contact details

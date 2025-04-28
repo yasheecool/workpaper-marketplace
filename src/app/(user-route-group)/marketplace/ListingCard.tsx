@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 const ListingCard = () => {
   const router = useRouter();
