@@ -10,7 +10,7 @@ const SidebarNav = () => {
   };
 
   return (
-    <aside className='px-2 py-4 border-r-[1px] border-r-gray-200 text-gray-800'>
+    <aside className='pr-4 py-4 border-r-[1px] border-r-gray-200 text-gray-800'>
       <nav>
         <ul className='flex flex-col text-sm h-full'>
           <li

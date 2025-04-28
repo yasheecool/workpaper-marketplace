@@ -7,7 +7,7 @@ const VendorLayout = ({ children }: { children: React.ReactElement }) => {
       <Header disableNavigation={true}>
         <VendorHeaderNav />
       </Header>
-      <main className='bg-base-200 py-4 h-[calc(100vh-70px)]'>{children}</main>
+      <main className='bg-base-200 py-4 h-[calc(100vh-142px)]'>{children}</main>
     </>
   );
 };
