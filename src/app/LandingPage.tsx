@@ -2,9 +2,24 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
+import axios from 'axios';
+import { user2 } from '@/store/JWT-User';
+import useAppStore from '@/store/appStore';
+import { useEffect } from 'react';
 
 const LandingPage = () => {
   const router = useRouter();
+  const { setToken, reset } = useAppStore();
+
+  useEffect(() => {
+    reset();
+  }, []);
+
+  const login = async () => {
+    setToken(user2);
+    router.push('/firm-selection');
+  };
+
   return (
     <>
       <Header
@@ -12,7 +27,7 @@ const LandingPage = () => {
           <div className='flex items-center gap-4 ml-auto'>
             <button
               className='btn bg-transparent text-secondary-500 border-1 border-secondary-500 hover:bg-gray-100'
-              onClick={() => router.push('/firm-selection')}
+              onClick={login}
             >
               Log In
             </button>

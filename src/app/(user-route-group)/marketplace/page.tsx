@@ -1,7 +1,24 @@
+'use client';
+
 import Image from 'next/image';
 import ListingCard from './ListingCard';
+import useAppStore from '@/store/appStore';
+import { useEffect } from 'react';
+
+import api from '@/app/utils/axiosInstance';
 
 const Marketplace = () => {
+  const state = useAppStore();
+
+  const testGet = async () => {
+    const res = await api.get('/');
+    console.log(res);
+  };
+
+  useEffect(() => {
+    testGet();
+  }, []);
+
   return (
     <>
       <section className='bg-lavender py-18 relative overflow-hidden z-0 text-gray-800 h-[340px]'>

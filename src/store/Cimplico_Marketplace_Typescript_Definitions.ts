@@ -2,15 +2,19 @@
 // Add this to the request via some sort of metadata so the rest of the backend can utilise it as `req.user` and `req.firm`
 // Each request will also need to send of a `X-Firm-Id` header that is a uuid that MUST be found in the below array. if it's not send back a 401
 
+type Firm = {
+  name: string;
+  id: string; // <-- UUID of the firm the user belongs to
+  shortId: string; // <-- 8 character unique short code (use this in the front ends url to identify the current firm)
+};
+
 export type JWTMetadata = {
   uuid: string; // <-- UUID of the user (this is the users Cimplico Id across apps)
   workpapers: {
-    firms: [
-      {
-        id: string; // <-- UUID of the firm the user belongs to
-        shortId: string; // <-- 8 character unique short code (use this in the front ends url to identify the current firm)
-      },
-    ];
+    firms: Firm[];
+  };
+  marketplace: {
+    role: 'user' | 'admin';
   };
 };
 

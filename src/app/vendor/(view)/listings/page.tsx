@@ -9,7 +9,7 @@ const VendorListings = () => {
       <div className='flex items-center justify-between gap-2'>
         <h1 className='text-2xl font-semibold'>Your Listings</h1>
         <button
-          className='btn bg-secondary-500 text-white hover:bg-secondary-700 rounded-md'
+          className='btn bg-primary-500 text-white hover:bg-primary-700 rounded-md'
           onClick={() => {
             router.push('/vendor/create');
           }}
