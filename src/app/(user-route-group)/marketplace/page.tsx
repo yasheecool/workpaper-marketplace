@@ -2,22 +2,10 @@
 
 import Image from 'next/image';
 import ListingCard from './ListingCard';
-import useAppStore from '@/store/appStore';
-import { useEffect } from 'react';
-
-import api from '@/app/utils/axiosInstance';
 
 const Marketplace = () => {
-  const state = useAppStore();
-
-  const testGet = async () => {
-    const res = await api.get('/');
-    console.log(res);
-  };
-
-  useEffect(() => {
-    testGet();
-  }, []);
+  //TODO:
+  //Setup states for search functionality
 
   return (
     <>

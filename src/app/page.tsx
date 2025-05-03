@@ -5,5 +5,3 @@ const page = () => {
 };
 
 export default LandingPage;
-
-//add shadows to sections - checkout Clerk auth website

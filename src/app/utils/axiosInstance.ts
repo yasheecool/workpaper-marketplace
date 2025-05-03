@@ -7,7 +7,6 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const state = useAppStore.getState();
-  console.log(state);
 
   if (state.jwt) config.headers['Authorization'] = JSON.stringify(state.jwt);
   if (state.currentFirm) config.headers['X-Firm-Id'] = state.currentFirm.id;

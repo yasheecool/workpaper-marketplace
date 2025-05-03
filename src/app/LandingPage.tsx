@@ -2,8 +2,7 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Header from '@/components/Header';
-import axios from 'axios';
-import { user2 } from '@/store/JWT-User';
+import { user1, user2 } from '@/store/JWT-User';
 import useAppStore from '@/store/appStore';
 import { useEffect } from 'react';
 
@@ -12,31 +11,30 @@ const LandingPage = () => {
   const { setToken, reset } = useAppStore();
 
   useEffect(() => {
-    reset();
+    reset(); //always make sure that jwt and currFirm are NULL
   }, []);
 
   const login = async () => {
     setToken(user2);
-    router.push('/firm-selection');
+    if (user2.workpapers.firms.length > 1) router.push('/firm-selection');
+    else router.push('/marketplace');
   };
 
   return (
     <>
-      <Header
-        children={
-          <div className='flex items-center gap-4 ml-auto'>
-            <button
-              className='btn bg-transparent text-secondary-500 border-1 border-secondary-500 hover:bg-gray-100'
-              onClick={login}
-            >
-              Log In
-            </button>
-            <button className='btn bg-secondary-500 text-white hover:bg-secondary-700 ease-in-out'>
-              Sign Up
-            </button>
-          </div>
-        }
-      />
+      <Header disableNavigation={true}>
+        <div className='flex items-center gap-4 ml-auto'>
+          <button
+            className='btn bg-transparent text-secondary-500 border-1 border-secondary-500 hover:bg-gray-100'
+            onClick={login}
+          >
+            Log In
+          </button>
+          <button className='btn bg-secondary-500 text-white hover:bg-secondary-700 ease-in-out'>
+            Sign Up
+          </button>
+        </div>
+      </Header>
 
       <main className='min-h-[calc(100vh-70px)]'>
         <section className='bg-linear-to-br from-[#c9ccffa0] to-[#edd7fbba]  py-20 lg:py-28'>

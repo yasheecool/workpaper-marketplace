@@ -9,8 +9,9 @@ const FirmSelection = () => {
   const router = useRouter();
   const { jwt, setFirm, currentFirm } = useAppStore();
 
-  //TODO:
-  //Prevent re-render while selecting firm
+  useEffect(() => {
+    if (!jwt) router.replace('/'); //go back to landing page if jwt is NULL
+  });
 
   return (
     <>
