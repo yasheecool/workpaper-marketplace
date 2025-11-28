@@ -1,4 +1,4 @@
-# Cimplico Workpapers Marketplace – Final Dockerized Project
+# Workpapers Marketplace – Final Dockerized Project
 
 ## 🧾 Before Getting Started
 
