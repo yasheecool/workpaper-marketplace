@@ -1,0 +1,126 @@
+[
+  {
+    "name": "Annual Partner Review Process",
+    "region": "australia",
+    "id": "bcba9f36-8e8e-4941-8514-64b2750519f6",
+    "ownerFirmId": "6367742e-e1b0-48ec-af5d-da92778e4d13",
+    "description": "Procedure to review partner performance and approve profit distributions.",
+    "contentType": "procedure",
+    "workpaperType": ["taxPlanning", "compliance"],
+    "entityType": ["partnership"],
+
+    "tags": ["partner", "review", "distribution"]
+  },
+  {
+    "name": "Client Onboarding Procedure",
+    "region": "australia",
+    "description": "Step-by-step process to onboard new clients, ensure compliance, and set up initial services.",
+    "id": "ddc57930-c199-46e1-90eb-7815fab86876",
+    "ownerFirmId": "5a694a45-1d17-4b8a-9e41-9ac7f17b96f6",
+    "contentType": "procedure",
+    "workpaperType": ["clientSetup", "compliance"],
+    "entityType": ["individual", "company"],
+
+    "tags": ["onboarding", "client", "KYC", "services"]
+  },
+
+  {
+    "name": "Asset Disposal Summary Report",
+
+    "ownerFirmId": "6367742e-e1b0-48ec-af5d-da92778e4d13",
+    "region": "australia",
+
+    "id": "1c7adeed-9f3f-4619-9db2-362f3c69bd21",
+    "description": "Tracks asset sales, disposal dates, and calculates gains/losses.",
+    "contentType": "report",
+    "workpaperType": ["taxPlanning", "compliance"],
+    "entityType": ["company", "partnership"],
+
+    "tags": ["assets", "capital gains", "depreciation"]
+  },
+  {
+    "name": "ATO Correspondence Tracker",
+    "region": "australia",
+    "description": "Centralised log of all communication exchanged with the ATO.",
+    "ownerFirmId": "5a694a45-1d17-4b8a-9e41-9ac7f17b96f6",
+    "id": "608a3d46-184f-4167-b394-6d3098ad801a",
+    "contentType": "report",
+    "workpaperType": ["compliance"],
+    "entityType": ["individual", "trust", "company"],
+
+    "tags": ["ATO", "correspondence", "compliance"]
+  },
+  {
+    "name": "Year-End Finalisation Checklist",
+    "region": "australia",
+    "ownerFirmId": "6367742e-e1b0-48ec-af5d-da92778e4d13",
+    "id": "c34ed2c4-2f8c-403d-a8e7-ce87db122014",
+    "description": "Checklist to ensure all year-end tasks are completed before closing the books.",
+    "contentType": "checklist",
+    "workpaperType": ["compliance", "itr"],
+    "entityType": ["company", "trust"],
+
+    "tags": ["year-end", "closing", "compliance"]
+  },
+  {
+    "name": "Payroll Compliance Checklist",
+    "region": "australia",
+    "description": "A checklist for verifying payroll obligations are met each period.",
+    "ownerFirmId": "5a694a45-1d17-4b8a-9e41-9ac7f17b96f6",
+    "id": "bc659e36-d25d-4884-a91d-421004fdc072",
+    "contentType": "checklist",
+    "workpaperType": ["fbt", "compliance"],
+    "entityType": ["company"],
+
+    "tags": ["payroll", "compliance", "fbt"]
+  },
+  {
+    "name": "SMSF Contribution Limit Calculator",
+    "region": "australia",
+    "id": "c613466f-e18e-458e-aac5-2cca4ea76b76",
+    "ownerFirmId": "6367742e-e1b0-48ec-af5d-da92778e4d13",
+    "description": "Calculates concessional and non-concessional super contributions against limits.",
+    "contentType": "calculation",
+    "workpaperType": ["compliance", "taxPlanning"],
+    "entityType": ["individual"],
+
+    "tags": ["super", "SMSF", "limits"]
+  },
+  {
+    "name": "Depreciation Schedule Template",
+    "region": "australia",
+    "description": "Automates calculation of depreciation for assets over useful life.",
+    "ownerFirmId": "5a694a45-1d17-4b8a-9e41-9ac7f17b96f6",
+    "id": "d2907d5e-17ea-4880-a7c9-cdb6417fe88a",
+    "contentType": "calculation",
+    "workpaperType": ["compliance", "itr"],
+    "entityType": ["company", "partnership"],
+
+    "tags": ["depreciation", "assets", "tax"]
+  },
+  {
+    "name": "Trust Distribution Basics",
+    "region": "australia",
+
+    "ownerFirmId": "6367742e-e1b0-48ec-af5d-da92778e4d13",
+    "id": "ab5cb6e8-1025-457c-be78-2d5dcfd5fa93",
+    "description": "Covers foundational principles and documentation requirements for trust distributions.",
+    "contentType": "wiki",
+    "workpaperType": ["taxPlanning"],
+    "entityType": ["trust"],
+
+    "tags": ["trust", "distribution", "planning"]
+  },
+  {
+    "name": "Capital Allowances Reference",
+    "region": "australia",
+    "description": "Summarises depreciation rules, effective life estimates, and instant asset write-off thresholds.",
+    "ownerFirmId": "5a694a45-1d17-4b8a-9e41-9ac7f17b96f6",
+    "id": "d3a87126-032e-4951-b47b-6c0f2ec9fd95",
+    "contentType": "wiki",
+    "workpaperType": ["compliance"],
+    "entityType": ["company", "partnership"],
+
+    "tags": ["depreciation", "assets", "capital"]
+  }
+]

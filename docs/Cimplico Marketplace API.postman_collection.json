@@ -1,0 +1,3497 @@
+{
+	"info": {
+		"_postman_id": "31506525-bbe4-4a0a-9081-529bcf513994",
+		"name": "Cimplico Marketplace API",
+		"description": "## Authentication\n\nAll of the routes (except some) require the user to be **authenticated** and a **current firm** context to be present.\n\nIn this case, authentication is mocked by passing a **JWT Payload** in the `Authorization` header.\n\nThe payload to be passed in the `Authorization` header is of the type:\n\n``` json\n{\n  \"uuid\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n  \"workpapers\": {\n    \"firms\": [\n      {\n        \"id\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n        \"shortId\": \"6367742e\"\n      }\n    ]\n  },\n  \"marketplace\": {\n    \"isAdmin\": false //boolean to identify if the current user is an admin\n  }\n}\n\n ```\n\n### Firm Context\n\nAlongside the JWT token, each request (except for `/api/user/firms`) must include the current **firm ID** the user is acting on behalf of via the `X-Firm-Id` header:\n\n``` json\nX-Firm-Id: 6367742e-e1b0-48ec-af5d-da92778e4d13\n\n ```\n\nThe middleware checks if this `firmId` exists in the token’s `workpapers.firms[]` array.\n\n### 🚫 Error Responses\n\n| Status | When it Happens |\n| --- | --- |\n| `401 Unauthorized` | `Authorization` header is missing or user doesn't have access to `X-Firm-Id` |\n| `400 Bad Request` | `X-Firm-Id` header is missing |\n\n### Exceptions:\n\n1. If the route is `/api/user/firms`, only the JWT is required — the firm context is not needed yet. This route is used to retrieve the list of firms available to the user (from `workpapers.firms`) and allows the user to select one within the app.\n    \n\n### **Admin Route Exception and Note:**\n\nCurrently, the JWT includes a boolean flag at `marketplace.isAdmin` to identify if the user is an admin:\n\n``` json\n  \"marketplace\": {\n    \"isAdmin\": false //boolean to identify if the current user is an admin\n  }\n\n ```\n\nHowever, access to `api/admin` routes is **not yet restricted** based on this flag. As a result:\n\n- Users with `isAdmin: true`, do not require firm level checks. However, they can also access other routes assuming **firm context** and **normal users** (with firm context) can also access admin routes. Proper checks and middleware guards are to be enforced to prevent the same.\n    \n- Please check the **AuthMiddleware file** in the backend to gain a clearer context.\n    \n\n### Pre-Request Scripts\n\nAs this application uses **stringified JSON object** as the value of authorization token. This has been achieved by using **pre-request script** on the **collection level**, which adds both, the **Authorization** and **X-Firm-Id** header to the request object.\n\nWe also recommend having a look at **environment variables** in the collection, which are used in the pre-request scripts and throghout the whole collection.\n\nPre-request scripts used in:\n\n- The **collection level itself** \\- to set the `Authorization` and `X-Firm-Id` header.\n    \n- Overriden in **Admin Routes(Folder)**, to set the `Authorization` header to the admin token.\n    \n- **Overriden again in** **`/vendor-request POST`** route, to set the `X-Firm-Id` header to a firm that is not a vendor.\n    \n\n### Summary\n\n- **Most API routes require** both `Authorization` and `X-Firm-Id` headers.\n    \n- The `Authorization` header is a **stringified JWT** containing user.\n    \n- The `X-Firm-Id` must match one of the firms listed in the token's `workpapers.firms`.\n    \n- `/api/user/firms` is the only route that does not require a firm context.\n    \n- Admin behavior (`isAdmin: true`) bypasses firm checks, but the backend lacks route guards and necessary middleware for route protection.\n    \n- **Authorization guards are pending in the backend** for `/api/admin/\\\\\\\\*` routes.\n    \n- Most of the routes **assume user and firm context** from the `Authorization` and `X-Firm-Id` headers.\n    \n- Admin routes check of `marketplace.isAdmin` in the JWT payload to **bypass firm selection** (proper route guards and middleware still required).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45499458",
+		"_collection_link": "https://cimplico-8111.postman.co/workspace/Cimplico-Workspace~172838b2-f4aa-4978-8f2a-632eed8292a9/collection/38936204-31506525-bbe4-4a0a-9081-529bcf513994?action=share&source=collection_link&creator=45499458"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user"
+							]
+						},
+						"description": "Returns the current user record from the database"
+					},
+					"response": [
+						{
+							"name": "User",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/user",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "174"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"ae-wxrXXp7/G9l3SyuGDpIgJavlHH0\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:33:52 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"userId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"firstName\": \"Marco\",\n        \"lastName\": \"Fiumara\",\n        \"email\": \"abc@gmail.com\",\n        \"profileImage\": null,\n        \"isAdmin\": false\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Current User",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"updatedFields\": {\n        \"email\": \"marco@cimplico.com\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"profile"
+							]
+						},
+						"description": "Updates the current user's details. Only the fields provided in the `updatedFields` object will be modified.  \nReturns the new user object with updated fields."
+					},
+					"response": [
+						{
+							"name": "Update User",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"updatedFields\": {\n        \"email\": \"marco@cimplico.com\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/profile",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "179"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"b3-te5AdQS+w4MlumoG63IFU7TCU6Q\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:34:45 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"userId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"firstName\": \"Marco\",\n        \"lastName\": \"Fiumara\",\n        \"email\": \"marco@cimplico.com\",\n        \"profileImage\": null,\n        \"isAdmin\": false\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "User's Firms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/firms",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"firms"
+							]
+						},
+						"description": "Returns the list of firms associated with the currently authenticated user, based on the `workpapers.firms[]` array in the JWT payload.\n\nThis route **does not require firm context (****`X-Firm-Id`****)**, as it is intended to be used **before firm selection**.\n\nIn the application, it is typically called after login to **allow the user to choose a firm** and establish firm context for future requests."
+					},
+					"response": [
+						{
+							"name": "Firms",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/user/firms",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"firms"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "254"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"fe-H35/6OlFQPbQH3IqSISKTPkrBxA\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:54:09 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"firmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n            \"firmName\": \"Cimplico\",\n            \"isVendor\": true,\n            \"vendorStatus\": \"active\"\n        },\n        {\n            \"firmId\": \"9c4f4554-003c-43af-8343-b1e49d48f51c\",\n            \"firmName\": \"AuditPro Systems\",\n            \"isVendor\": false,\n            \"vendorStatus\": null\n        }\n    ]\n}"
+						}
+					]
+				}
+			],
+			"description": "All routes related to the currently logged-in user derive **user context from the JWT** provided in the `Authorization` header. The user’s identity (`uuid`) is extracted from this token, which is further used in backend logic to extract details from the database."
+		},
+		{
+			"name": "Firm",
+			"item": [
+				{
+					"name": "Firm Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/firm",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"firm"
+							]
+						},
+						"description": "Returns the details of the current firm."
+					},
+					"response": [
+						{
+							"name": "Firm",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/firm",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"firm"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "156"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9c-orw1zUFzr29U/QPmeUM6atXbUuA\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:25:33 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"firmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n        \"firmName\": \"Cimplico\",\n        \"isVendor\": true,\n        \"vendorStatus\": \"active\",\n        \"vendorRequest\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Vendor Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/firm/:firmId/vendor-profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"firm",
+								":firmId",
+								"vendor-profile"
+							],
+							"variable": [
+								{
+									"key": "firmId",
+									"value": "{{vendorFirmId}}"
+								}
+							]
+						},
+						"description": "Retrieves the profile information of a vendor firm using the provided `firmId` as a path parameter.\n\nThis endpoint is used in two contexts:\n\n- On the **user side**, to display vendor firm details associated with a listing.\n    \n- On the **vendor side**, to **view or update the vendor firm's own profile**.\n    \n\nIf the `firmId` were instead read from the `X-Firm-Id` header, a separate public-facing route would be needed for users to fetch vendor firm details. To avoid introducing an additional endpoint, the `firmId` is accepted as a **path parameter**, allowing both users and vendors to use the same route for different purposes."
+					},
+					"response": [
+						{
+							"name": "Vendor Profile",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/firm/:firmId/vendor-profile",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"firm",
+										":firmId",
+										"vendor-profile"
+									],
+									"variable": [
+										{
+											"key": "firmId",
+											"value": "{{vendorFirmId}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "992"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3e0-l0O9+BZ4L7v7P1J8MeSTDUyBGLQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:28:13 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"firmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n        \"firmEmail\": \"helloworld@gmail.com\",\n        \"firmLogo\": null,\n        \"description\": \"Sky Accounting is a mid-tier professional services firm based in Sydney, Australia, specializing in audit, compliance, and advisory services for small to medium-sized enterprises. With over two decades of experience, Sky has built a reputation for delivering practical and efficient solutions that help firms meet regulatory requirements without unnecessary complexity.\\n        The team at Sky includes registered auditors, compliance consultants, and industry trainers, all of whom contribute to developing standardized documentation and tools used by firms across Australia. Their approach blends technical accuracy with usability, making their content highly accessible for teams at any level of experience.\",\n        \"vendorSince\": \"2025-05-02T12:00:00.000Z\",\n        \"websiteUrl\": \"https://www.cimplico.com/about/\",\n        \"linkedInUrl\": null,\n        \"vendor\": {\n            \"firmName\": \"Cimplico\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Content for creating listing",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/firm/content",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"firm",
+								"content"
+							]
+						},
+						"description": "Returns all the content available to create a listing. In the backend, this route uses the Workpapers Api SDK (which is mocked) that returns the list of content available.\n\n**Check the workpapers API SDK docs and code in the backend.**"
+					},
+					"response": [
+						{
+							"name": "Content for creating listing",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/firm/content",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"firm",
+										"content"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1739"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"6cb-a4QEPjhMEohuhy8/+EXUwbc71d8\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:29:45 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"totalItems\": 5,\n        \"data\": [\n            {\n                \"name\": \"Annual Partner Review Process\",\n                \"region\": \"australia\",\n                \"id\": \"bcba9f36-8e8e-4941-8514-64b2750519f6\",\n                \"description\": \"Procedure to review partner performance and approve profit distributions.\",\n                \"contentType\": \"procedure\",\n                \"workpaperType\": [\n                    \"taxPlanning\",\n                    \"compliance\"\n                ],\n                \"entityType\": [\n                    \"partnership\"\n                ],\n                \"tags\": [\n                    \"partner\",\n                    \"review\",\n                    \"distribution\"\n                ]\n            },\n            ...\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Vendor Profile",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"updatedFields\": {\n        \"description\": \"Cimplico provides a truly cloud workpapers solution.\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/firm/vendor-profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"firm",
+								"vendor-profile"
+							]
+						},
+						"description": "This endpoint is called when a vendor firm is updating their vendor profile (public facing profile).\n\nOnly the fields provided in the `updatedFields` object will be modified.  \nReturns the profile object with updated fields."
+					},
+					"response": [
+						{
+							"name": "Update vendor profile",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"updatedFields\": {\n        \"description\": \"Cimplico provides a truly cloud workpapers solution.\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/firm/vendor-profile",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"firm",
+										"vendor-profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "300"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"12c-mLHG//9ahai6nROSGS6v2n8+m+k\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:30:57 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"firmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n        \"firmEmail\": \"helloworld@gmail.com\",\n        \"firmLogo\": null,\n        \"description\": \"Cimplico provides a truly cloud workpapers solution.\",\n        \"vendorSince\": \"2025-05-02T12:00:00.000Z\",\n        \"websiteUrl\": \"https://www.cimplico.com/about/\",\n        \"linkedInUrl\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Created Listings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/firm/created-listings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"firm",
+								"created-listings"
+							]
+						},
+						"description": "Returns the listings that belong to/owned by the current firm - (identified by the `x-firm-id` header) i.e the listings having `ownerFirmId` equal to the `X-Firm-Id` header.  \nThis endpoint is used in the vendor side of the application, to display the vendor's listings."
+					},
+					"response": [
+						{
+							"name": "Created Listings",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/firm/created-listings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"firm",
+										"created-listings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "3229"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"c9d-D3tYGI6GTbLADNE+2Y4Ash8pj4Y\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:32:03 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"name\": \"Updated Entitlements Tool\",\n            \"contentType\": \"calculation\",\n            \"updatedAt\": \"2025-06-04T16:24:40.544Z\",\n            \"visibility\": \"request_access\",\n            \"id\": \"12be4409-0c8b-4073-bbee-813969c82522\",\n            \"status\": \"active\",\n            \"updatedBy\": {\n                \"firstName\": \"Marco\",\n                \"lastName\": \"Fiumara\",\n                \"profileImage\": null\n            }\n        },\n        ....\n    ]\n}"
+						}
+					]
+				}
+			],
+			"description": "Routes related to the currently selected firm. Firm context is retrieved from the `X-Firm-Id` header."
+		},
+		{
+			"name": "Listing",
+			"item": [
+				{
+					"name": "Marketplace Listings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/listings/marketplace-listings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listings",
+								"marketplace-listings"
+							]
+						},
+						"description": "Returns all listings that are either publicly visible or marked as available for access requests (`visibility: \"public\"` or `\"request_access\"`).\n\nThis route is used to populate the **main marketplace page**, displaying listings that a firm can either install directly or request access to.\n\nThe response **does not** include the full listing object, it only includes enough data for the listing to be displayed, and for the filtering functionality (which is done on the client side) to work in the application."
+					},
+					"response": [
+						{
+							"name": "Marketplace Listings",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/listings/marketplace-listings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"listings",
+										"marketplace-listings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "14378"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"382a-043t15cvmk9rftWkr2swqN+PGmA\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:16:33 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": \"4bfbf680-cf89-4ced-8d9b-895a1219e638\",\n            \"name\": \"BAS Summary Report\",\n            \"contentType\": \"report\",\n            \"updatedAt\": \"2025-06-03T11:54:04.945Z\",\n            \"description\": \"A detailed breakdown of Business Activity Statement lodgement details.\",\n            \"imagesLink\": [\n                \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747662251/ylausavamykqw6jo4evp.png\",\n                \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708008/u3berfz5i9bdqlm6znnf.png\",\n                \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708008/wrppsifg1nbj2b1pqexe.png\",\n                \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708009/mozlnim8mm7az6x593x4.png\"\n            ],\n            \"visibility\": \"public\",\n            \"workpaperType\": [\n                \"bas\",\n                \"compliance\",\n                \"itr\"\n            ],\n            \"entityType\": [\n                \"company\",\n                \"trust\"\n            ],\n            \"ownedByFirm\": {\n                \"firmName\": \"Cimplico\",\n                \"firmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\"\n            }\n        },\n        ...\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Individual Listing",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/listings/:listingId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listings",
+								":listingId"
+							],
+							"variable": [
+								{
+									"key": "listingId",
+									"value": "{{listingId}}"
+								}
+							]
+						},
+						"description": "Retrieves the full details of a listing using the provided `listingId`.This route is used in two primary scenarios:\n\n- On the **user side**, to display the full listing details on the individual listing view page.\n    \n- On the **vendor side**, to **pre-fill the listing form** when editing an existing listing."
+					},
+					"response": [
+						{
+							"name": "Listing By ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/listings/:listingId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"listings",
+										":listingId"
+									],
+									"variable": [
+										{
+											"key": "listingId",
+											"value": "{{listingId}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1701"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"6a5-D+oqGlChA2Ap/0Ad9XMNi0/DewU\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:19:50 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": \"12be4409-0c8b-4073-bbee-813969c82522\",\n        \"ownerFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n        \"createdByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"updatedAt\": \"2025-05-05T10:53:09.441Z\",\n        \"updatedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"createdAt\": \"2025-05-05T10:53:09.441Z\",\n        \"name\": \"Employee Entitlements Accrual Tool\",\n        \"description\": \"Helps calculate leave, super, and payroll accruals for reporting periods.\",\n        \"longDescription\": \"The Audit Planning Checklist helps firms ensure that every essential step in the audit planning phase is executed thoroughly and in compliance with professional standards. Designed to reduce oversight, improve consistency, and support quality reviews, this template includes planning activities, risk assessment procedures, client engagement considerations, and documentation guidance.\\n\\nIdeal for junior auditors, reviewers, and quality managers, this checklist reflects the practical steps used by experienced firms and supports customization to suit client complexity.\",\n        \"gettingStartedSteps\": \"Import employee data or input manually, then review accrual calculations.\",\n        \"region\": \"australia\",\n        \"contentType\": \"calculation\",\n        \"workpaperType\": [\n            \"fbt\",\n            \"compliance\"\n        ],\n        \"entityType\": [\n            \"company\"\n        ],\n        \"tags\": [\n            \"payroll\",\n            \"HR\",\n            \"leave\"\n        ],\n        \"imagesLink\": [\n            \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747662251/ylausavamykqw6jo4evp.png\",\n            \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708008/u3berfz5i9bdqlm6znnf.png\",\n            \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708008/wrppsifg1nbj2b1pqexe.png\",\n            \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708009/mozlnim8mm7az6x593x4.png\"\n        ],\n        \"visibility\": \"request_access\",\n        \"status\": \"active\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Listing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/listings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"listings"
+							]
+						},
+						"description": "Updates a listing and returns the updated listing object.  \nOnly the fields provided in the `updatedFields` object will be modified."
+					},
+					"response": [
+						{
+							"name": "Update Listing By ID",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"updatedFields\":\r\n    {\r\n        \"name\": \"Updated Entitlements Tool\",\r\n        \"description\": \"Updated description for showcase\",\r\n       ...\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/listings/:listingId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"listings",
+										":listingId"
+									],
+									"variable": [
+										{
+											"key": "listingId",
+											"value": "{{listingId}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1651"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"673-C7rEW2l3xRv6WnnOCU0gJ30IBSE\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:24:40 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": \"12be4409-0c8b-4073-bbee-813969c82522\",\n        \"ownerFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n        \"createdByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"updatedAt\": \"2025-06-04T16:24:40.544Z\",\n        \"updatedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"createdAt\": \"2025-05-05T10:53:09.441Z\",\n        \"name\": \"Updated Entitlements Tool\",\n        \"description\": \"Updated description for showcase\",\n        \"longDescription\": \"The Audit Planning Checklist helps firms ensure that every essential step in the audit planning phase is executed thoroughly and in compliance with professional standards. Designed to reduce oversight, improve consistency, and support quality reviews, this template includes planning activities, risk assessment procedures, client engagement considerations, and documentation guidance.\\n\\nIdeal for junior auditors, reviewers, and quality managers, this checklist reflects the practical steps used by experienced firms and supports customization to suit client complexity.\",\n        \"gettingStartedSteps\": \"Import employee data or input manually, then review accrual calculations.\",\n        \"region\": \"australia\",\n        \"contentType\": \"calculation\",\n        \"workpaperType\": [\n            \"fbt\",\n            \"compliance\"\n        ],\n        \"entityType\": [\n            \"company\"\n        ],\n        \"tags\": [\n            \"payroll\",\n            \"HR\",\n            \"leave\"\n        ],\n        \"imagesLink\": [\n            \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747662251/ylausavamykqw6jo4evp.png\",\n            \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708008/u3berfz5i9bdqlm6znnf.png\",\n            \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708008/wrppsifg1nbj2b1pqexe.png\",\n            \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708009/mozlnim8mm7az6x593x4.png\"\n        ],\n        \"visibility\": \"request_access\",\n        \"status\": \"active\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Listing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"listing\": {\n    \"id\": \"ddc57930-c199-46e1-90eb-7815fab86876\",\n    \"name\": \"Client Onboarding Procedure\",\n    \"description\": \"Step-by-step process to onboard new clients, ensure compliance, and set up initial services.\",\n    \"longDescription\": \"Some Long description\",\n    \"gettingStartedSteps\": \"some getting started steps.\",\n    \"region\": \"australia\",\n    \"workpaperType\": [ \"compliance\" ],\n    \"entityType\": [ \"individual\", \"company\" ],\n    \"contentType\": \"procedure\",\n    \"visibility\": \"public\",\n    \"imagesLink\": [],\n    \"tags\": [ \"onboarding\", \"client\", \"KYC\", \"services\" ]\n  }}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/listings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listings"
+							]
+						},
+						"description": "Endpoint used to create a listing. Include a **listing object** in the request body that contains the listing details - along with the **id**. Returns the **created listing object.**\n\nNote: The **listing creation flow** in the backend involves using the **workpapers SDK** - which is **mocked in implementation.**"
+					},
+					"response": [
+						{
+							"name": "Create Listing",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"listing\": {\n    \"id\": \"ddc57930-c199-46e1-90eb-7815fab86876\",\n    \"name\": \"Client Onboarding Procedure\",\n    \"description\": \"Step-by-step process to onboard new clients, ensure compliance, and set up initial services.\",\n    \"longDescription\": \"Some Long description\",\n    \"gettingStartedSteps\": \"some getting started steps.\",\n    \"region\": \"australia\",\n    \"workpaperType\": [ \"compliance\" ],\n    \"entityType\": [ \"individual\", \"company\" ],\n    \"contentType\": \"procedure\",\n    \"visibility\": \"public\",\n    \"imagesLink\": [],\n    \"tags\": [ \"onboarding\", \"client\", \"KYC\", \"services\" ]\n  }}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/listings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"listings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "814"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"32e-drWd/EoVS0gp4z57uUW5Kw4j+XY\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 06 Jun 2025 03:44:18 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"msg\": \"Listing Created Successfully\",\n    \"listing\": {\n        \"id\": \"ddc57930-c199-46e1-90eb-7815fab86876\",\n        \"ownerFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n        \"createdByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"updatedAt\": \"2025-06-06T03:44:18.984Z\",\n        \"updatedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"createdAt\": \"2025-06-06T03:35:36.102Z\",\n        \"name\": \"Client Onboarding Procedure\",\n        \"description\": \"Step-by-step process to onboard new clients, ensure compliance, and set up initial services.\",\n        \"longDescription\": \"Some Long description\",\n        \"gettingStartedSteps\": \"some getting started steps.\",\n        \"region\": \"australia\",\n        \"contentType\": \"procedure\",\n        \"workpaperType\": [\n            \"compliance\"\n        ],\n        \"entityType\": [\n            \"individual\",\n            \"company\"\n        ],\n        \"tags\": [\n            \"onboarding\",\n            \"client\",\n            \"KYC\",\n            \"services\"\n        ],\n        \"imagesLink\": [],\n        \"visibility\": \"public\",\n        \"status\": \"active\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Saved",
+			"item": [
+				{
+					"name": "Saved Listings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/saved-listings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"saved-listings"
+							]
+						},
+						"description": "Returns the saved listing records/logs for the current user.\n\nThe returned object does not include the full listing, only enough data for the UI to render."
+					},
+					"response": [
+						{
+							"name": "Saved Listings",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/saved-listings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"saved-listings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "790"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"316-jNlLse5cRC8lsHwYpqyBg1y/z+o\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:56:05 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"savedListings\": [\n        {\n            \"id\": \"6ed77939-049e-4718-8488-e0e826b69d90\",\n            \"savedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n            \"listingId\": \"12be4409-0c8b-4073-bbee-813969c82522\",\n            \"saveTime\": \"2025-06-04T16:55:44.720Z\",\n            \"listing\": {\n                \"imagesLink\": [\n                    \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747662251/ylausavamykqw6jo4evp.png\",\n                    \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708008/u3berfz5i9bdqlm6znnf.png\",\n                    \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708008/wrppsifg1nbj2b1pqexe.png\",\n                    \"https://res.cloudinary.com/dgfd1gqzb/image/upload/v1747708009/mozlnim8mm7az6x593x4.png\"\n                ],\n                \"name\": \"Updated Entitlements Tool\",\n                \"id\": \"12be4409-0c8b-4073-bbee-813969c82522\",\n                \"status\": \"active\",\n                \"ownedByFirm\": {\n                    \"firmName\": \"Cimplico\",\n                    \"firmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\"\n                }\n            }\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Save Listing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/saved-listings/:listingId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"saved-listings",
+								":listingId"
+							],
+							"variable": [
+								{
+									"key": "listingId",
+									"value": "{{listingId}}"
+								}
+							]
+						},
+						"description": "Saves a listing for the current user.\n\nInclude the **listingId** as path params for the endpoint to function."
+					},
+					"response": [
+						{
+							"name": "Save Listing",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/saved-listings/:listingId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"saved-listings",
+										":listingId"
+									],
+									"variable": [
+										{
+											"key": "listingId",
+											"value": "{{listingId}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "55"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"37-8ttyr3nJMGWEEd1U31FDBofHaII\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:55:44 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Listing saved successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Unsave Listing",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/saved-listings/:listingId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"saved-listings",
+								":listingId"
+							],
+							"variable": [
+								{
+									"key": "listingId",
+									"value": "{{listingId}}"
+								}
+							]
+						},
+						"description": "Removes a saved listing for the current user.\n\nThis action deletes the saved record, effectively removing the listing from the user's saved listings list.  \nInclude the **listingId** in path params."
+					},
+					"response": [
+						{
+							"name": "Unsave Listing",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/saved-listings/:listingId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"saved-listings",
+										":listingId"
+									],
+									"variable": [
+										{
+											"key": "listingId",
+											"value": "{{listingId}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "57"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"39-bE2JqlrX0SirydMvNx5mrzPAcQE\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 16:57:10 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Listing unsaved successfully\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints in this group handle operations related to **retrieving saved listings**, **saving**, and **unsaving** listings for the currently authenticated user.\n\nSaved listings are **user-specific** — even if multiple users belong to the same firm, each user maintains their **own set** of saved listings. These actions do not affect other users in the same firm."
+		},
+		{
+			"name": "Request",
+			"item": [
+				{
+					"name": "Listing Requests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/listing-requests?status=pending&status=completed",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listing-requests"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending"
+								},
+								{
+									"key": "status",
+									"value": "completed"
+								}
+							]
+						},
+						"description": "Returns all the listings requests of the listings that belong to the current firm. Also includes the number of **unique listings** requested and the **total requests** that the vendor has to approve/reject.\n\nNote: In the backend, a request status could either be **pending, approved, rejected.** However, for simplicity, passing status as **completed** would return both, **rejected** and **approved** requests.\n\nIf no **status** is passed, no requests will be returned. The logic in the backend should be changed to return all requests incase of no status."
+					},
+					"response": [
+						{
+							"name": "Status = pending",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/listing-requests?status=pending",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"listing-requests"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "pending"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "682"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2aa-dgJWBSkv/VEP9gfIQxbirp0VCzQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 17:04:19 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"listingRequests\": [\n            {\n                \"id\": \"0c78b084-442b-43a6-a682-6a59bfba0bf6\",\n                \"requestedByFirmId\": \"5a694a45-1d17-4b8a-9e41-9ac7f17b96f6\",\n                \"requestedByUserId\": \"ae181499-37bf-466d-afd5-b4a1d75d1662\",\n                \"listingId\": \"06db9386-73c5-4f25-809c-ad1400e0c70d\",\n                \"actionedByUserId\": null,\n                \"requestStatus\": \"pending\",\n                \"requestTime\": \"2025-06-04T17:02:29.213Z\",\n                \"actionTime\": \"2025-06-04T17:02:29.213Z\",\n                \"requestingUser\": {\n                    \"firstName\": \"Yash\",\n                    \"lastName\": \"Talreja\"\n                },\n                \"requestingFirm\": {\n                    \"firmName\": \"Sky Accounting\"\n                },\n                \"listing\": {\n                    \"id\": \"06db9386-73c5-4f25-809c-ad1400e0c70d\",\n                    \"name\": \"Taxable Income Reconciliation Notes\",\n                    \"contentType\": \"wiki\"\n                },\n                \"actionedBy\": null\n            }\n        ],\n        \"listingsRequestedCount\": 1,\n        \"totalRequests\": 1\n    }\n}"
+						},
+						{
+							"name": "Status = completed",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/listing-requests?status=completed",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"listing-requests"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "completed"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "3407"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"d4f-JNLPQ3LGHXkja07X1w3BryeQRFo\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 17:04:34 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"listingRequests\": [\n            {\n                \"id\": \"d9725fb3-313c-40d5-ad50-d8258c0b7366\",\n                \"requestedByFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n                \"requestedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n                \"listingId\": \"2551f2fe-cc1d-4e3a-bda5-ccf16d0af9b7\",\n                \"actionedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n                \"requestStatus\": \"rejected\",\n                \"requestTime\": \"2025-06-03T13:15:59.327Z\",\n                \"actionTime\": \"2025-06-03T13:16:16.166Z\",\n                \"requestingUser\": {\n                    \"firstName\": \"Marco\",\n                    \"lastName\": \"Fiumara\"\n                },\n                \"requestingFirm\": {\n                    \"firmName\": \"Cimplico\"\n                },\n                \"listing\": {\n                    \"id\": \"2551f2fe-cc1d-4e3a-bda5-ccf16d0af9b7\",\n                    \"name\": \"BAS Lodgement Readiness Checklist\",\n                    \"contentType\": \"checklist\"\n                },\n                \"actionedBy\": {\n                    \"firstName\": \"Marco\",\n                    \"lastName\": \"Fiumara\"\n                }\n            },\n            {\n                \"id\": \"262ad51f-7e16-4c7f-aca6-a44270e99f3e\",\n                \"requestedByFirmId\": \"5a694a45-1d17-4b8a-9e41-9ac7f17b96f6\",\n                \"requestedByUserId\": \"ae181499-37bf-466d-afd5-b4a1d75d1662\",\n                \"listingId\": \"2551f2fe-cc1d-4e3a-bda5-ccf16d0af9b7\",\n                \"actionedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n                \"requestStatus\": \"approved\",\n                \"requestTime\": \"2025-06-04T17:02:30.595Z\",\n                \"actionTime\": \"2025-06-04T17:04:06.617Z\",\n                \"requestingUser\": {\n                    \"firstName\": \"Yash\",\n                    \"lastName\": \"Talreja\"\n                },\n                \"requestingFirm\": {\n                    \"firmName\": \"Sky Accounting\"\n                },\n                \"listing\": {\n                    \"id\": \"2551f2fe-cc1d-4e3a-bda5-ccf16d0af9b7\",\n                    \"name\": \"BAS Lodgement Readiness Checklist\",\n                    \"contentType\": \"checklist\"\n                },\n                \"actionedBy\": {\n                    \"firstName\": \"Marco\",\n                    \"lastName\": \"Fiumara\"\n                }\n            },\n            {\n                \"id\": \"b3ce5cde-528d-4f3b-8b7e-b5f69250d89e\",\n                \"requestedByFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n                \"requestedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n                \"listingId\": \"06db9386-73c5-4f25-809c-ad1400e0c70d\",\n                \"actionedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n                \"requestStatus\": \"approved\",\n                \"requestTime\": \"2025-06-03T13:16:00.974Z\",\n                \"actionTime\": \"2025-06-04T13:08:56.648Z\",\n                \"requestingUser\": {\n                    \"firstName\": \"Marco\",\n                    \"lastName\": \"Fiumara\"\n                },\n                \"requestingFirm\": {\n                    \"firmName\": \"Cimplico\"\n                },\n                \"listing\": {\n                    \"id\": \"06db9386-73c5-4f25-809c-ad1400e0c70d\",\n                    \"name\": \"Taxable Income Reconciliation Notes\",\n                    \"contentType\": \"wiki\"\n                },\n                \"actionedBy\": {\n                    \"firstName\": \"Marco\",\n                    \"lastName\": \"Fiumara\"\n                }\n            },\n            {\n                \"id\": \"8d800d57-e1bb-4c77-9682-a340343ef6c9\",\n                \"requestedByFirmId\": \"5a694a45-1d17-4b8a-9e41-9ac7f17b96f6\",\n                \"requestedByUserId\": \"ae181499-37bf-466d-afd5-b4a1d75d1662\",\n                \"listingId\": \"c7834abd-bcf2-4878-a35a-638a0ddfb389\",\n                \"actionedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n                \"requestStatus\": \"rejected\",\n                \"requestTime\": \"2025-06-04T17:01:59.541Z\",\n                \"actionTime\": \"2025-06-04T17:04:10.061Z\",\n                \"requestingUser\": {\n                    \"firstName\": \"Yash\",\n                    \"lastName\": \"Talreja\"\n                },\n                \"requestingFirm\": {\n                    \"firmName\": \"Sky Accounting\"\n                },\n                \"listing\": {\n                    \"id\": \"c7834abd-bcf2-4878-a35a-638a0ddfb389\",\n                    \"name\": \"Loan Interest Deduction Estimator\",\n                    \"contentType\": \"calculation\"\n                },\n                \"actionedBy\": {\n                    \"firstName\": \"Marco\",\n                    \"lastName\": \"Fiumara\"\n                }\n            },\n            {\n                \"id\": \"643e02f8-1fd2-449d-9909-4edac0c244fc\",\n                \"requestedByFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n                \"requestedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n                \"listingId\": \"1c7adeed-9f3f-4619-9db2-362f3c69bd21\",\n                \"actionedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n                \"requestStatus\": \"rejected\",\n                \"requestTime\": \"2025-06-04T13:09:22.927Z\",\n                \"actionTime\": \"2025-06-04T13:09:38.109Z\",\n                \"requestingUser\": {\n                    \"firstName\": \"Marco\",\n                    \"lastName\": \"Fiumara\"\n                },\n                \"requestingFirm\": {\n                    \"firmName\": \"Cimplico\"\n                },\n                \"listing\": {\n                    \"id\": \"1c7adeed-9f3f-4619-9db2-362f3c69bd21\",\n                    \"name\": \"Asset Disposal Summary Report\",\n                    \"contentType\": \"report\"\n                },\n                \"actionedBy\": {\n                    \"firstName\": \"Marco\",\n                    \"lastName\": \"Fiumara\"\n                }\n            }\n        ],\n        \"listingsRequestedCount\": 4,\n        \"totalRequests\": 5\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Action Listing Request",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"action\": \"approve\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/listing-requests/:requestId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"listing-requests",
+								":requestId"
+							],
+							"variable": [
+								{
+									"key": "requestId",
+									"value": "0c78b084-442b-43a6-a682-6a59bfba0bf6"
+								}
+							]
+						},
+						"description": "This endpoint is used to **approve** or **reject** a listing request (from the **vendor side**).  \nInclude an action object in the request body having a value of either **\"approve\"** or **\"reject\"**\n\nReturns the listing request object with the updated status."
+					},
+					"response": [
+						{
+							"name": "Action Listing Request",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"action\": \"approve\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/listing-requests/:requestId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"listing-requests",
+										":requestId"
+									],
+									"variable": [
+										{
+											"key": "requestId",
+											"value": "0c78b084-442b-43a6-a682-6a59bfba0bf6"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "404"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"194-th1d2VaOVA17LY6CmBeqULtatME\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 17:06:57 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": \"0c78b084-442b-43a6-a682-6a59bfba0bf6\",\n        \"requestedByFirmId\": \"5a694a45-1d17-4b8a-9e41-9ac7f17b96f6\",\n        \"requestedByUserId\": \"ae181499-37bf-466d-afd5-b4a1d75d1662\",\n        \"listingId\": \"06db9386-73c5-4f25-809c-ad1400e0c70d\",\n        \"actionedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"requestStatus\": \"approved\",\n        \"requestTime\": \"2025-06-04T17:02:29.213Z\",\n        \"actionTime\": \"2025-06-04T17:06:57.711Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Requested Listings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/requested-listings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"requested-listings"
+							]
+						},
+						"description": "This endpoint is to be used by a **user firm**, to get the listings **they have requested** on the marketplace. Returns an array of request objects, with the request object also containing some listing metadata."
+					},
+					"response": [
+						{
+							"name": "Requested Listings",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/requested-listings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"requested-listings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "3682"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"e62-l3cuIpqnH2xSOtth1+Scuj3j8JI\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 17:07:53 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": \"d9725fb3-313c-40d5-ad50-d8258c0b7366\",\n            \"requestedByFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n            \"requestedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n            \"listingId\": \"2551f2fe-cc1d-4e3a-bda5-ccf16d0af9b7\",\n            \"actionedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n            \"requestStatus\": \"rejected\",\n            \"requestTime\": \"2025-06-03T13:15:59.327Z\",\n            \"actionTime\": \"2025-06-03T13:16:16.166Z\",\n            \"requestingUser\": {\n                \"firstName\": \"Marco\",\n                \"lastName\": \"Fiumara\"\n            },\n            \"listing\": {\n                \"name\": \"BAS Lodgement Readiness Checklist\",\n                \"contentType\": \"checklist\",\n                \"ownedByFirm\": {\n                    \"firmName\": \"Cimplico\",\n                    \"firmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\"\n                },\n                \"status\": \"active\"\n            }\n        },\n        ....\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Request Listing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/requested-listings/:listingId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"requested-listings",
+								":listingId"
+							],
+							"variable": [
+								{
+									"key": "listingId",
+									"value": "{{listingId}}"
+								}
+							]
+						},
+						"description": "This endpoint is used to request a listing from it's vendor.  \nInclude the **listingId** in the path variables. Returns the request object on success."
+					},
+					"response": [
+						{
+							"name": "Requests for a listing",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/requested-listings/:listingId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"requested-listings",
+										":listingId"
+									],
+									"variable": [
+										{
+											"key": "listingId",
+											"value": "{{listingId}}"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "369"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"171-TH6bi6sUSzjC4totbQZnK9q2TQk\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 17:13:13 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": \"c04a9fdb-bd43-4704-9fbe-cf5762ea3d85\",\n        \"requestedByFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n        \"requestedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"listingId\": \"12be4409-0c8b-4073-bbee-813969c82522\",\n        \"actionedByUserId\": null,\n        \"requestStatus\": \"pending\",\n        \"requestTime\": \"2025-06-04T17:13:13.790Z\",\n        \"actionTime\": \"2025-06-04T17:13:13.790Z\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Listing Installation",
+			"item": [
+				{
+					"name": "Installed Listings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/installed-listings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"installed-listings"
+							]
+						},
+						"description": "This endpoint is used to retrieve Installed LIstings (install records) for the current firm. The record object includes some listing metadata, enough for display."
+					},
+					"response": [
+						{
+							"name": "Installed Listings",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/installed-listings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"installed-listings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2513"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9d1-Zg6XtXzZToa+RQnDz8BB3P+ncsA\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 17:19:10 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": \"5b640538-4261-489a-b4c3-a7506a86b015\",\n            \"installedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n            \"installedByFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n            \"listingId\": \"bcba9f36-8e8e-4941-8514-64b2750519f6\",\n            \"installTime\": \"2025-06-03T15:34:22.094Z\",\n            \"installedByUser\": {\n                \"firstName\": \"Marco\",\n                \"lastName\": \"Fiumara\"\n            },\n            \"listing\": {\n                \"name\": \"Annual Partner Review Process\",\n                \"contentType\": \"procedure\",\n                \"status\": \"deleted\",\n                \"ownedByFirm\": {\n                    \"firmName\": \"Cimplico\",\n                    \"firmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\"\n                }\n            }\n        },\n        ...\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Install Listing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/installed-listings/:listingId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"installed-listings",
+								":listingId"
+							],
+							"variable": [
+								{
+									"key": "listingId",
+									"value": "{{listingId}}"
+								}
+							]
+						},
+						"description": "This endpoint is used to install a listing. Include the **listingId** in path variables for the endpoint to function. Returns the install record object on success."
+					},
+					"response": [
+						{
+							"name": "Install Listing",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/installed-listings/:listingId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"installed-listings",
+										":listingId"
+									],
+									"variable": [
+										{
+											"key": "listingId",
+											"value": "{{listingId}}"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "282"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"11a-VlGuel0sWC3G1Oy30BwuZPUBNXo\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 17:20:55 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"listing\": {\n        \"id\": \"7a0d0282-9f14-4172-a731-e7c12c8d2025\",\n        \"installedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n        \"installedByFirmId\": \"6367742e-e1b0-48ec-af5d-da92778e4d13\",\n        \"listingId\": \"12be4409-0c8b-4073-bbee-813969c82522\",\n        \"installTime\": \"2025-06-04T17:20:55.015Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Uninstall Listing",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/installed-listings/:listingId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"installed-listings",
+								":listingId"
+							],
+							"variable": [
+								{
+									"key": "listingId",
+									"value": "{{listingId}}"
+								}
+							]
+						},
+						"description": "This endpoint is used to uninstall a listing. Include the **listingId** in path variables for the endpoint to function."
+					},
+					"response": [
+						{
+							"name": "Uninstall Listing",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/installed-listings/:listingId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"installed-listings",
+										":listingId"
+									],
+									"variable": [
+										{
+											"key": "listingId",
+											"value": "{{listingId}}"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "61"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3d-vzzSuUlo09VrpgonUUfL0k3lGh8\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 04 Jun 2025 17:24:58 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Listing uninstalled successfully\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Admin Routes",
+			"item": [
+				{
+					"name": "Get Vendor Requests",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/vendor-requests",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"vendor-requests"
+							]
+						},
+						"description": "Returns all the vendor requests. A request could have a status of **approved, rejected, pending**. This endpoint returns \\*_all.__\\*_Query params can be added for a more scalable approach."
+					},
+					"response": [
+						{
+							"name": "Get Vendor Requests",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/vendor-requests",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"vendor-requests"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "505"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1f9-pQHsKLGxWdaQOjPZ2VNtGYvPkno\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Jun 2025 07:51:00 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"vendorRequests\": [\n        {\n            \"requestId\": \"bd1e3708-e708-4cca-840c-f857bef17612\",\n            \"requestingFirmId\": \"9c4f4554-003c-43af-8343-b1e49d48f51c\",\n            \"requestedByUserId\": \"01848bf0-aea0-4a7f-b220-e8d2aaf72f93\",\n            \"requestStatus\": \"pending\",\n            \"requestedAt\": \"2025-06-05T07:50:55.732Z\",\n            \"actionedAt\": null,\n            \"actionedBy\": null,\n            \"contactEmail\": \"marco@cimplico.com\",\n            \"contactPhone\": \"0123409124\",\n            \"requestedByFirm\": {\n                \"firmName\": \"AuditPro Systems\"\n            },\n            \"requestedByUser\": {\n                \"firstName\": \"Marco\",\n                \"lastName\": \"Fiumara\"\n            },\n            \"actionedByUser\": null\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Action Vendor Request",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"action\": \"approved\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/vendor-requests/:requestId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"vendor-requests",
+								":requestId"
+							],
+							"variable": [
+								{
+									"key": "requestId",
+									"value": "bd1e3708-e708-4cca-840c-f857bef17612"
+								}
+							]
+						},
+						"description": "Endpoint to **approve** or **reject** a vendor request..  \nInclude an action property in the request body, having either of these values: **\"approved\"** or **\"rejected\"**"
+					},
+					"response": [
+						{
+							"name": "Action Vendor Request",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"action\": \"approved\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/admin/vendor-requests/:requestId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"vendor-requests",
+										":requestId"
+									],
+									"variable": [
+										{
+											"key": "requestId",
+											"value": "bd1e3708-e708-4cca-840c-f857bef17612"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "91"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"5b-eYN2+6qk7dvsMLxn7YSrS+0eSj8\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 05 Jun 2025 07:54:01 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Request bd1e3708-e708-4cca-840c-f857bef17612 has been approved\"\n}"
+						}
+					]
+				}
+			],
+			"description": "These endpoints are to be used by an admin. Please ensure a pre-request script to add a user token (jwt payload) that has **isAdmin:true** for this to function.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"// console.log(pm.request.headers.get('Authorization'))",
+							"pm.request.headers.clear()",
+							"pm.request.headers.add({",
+							"    key: \"Authorization\",",
+							"    value: pm.environment.get('adminJwt')",
+							"})"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Create Vendor Request",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.headers.upsert({",
+							"    key: 'X-firm-id',",
+							"    value: pm.environment.get('userFirmId')",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"requestForm\": {\n        \"contactEmail\": \"contact@requestingfirm.com\",\n        \"contactPhone\": \"0112907643\"\n    }   \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vendor-request",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vendor-request"
+					]
+				},
+				"description": "This endpoint is to be used by user firms to request to be a vendor.  \nInclude a `requestForm` object in request body with the fields - `contactEmail` `contactPhone`\n\n**Ensure** a pre-request script that sets the `X-Firm-Id` header to a non-vendor firm."
+			},
+			"response": [
+				{
+					"name": "Create Vendor Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"requestForm\": {\n        \"contactEmail\": \"contact@requestingfirm.com\",\n        \"contactPhone\": \"0112907643\"\n    }   \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vendor-request",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vendor-request"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Cross-Origin-Resource-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Origin-Agent-Cluster",
+							"value": "?1"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "no-referrer"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=31536000; includeSubDomains"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-DNS-Prefetch-Control",
+							"value": "off"
+						},
+						{
+							"key": "X-Download-Options",
+							"value": "noopen"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "SAMEORIGIN"
+						},
+						{
+							"key": "X-Permitted-Cross-Domain-Policies",
+							"value": "none"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "0"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "64"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"40-PlF69WnEbj6OeLEQzRD8pVxCb9Q\""
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 05 Jun 2025 09:08:16 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Vendor request handled successfully\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const user = pm.environment.get('jwt');",
+					"pm.request.headers.upsert({",
+					"    key: \"Authorization\",",
+					"    value: user",
+					"})",
+					"",
+					"pm.request.headers.upsert({",
+					"    key: \"X-Firm-Id\",",
+					"    value: pm.environment.get('vendorFirmId')",
+					"});",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

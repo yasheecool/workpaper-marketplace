@@ -1,0 +1,234 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------- MODELS ------------------------
+
+// App Users
+
+model User {
+    userId String @id 
+    firstName String
+    lastName String
+    email String
+    profileImage String?
+    isAdmin Boolean @default(false) //can be discarded if not needed, 
+
+    requestedVendorRequests VendorRequest[] @relation("requestedVendorRequest") //vendor request by the user on behalf of their firm
+    installedListings InstalledListing[] //listings installed by the user
+    requestedListings ListingAccessControl[] @relation("requestedListings") //listings requested by the user on behalf of firm
+
+    actionedListingRequests ListingAccessControl[] @relation("actionedRequest") //user approving/rejecting listing requests on behalf of their firm (for audit trail purposes)
+
+    approvedVendorRequests VendorRequest[] @relation("actionedVendorRequest") //user approving/rejecting vendor requests on behalf of their firm - done by an admin user
+
+    updatedListings Listing[] 
+    savedListing SavedListing[]
+
+    // GlobalWhitelistActions FirmWhitelist[]  //a user adding other firms in their current firm's (which is a vendor) global whitelist
+}
+
+model Firm {
+    firmId String @id 
+    firmName String
+    isVendor Boolean @default(false)
+    vendorStatus VendorStatus?
+    vendorProfile VendorProfile?
+
+    //Case: Firm as a user of the marketplace
+    installedListings InstalledListing[]
+    requestedListings ListingAccessControl[]
+    vendorRequest VendorRequest? //if the firm
+
+    //firm as a vendor - having listings in the marketplace
+    createdListings Listing[]   
+}
+
+//table to track listing requests and their status
+model ListingAccessControl {
+    id String @id @default(uuid())
+    requestedByFirmId String
+    requestedByUserId String
+    listingId String
+    actionedByUserId String? 
+    requestStatus RequestStatus @default(pending)
+    requestTime DateTime @default(now())
+    actionTime DateTime @updatedAt
+
+    requestingFirm Firm @relation(fields: [requestedByFirmId], references: [firmId])
+    requestingUser User @relation("requestedListings", fields: [requestedByUserId], references: [userId] )
+
+    listing Listing @relation(fields: [listingId], references: [id]) //requested listing
+    actionedBy User? @relation("actionedRequest", fields: [actionedByUserId], references: [userId])
+
+    @@unique([listingId, requestedByFirmId])
+}
+
+//not implemented - it was supposed by a firm-level whitelist which could be applied to a set of users automatically. However, it is unused. This can be discarded if not needed.
+// model FirmWhitelist {
+//     id String @id
+//     actionTime DateTime @default(now())
+//     userFirmId String
+//     vendorFirmId String 
+//     actionedBy String
+
+//     whitelistedFirms Firm @relation("whitelistedFirm", fields: [userFirmId], references: [firmId]) //Link to User Firm
+
+//     vendorFirm Firm @relation("whitelistingFirm",fields: [vendorFirmId], references: [firmId]) //Link to vendor firm
+
+//     actionedByUser User @relation(fields: [actionedBy], references: [userId]) //creator of the whitelist entry
+
+//     @@unique([userFirmId, vendorFirmId])
+// }
+
+model SavedListing {
+    id String @id @default(uuid())
+    savedByUserId String
+    listingId String
+    saveTime DateTime @default(now())
+
+    listing Listing @relation(fields: [listingId], references: [id])
+    savedByUser User @relation(fields: [savedByUserId], references: [userId])
+    @@unique([savedByUserId, listingId])
+}
+
+model InstalledListing {
+    id String @id @default(uuid())
+    installedByUserId String
+    installedByFirmId String
+    listingId String
+    installTime DateTime @default(now())
+
+    installedByUser User @relation(fields: [installedByUserId], references: [userId])
+    installedByFirm Firm @relation(fields: [installedByFirmId], references: [firmId])
+    listing Listing @relation(fields: [listingId], references: [id])
+
+    @@unique([installedByFirmId, listingId])
+}
+
+model Listing {
+    id String @id
+    ownerFirmId String
+    createdByUserId String
+    updatedAt DateTime @updatedAt
+    updatedByUserId String
+    createdAt DateTime @default(now())
+    name String
+    description String
+    longDescription String?
+    gettingStartedSteps String?
+    region Region
+    contentType ListingType
+    workpaperType WorkpaperType[]
+    entityType EntityType[]
+    tags String[]
+    imagesLink String[] @default([])
+    visibility ListingVisibility @default(public)
+    status ListingStatus @default(active)
+
+    // changelogs ListingChangeRecords[]
+    installedBy InstalledListing[]
+    savedBy SavedListing[]
+    requestedBy ListingAccessControl[]
+    ownedByFirm Firm @relation(fields: [ownerFirmId], references: [firmId])
+    updatedBy User @relation(fields: [updatedByUserId], references: [userId])
+}
+
+// Not Implemented - can be discarded if not needed
+// model ListingChangeRecords {
+//     id String @id @default(cuid())
+//     listingId String
+//     createdBy String
+//     createdAt DateTime @default(now()) //same as updatedAt in the listing table
+    // title String //Change title
+//     description String //Change description
+
+//     listing Listing @relation(fields: [listingId], references: [id])
+//     createdByUser User @relation(fields: [createdBy], references: [userId])
+// }
+
+model VendorProfile {
+    firmId String @id
+    firmEmail String
+    firmLogo String?
+    description String
+    vendorSince DateTime @default(now())
+    websiteUrl String
+    linkedInUrl String?
+    vendor Firm @relation(fields: [firmId], references: [firmId])
+}
+
+model VendorRequest {
+  requestId String @id @default(uuid())
+  requestingFirmId String @unique
+  requestedByUserId String
+  requestStatus RequestStatus @default(pending)
+  requestedAt DateTime @default(now())
+  actionedAt DateTime?
+  actionedBy String?
+  contactEmail String
+  contactPhone String
+
+  requestedByUser User @relation(fields: [requestedByUserId], references: [userId], name: "requestedVendorRequest")
+  requestedByFirm Firm @relation(fields: [requestingFirmId], references: [firmId])
+  actionedByUser User? @relation(fields: [actionedBy], references: [userId], name: "actionedVendorRequest")
+}
+
+// ------------------- ENUMS ------------------------
+
+enum VendorStatus {
+  active
+  blocked
+}
+
+enum RequestStatus {
+  pending
+  approved
+  rejected
+}
+
+enum ListingVisibility {
+  public
+  request_access
+  private
+}
+
+enum Region {
+  australia
+  newZealand
+  unitedKingdom
+  republicOfIreland
+}
+
+enum WorkpaperType {
+  compliance
+  itr
+  bas
+  taxPlanning
+  fbt
+}
+
+enum EntityType {
+  company
+  individual
+  partnership
+  trust
+}
+
+enum ListingType {
+  calculation
+  checklist
+  report
+  procedure
+  wiki
+}
+
+enum ListingStatus {
+  active
+  deleted
+}
