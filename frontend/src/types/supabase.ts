@@ -1,0 +1,612 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "13.0.5"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  public: {
+    Tables: {
+      firm: {
+        Row: {
+          created_at: string
+          firm_name: string
+          id: string
+          logo: string | null
+          updated_at: string
+          vendor_profile: string | null
+        }
+        Insert: {
+          created_at?: string
+          firm_name: string
+          id?: string
+          logo?: string | null
+          updated_at?: string
+          vendor_profile?: string | null
+        }
+        Update: {
+          created_at?: string
+          firm_name?: string
+          id?: string
+          logo?: string | null
+          updated_at?: string
+          vendor_profile?: string | null
+        }
+        Relationships: []
+      }
+      firm_user: {
+        Row: {
+          created_at: string
+          firm_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          firm_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          firm_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "firm_users_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "firm_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      installed_listing: {
+        Row: {
+          created_at: string
+          id: string
+          installed_by_firm: string
+          installed_by_user: string
+          listing_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          installed_by_firm: string
+          installed_by_user: string
+          listing_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          installed_by_firm?: string
+          installed_by_user?: string
+          listing_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "installed_listing_installed_by_firm_fkey"
+            columns: ["installed_by_firm"]
+            isOneToOne: false
+            referencedRelation: "firm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "installed_listing_installed_by_user_fkey"
+            columns: ["installed_by_user"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "installed_listing_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listing"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing: {
+        Row: {
+          content_type: Database["public"]["Enums"]["ListingType"]
+          created_at: string
+          description: string
+          entity_type: Database["public"]["Enums"]["EntityType"]
+          getting_started_steps: string | null
+          id: string
+          images_link: string[]
+          long_description: string | null
+          name: string
+          owned_by_firm: string
+          region: Database["public"]["Enums"]["Region"]
+          status: Database["public"]["Enums"]["ListingStatus"]
+          updated_at: string
+          updated_by_user: string
+          visibility: Database["public"]["Enums"]["ListingVisibility"]
+          workpaper_type: Database["public"]["Enums"]["WorkpaperType"]
+        }
+        Insert: {
+          content_type: Database["public"]["Enums"]["ListingType"]
+          created_at?: string
+          description: string
+          entity_type?: Database["public"]["Enums"]["EntityType"]
+          getting_started_steps?: string | null
+          id?: string
+          images_link: string[]
+          long_description?: string | null
+          name: string
+          owned_by_firm: string
+          region?: Database["public"]["Enums"]["Region"]
+          status?: Database["public"]["Enums"]["ListingStatus"]
+          updated_at?: string
+          updated_by_user: string
+          visibility?: Database["public"]["Enums"]["ListingVisibility"]
+          workpaper_type: Database["public"]["Enums"]["WorkpaperType"]
+        }
+        Update: {
+          content_type?: Database["public"]["Enums"]["ListingType"]
+          created_at?: string
+          description?: string
+          entity_type?: Database["public"]["Enums"]["EntityType"]
+          getting_started_steps?: string | null
+          id?: string
+          images_link?: string[]
+          long_description?: string | null
+          name?: string
+          owned_by_firm?: string
+          region?: Database["public"]["Enums"]["Region"]
+          status?: Database["public"]["Enums"]["ListingStatus"]
+          updated_at?: string
+          updated_by_user?: string
+          visibility?: Database["public"]["Enums"]["ListingVisibility"]
+          workpaper_type?: Database["public"]["Enums"]["WorkpaperType"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_owned_by_firm_fkey"
+            columns: ["owned_by_firm"]
+            isOneToOne: false
+            referencedRelation: "firm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_updated_by_user_fkey"
+            columns: ["updated_by_user"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listing_access_control: {
+        Row: {
+          actioned_at: string | null
+          actioned_by_user_id: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          request_status: Database["public"]["Enums"]["RequestStatus"]
+          requested_by_firm_id: string
+          requested_by_user_id: string
+        }
+        Insert: {
+          actioned_at?: string | null
+          actioned_by_user_id?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          request_status?: Database["public"]["Enums"]["RequestStatus"]
+          requested_by_firm_id: string
+          requested_by_user_id: string
+        }
+        Update: {
+          actioned_at?: string | null
+          actioned_by_user_id?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          request_status?: Database["public"]["Enums"]["RequestStatus"]
+          requested_by_firm_id?: string
+          requested_by_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_access_control_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listing"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_access_control_requested_by_firm_id_fkey"
+            columns: ["requested_by_firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_access_control_requested_by_user_id_fkey"
+            columns: ["requested_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_listing: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string
+          saved_by_firm: string
+          saved_by_user: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id: string
+          saved_by_firm: string
+          saved_by_user: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string
+          saved_by_firm?: string
+          saved_by_user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_listing_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listing"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_listing_saved_by_firm_fkey"
+            columns: ["saved_by_firm"]
+            isOneToOne: false
+            referencedRelation: "firm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_listing_saved_by_user_fkey"
+            columns: ["saved_by_user"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          is_admin: boolean
+          last_name: string
+          profile_image: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at: string
+          email: string
+          first_name: string
+          id?: string
+          is_admin?: boolean
+          last_name: string
+          profile_image?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          is_admin?: boolean
+          last_name?: string
+          profile_image?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      vendor_profile: {
+        Row: {
+          created_at: string
+          description: string
+          firm_email: string
+          firm_id: string
+          firm_logo: string | null
+          id: string
+          status: Database["public"]["Enums"]["VendorStatus"] | null
+          vendor_since: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          firm_email: string
+          firm_id: string
+          firm_logo?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["VendorStatus"] | null
+          vendor_since?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          firm_email?: string
+          firm_id?: string
+          firm_logo?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["VendorStatus"] | null
+          vendor_since?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_profile_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_request: {
+        Row: {
+          actioned_at: string | null
+          actioned_by: string | null
+          created_at: string
+          id: string
+          request_status: Database["public"]["Enums"]["RequestStatus"]
+          requesting_firm_id: string
+          requesting_user_id: string
+          vendor_contact_email: string
+          vendor_contact_phone: string
+        }
+        Insert: {
+          actioned_at?: string | null
+          actioned_by?: string | null
+          created_at?: string
+          id?: string
+          request_status?: Database["public"]["Enums"]["RequestStatus"]
+          requesting_firm_id: string
+          requesting_user_id: string
+          vendor_contact_email: string
+          vendor_contact_phone: string
+        }
+        Update: {
+          actioned_at?: string | null
+          actioned_by?: string | null
+          created_at?: string
+          id?: string
+          request_status?: Database["public"]["Enums"]["RequestStatus"]
+          requesting_firm_id?: string
+          requesting_user_id?: string
+          vendor_contact_email?: string
+          vendor_contact_phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_request_actioned_by_fkey"
+            columns: ["actioned_by"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_request_requesting_firm_id_fkey"
+            columns: ["requesting_firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_request_requesting_user_id_fkey"
+            columns: ["requesting_user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      EntityType: "company" | "individual" | "partnership" | "trust"
+      ListingStatus: "active" | "deleted"
+      ListingType: "calculation" | "checklist" | "report" | "procedure" | "wiki"
+      ListingVisibility: "public" | "request_access" | "private"
+      Region: "australia" | "newZealand" | "unitedKingdom" | "republicOfIreland"
+      RequestStatus: "pending" | "approved" | "rejected"
+      VendorStatus: "active" | "blocked"
+      WorkpaperType: "compliance" | "itr" | "bas" | "taxPlanning" | "fbt"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
+  public: {
+    Enums: {
+      EntityType: ["company", "individual", "partnership", "trust"],
+      ListingStatus: ["active", "deleted"],
+      ListingType: ["calculation", "checklist", "report", "procedure", "wiki"],
+      ListingVisibility: ["public", "request_access", "private"],
+      Region: ["australia", "newZealand", "unitedKingdom", "republicOfIreland"],
+      RequestStatus: ["pending", "approved", "rejected"],
+      VendorStatus: ["active", "blocked"],
+      WorkpaperType: ["compliance", "itr", "bas", "taxPlanning", "fbt"],
+    },
+  },
+} as const

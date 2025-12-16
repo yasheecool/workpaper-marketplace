@@ -19,7 +19,7 @@ async function main() {
         firmId: '6367742e-e1b0-48ec-af5d-da92778e4d13',
         firmEmail: 'helloworld@gmail.com',
         description: `
-        Cimplico is a technology-driven consulting firm focused on modernizing how professional services firms manage their compliance, audit, and documentation workflows. Unlike traditional vendors, Cimplico combines deep accounting expertise with product design and technical implementation, enabling the creation of scalable, digital-first workpaper content. Cimplico is also the creator of the Content Management Marketplace platform. As both a platform builder and a content contributor, they are uniquely positioned to drive best practices in how reusable workpaper content is structured, shared, and managed across firms. `,
+        Faker & Co is a technology-driven consulting firm focused on modernizing how professional services firms manage their compliance, audit, and documentation workflows. Unlike traditional vendors, Faker & Co combines deep accounting expertise with product design and technical implementation, enabling the creation of scalable, digital-first workpaper content. Faker & Co is also the creator of the Content Management Marketplace platform. As both a platform builder and a content contributor, they are uniquely positioned to drive best practices in how reusable workpaper content is structured, shared, and managed across firms. `,
         websiteUrl: 'https://www.cimplico.com/about/',
         vendorSince: '2025-05-02T12:00:00.000Z',
       },
