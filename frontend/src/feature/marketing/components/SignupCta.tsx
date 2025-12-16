@@ -5,7 +5,7 @@ const SignupCta = () => {
     <section className='bg-linear-to-br from-[#c9ccffa0] to-[#edd7fbba] py-20'>
       <div className='section-container max-w-3xl grid gap-6 grid-rows-2 sm:grid-cols-2 sm:grid-rows-none'>
         <div className='flex flex-col gap-4'>
-          {/* LOGO + MARKEPLACE text */}
+          {/* LOGO + MARKETPLACE text */}
           <div className='flex items-center'>
             <Image
               src={'./workpapers_logo.svg'}
