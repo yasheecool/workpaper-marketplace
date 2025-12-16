@@ -9,7 +9,7 @@ import Footer from '@/components/layout/Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Cimplico Marketplace',
+  title: 'Workpaper Marketplace',
   description:
     'A marketplace that lists verified workpaper content such as procedures, calculations, checklists, wikis and reports.',
 };
