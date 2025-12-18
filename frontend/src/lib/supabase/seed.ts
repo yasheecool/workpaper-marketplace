@@ -4,10 +4,12 @@ import users from '../../mockData/users.js';
 import firms from '../../mockData/firms.js';
 import vendorProfiles from '../../mockData/vendorProfiles.js';
 import listings from '../../mockData/listings.js';
+import firmUsers from '../../mockData/firmUsers.js';
 
 // import { Database } from '@/types/supabase.js';
 
-dotenv.config();
+dotenv.config({ path: '.env' });
+dotenv.config({ path: '.env.local' });
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -41,6 +43,15 @@ async function seed() {
   if (firmError) {
     console.error('Error seeding firms:', firmError);
   } else console.log('Seeded firms:', firmData.length);
+
+  const { data: firmUserData, error: firmUserError } = await supabase
+    .from('firm_user')
+    .upsert(firmUsers)
+    .select();
+
+  if (firmUserError) {
+    console.error('Error seeding firm users:', firmUserError);
+  } else console.log('Seeded firm users:', firmUserData.length);
 
   const mappedVendorProfiles = vendorProfiles.map((profile) => ({
     firm_id: profile.firmId,
