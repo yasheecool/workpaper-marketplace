@@ -8,6 +8,7 @@ import SocialProof from './components/SocialProof';
 import FeaturedListings from './components/FeaturedListings';
 
 import SignupCta from './components/SignupCta';
+import Link from 'next/link';
 
 const LandingPage = () => {
   const { login } = useMockLogin();
@@ -20,15 +21,15 @@ const LandingPage = () => {
     <>
       <Header disableNavigation={true}>
         <div className='flex items-center gap-4 ml-auto'>
-          <button
-            className='btn bg-transparent text-secondary-500 border-1 border-secondary-500 hover:bg-gray-100'
-            onClick={login}
-          >
-            Log In
-          </button>
-          <button className='btn bg-secondary-500 text-white hover:bg-secondary-700 ease-in-out'>
-            Sign Up
-          </button>
+          <Link href='/login'>
+            <button
+              className='btn bg-transparent text-primary border-1 border-primary hover:bg-base-200'
+              // onClick={login}
+            >
+              Log In
+            </button>
+          </Link>
+          <button className='btn btn-primary ease-in-out'>Sign Up</button>
         </div>
       </Header>
 

@@ -1,12 +1,13 @@
 import Image from 'next/image';
 import useMockLogin from '@/hooks/useLogin';
+import Container from '@/components/layout/Container';
 
 const HeroSection = () => {
   const { login } = useMockLogin();
 
   return (
     <section className='bg-linear-to-br from-[#c9ccffa0] to-[#edd7fbba]  py-20 lg:py-28'>
-      <div className='section-container flex flex-col items-center gap-8 lg:flex-row '>
+      <Container styles='flex flex-col items-center gap-8 lg:flex-row'>
         <div className='flex flex-col items-center lg:items-start'>
           <h1 className='text-gray-800 text-4xl mb-4 font-semibold tracking-tight md:text-5xl text-center lg:text-6xl lg:text-start lg:tracking-[-2px]'>
             Explore Verified Workpaper Content
@@ -16,11 +17,9 @@ const HeroSection = () => {
             workspace with one click.
           </p>
           <div>
-            <button className='btn bg-secondary-500 text-white hover:bg-secondary-600 mr-2'>
-              Sign Up
-            </button>
+            <button className='btn btn-primary mr-2'>Sign Up</button>
             <button
-              className='mr-2 btn text-secondary-500 bg-transparent  border-secondary-500  hover:bg-gray-100'
+              className='btn bg-transparent  border-primary  text-primary hover:bg-base-200'
               onClick={login}
             >
               Log In
@@ -52,7 +51,7 @@ const HeroSection = () => {
             />
           </div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

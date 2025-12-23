@@ -16,7 +16,7 @@ const FirmSelection = () => {
 
   useEffect(() => {
     if (!isHydrated) return;
-    if (!jwt) router.replace('/'); //go back to landing page if jwt is NULL
+    // if (!jwt) router.replace('/'); //go back to landing page if jwt is NULL
   }, [jwt, isHydrated]);
 
   if (isLoading) {

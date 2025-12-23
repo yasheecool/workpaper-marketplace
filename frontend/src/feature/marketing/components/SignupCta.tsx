@@ -1,16 +1,21 @@
+import Container from '@/components/layout/Container';
 import Image from 'next/image';
 
 const SignupCta = () => {
   return (
     <section className='bg-linear-to-br from-[#c9ccffa0] to-[#edd7fbba] py-20'>
-      <div className='section-container max-w-3xl grid gap-6 grid-rows-2 sm:grid-cols-2 sm:grid-rows-none'>
+      <Container
+        styles={
+          'max-w-3xl grid gap-6 grid-rows-2 sm:grid-cols-2 sm:grid-rows-none'
+        }
+      >
+        {/* LOGO + MARKETPLACE text */}
         <div className='flex flex-col gap-4'>
-          {/* LOGO + MARKETPLACE text */}
           <div className='flex items-center'>
             <Image
               src={'./workpapers_logo.svg'}
-              height={20}
-              width={20}
+              height={35}
+              width={35}
               alt='cimplico workpapers logo'
               className='inline-block mr-2'
             />
@@ -57,9 +62,7 @@ const SignupCta = () => {
               </li>
             </ul>
           </div>
-          <button className='btn bg-secondary-500 text-white hover:bg-secondary-700'>
-            Sign up
-          </button>
+          <button className='btn btn-primary'>Sign up</button>
         </div>
 
         {/* Illustration */}
@@ -70,7 +73,7 @@ const SignupCta = () => {
             fill
           />
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

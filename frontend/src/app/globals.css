@@ -5,7 +5,7 @@
 }
 
 @plugin "daisyui/theme" {
-  name: 'light';
+  name: 'workpaper';
   default: true;
   prefersdark: false;
   color-scheme: 'light';
@@ -14,11 +14,11 @@
   --color-base-300: oklch(95% 0 0);
   --color-base-content: #1d1d1d;
   --color-primary: #7b70ff;
-  --color-primary-content: #f2f0fc;
+  --color-primary-content: #fff;
   --color-secondary: #361994;
   --color-secondary-content: #ece8fd;
   --color-accent: #c9ccff;
-  --color-accent-content: oklch(28% 0.141 291.089);
+  --color-accent-content: #200f59;
   --color-neutral: oklch(14% 0.005 285.823);
   --color-neutral-content: oklch(92% 0.004 286.32);
   --color-info: oklch(74% 0.16 232.661);
@@ -37,16 +37,6 @@
   --border: 1px;
   --depth: 1;
   --noise: 1;
-}
-
-@plugin "daisyui/theme" {
-  name: 'light';
-  default: true;
-  --color-primary: #7b70ff;
-  --color-primary-content: ##f2f0fc;
-  --color-secondary: #361994;
-  --color-secondary-content: #ece8fd;
-  --color-base-content: #1d1d1d;
 }
 
 @theme {
