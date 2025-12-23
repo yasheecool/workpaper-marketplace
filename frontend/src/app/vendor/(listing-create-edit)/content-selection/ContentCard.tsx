@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BaseContent } from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+import { BaseContent } from '@/types/types';
 import _ from 'lodash';
 
 const ContentCard = ({ content }: { content: BaseContent }) => {

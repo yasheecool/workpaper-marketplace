@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
 
   const user = data?.claims;
-  console.log('User claims:', user);
+  // console.log('User claims:', user);
 
   if (
     !user &&
@@ -49,10 +49,10 @@ export async function updateSession(request: NextRequest) {
   ) {
     console.log('No user session found');
     // no user, potentially respond by redirecting the user to the login page
-    // const url = request.nextUrl.clone();
-    // url.pathname = '/login';
-    // return NextResponse.redirect(url);
-  }
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  } else console.log('User logged in!');
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:

@@ -2,10 +2,7 @@
 import { useMemo } from 'react';
 import { useFirmCreatedListings } from '@/hooks/react-query/firm';
 import FormSelect from '../../../../components/input/FormSelect';
-import {
-  CONTENT_TYPE,
-  LISTING_VISIBILITY,
-} from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+import { CONTENT_TYPE, LISTING_VISIBILITY } from '@/types/types';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Loading from '@/components/ui/Loading';

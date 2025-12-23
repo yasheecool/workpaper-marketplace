@@ -1,21 +1,21 @@
 import useAppStore from '@/store/appStore';
 import { Fragment, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { type Firm } from '@/types/types';
+import { getFirms } from './actions';
 
-const FirmSelector = ({ firms }: { firms: Record<string, any>[] }) => {
+const FirmSelector = () => {
   const router = useRouter();
   const setFirm = useAppStore((state) => state.setFirm);
-  const [selectedFirm, setSelectedFirm] = useState<Record<string, any> | null>(
-    null
-  );
+  const [selectedFirm, setSelectedFirm] = useState<Firm | null>(null);
 
-  const navigate = (destination: string) => {
-    setFirm({
-      id: selectedFirm?.firmId,
-      shortId: selectedFirm?.firmId.slice(0, 8),
-    });
-    router.push(destination);
-  };
+  // const navigate = (destination: string) => {
+  //   setFirm({
+  //     id: selectedFirm?.firmId,
+  //     shortId: selectedFirm?.firmId.slice(0, 8),
+  //   });
+  //   router.push(destination);
+  // };
 
   return (
     <>
@@ -35,7 +35,7 @@ const FirmSelector = ({ firms }: { firms: Record<string, any>[] }) => {
         );
       })}
 
-      {selectedFirm && (
+      {/* {selectedFirm && (
         <div className='flex justify-center items-center col-span-2 mt-4 gap-4'>
           <button
             className='btn  text-white bg-secondary-500 hover:bg-secondary-700'
@@ -57,7 +57,7 @@ const FirmSelector = ({ firms }: { firms: Record<string, any>[] }) => {
             </button>
           )}
         </div>
-      )}
+      )} */}
     </>
   );
 };

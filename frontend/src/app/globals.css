@@ -39,7 +39,7 @@
   --noise: 1;
 }
 
-@theme {
+/* @theme {
   --color-primary-100: #8675bf;
   --color-primary-200: #725eb4;
   --color-primary-300: #5e47a9;
@@ -62,7 +62,7 @@
 
   --color-lavender: #c9ccff;
   --color-blk: #1d1d1d;
-}
+} */
 
 @layer components {
   .section-container {

@@ -5,7 +5,7 @@ import {
   CONTENT_TYPE,
   ENTITY_TYPES,
   LISTING_VISIBILITY,
-} from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+} from '@/types/types';
 
 export const listingInputSchema = z.object({
   id: z.string(), //needed by the backend to uniquely identify the listing

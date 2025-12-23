@@ -1,9 +1,6 @@
 import { StateCreator } from 'zustand';
 
-import {
-  JWTMetadata,
-  Firm,
-} from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+import { JWTMetadata, Firm } from '@/types/types';
 
 interface State {
   jwt: null | JWTMetadata;

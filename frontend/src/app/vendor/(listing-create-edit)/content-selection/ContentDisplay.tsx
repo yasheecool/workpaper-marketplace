@@ -1,12 +1,9 @@
 'use client';
 import FormSelect from '@/components/input/FormSelect';
-import {
-  CONTENT_TYPE,
-  ENTITY_TYPES,
-} from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+import { CONTENT_TYPE, ENTITY_TYPES } from '@/types/types';
 import ContentCard from './ContentCard';
 import { useFirmContent } from '@/hooks/react-query/firm';
-import { BaseContent } from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+import { BaseContent } from '@/types/types';
 import Loading from '@/components/ui/Loading';
 import { useEffect } from 'react';
 

@@ -6,8 +6,8 @@ import { useEffect } from 'react';
 import HeroSection from './components/HeroSection';
 import SocialProof from './components/SocialProof';
 import FeaturedListings from './components/FeaturedListings';
-
 import SignupCta from './components/SignupCta';
+
 import Link from 'next/link';
 
 const LandingPage = () => {

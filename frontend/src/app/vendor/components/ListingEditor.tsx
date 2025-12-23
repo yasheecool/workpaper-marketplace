@@ -6,7 +6,7 @@ import {
   CONTENT_TYPE,
   ENTITY_TYPES,
   LISTING_VISIBILITY,
-} from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+} from '@/types/types';
 import { LabelText, FormSelect, CheckboxGroup } from '@/components/input';
 import ImageUpload from '../../../components/ImageUpload';
 import ImagePreview from '../../../components/ImagePreview';

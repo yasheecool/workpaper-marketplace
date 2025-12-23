@@ -1,6 +1,6 @@
 'use client';
 import FormSelect from '@/components/input/FormSelect';
-import { CONTENT_TYPE } from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+import { CONTENT_TYPE } from '@/types/types';
 import {
   useFirmInstalledListings,
   useFirmRequestedListings,
@@ -8,7 +8,7 @@ import {
 import { useState } from 'react';
 import TableWrapper from './TableWrapper';
 import Loading from '@/components/ui/Loading';
-import { ContentType } from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+import { ContentType } from '@/types/types';
 
 const InstalledListingsPage = () => {
   const { data: installedListingsRecords, isLoading } =

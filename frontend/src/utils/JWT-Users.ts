@@ -1,4 +1,4 @@
-import { JWTMetadata } from '../types/Cimplico_Marketplace_Typescript_Definitions';
+import { JWTMetadata } from '../types/types';
 
 //user 1 as Marco, Cimplico having vendor status, AuditPro as user firm
 const user1: JWTMetadata = {

@@ -24,10 +24,11 @@ const LoginForm = () => {
         },
       });
 
-      console.log(data, err);
+      if (err) throw err;
       toast.success('Magic link sent to your email!');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An unexpected error occurred');
+      toast.error(error || 'Failed to send magic link.');
     } finally {
       setIsLoading(false);
     }

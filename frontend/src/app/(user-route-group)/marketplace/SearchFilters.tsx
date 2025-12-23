@@ -4,7 +4,7 @@ import {
   ENTITY_TYPES,
   REGIONS,
   WORKPAPER_TYPES,
-} from '@/types/Cimplico_Marketplace_Typescript_Definitions';
+} from '@/types/types';
 import useAppStore from '@/store/appStore';
 
 const SearchFilters = () => {
