@@ -42,27 +42,27 @@ export type Database = {
       firm: {
         Row: {
           created_at: string
-          firm_name: string
           id: string
           logo: string | null
+          name: string
+          short_id: string
           updated_at: string
-          vendor_profile: string | null
         }
         Insert: {
           created_at?: string
-          firm_name: string
           id?: string
           logo?: string | null
+          name: string
+          short_id: string
           updated_at?: string
-          vendor_profile?: string | null
         }
         Update: {
           created_at?: string
-          firm_name?: string
           id?: string
           logo?: string | null
+          name?: string
+          short_id?: string
           updated_at?: string
-          vendor_profile?: string | null
         }
         Relationships: []
       }
@@ -152,11 +152,12 @@ export type Database = {
         Row: {
           content_type: Database["public"]["Enums"]["ListingType"]
           created_at: string
+          created_by_user: string | null
           description: string
-          entity_type: Database["public"]["Enums"]["EntityType"]
+          entity_type: Database["public"]["Enums"]["EntityType"][]
           getting_started_steps: string | null
           id: string
-          images_link: string[]
+          images_link: string[] | null
           long_description: string | null
           name: string
           owned_by_firm: string
@@ -165,16 +166,17 @@ export type Database = {
           updated_at: string
           updated_by_user: string
           visibility: Database["public"]["Enums"]["ListingVisibility"]
-          workpaper_type: Database["public"]["Enums"]["WorkpaperType"]
+          workpaper_type: Database["public"]["Enums"]["WorkpaperType"][]
         }
         Insert: {
           content_type: Database["public"]["Enums"]["ListingType"]
           created_at?: string
+          created_by_user?: string | null
           description: string
-          entity_type?: Database["public"]["Enums"]["EntityType"]
+          entity_type: Database["public"]["Enums"]["EntityType"][]
           getting_started_steps?: string | null
           id?: string
-          images_link: string[]
+          images_link?: string[] | null
           long_description?: string | null
           name: string
           owned_by_firm: string
@@ -183,16 +185,17 @@ export type Database = {
           updated_at?: string
           updated_by_user: string
           visibility?: Database["public"]["Enums"]["ListingVisibility"]
-          workpaper_type: Database["public"]["Enums"]["WorkpaperType"]
+          workpaper_type: Database["public"]["Enums"]["WorkpaperType"][]
         }
         Update: {
           content_type?: Database["public"]["Enums"]["ListingType"]
           created_at?: string
+          created_by_user?: string | null
           description?: string
-          entity_type?: Database["public"]["Enums"]["EntityType"]
+          entity_type?: Database["public"]["Enums"]["EntityType"][]
           getting_started_steps?: string | null
           id?: string
-          images_link?: string[]
+          images_link?: string[] | null
           long_description?: string | null
           name?: string
           owned_by_firm?: string
@@ -201,9 +204,16 @@ export type Database = {
           updated_at?: string
           updated_by_user?: string
           visibility?: Database["public"]["Enums"]["ListingVisibility"]
-          workpaper_type?: Database["public"]["Enums"]["WorkpaperType"]
+          workpaper_type?: Database["public"]["Enums"]["WorkpaperType"][]
         }
         Relationships: [
+          {
+            foreignKeyName: "listing_created_by_user_fkey"
+            columns: ["created_by_user"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "listing_owned_by_firm_fkey"
             columns: ["owned_by_firm"]
@@ -333,7 +343,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          created_at: string
+          created_at?: string
           email: string
           first_name: string
           id?: string
@@ -362,8 +372,9 @@ export type Database = {
           firm_id: string
           firm_logo: string | null
           id: string
-          status: Database["public"]["Enums"]["VendorStatus"] | null
+          status: Database["public"]["Enums"]["VendorStatus"]
           vendor_since: string | null
+          website_url: string | null
         }
         Insert: {
           created_at?: string
@@ -372,8 +383,9 @@ export type Database = {
           firm_id: string
           firm_logo?: string | null
           id?: string
-          status?: Database["public"]["Enums"]["VendorStatus"] | null
+          status?: Database["public"]["Enums"]["VendorStatus"]
           vendor_since?: string | null
+          website_url?: string | null
         }
         Update: {
           created_at?: string
@@ -382,14 +394,15 @@ export type Database = {
           firm_id?: string
           firm_logo?: string | null
           id?: string
-          status?: Database["public"]["Enums"]["VendorStatus"] | null
+          status?: Database["public"]["Enums"]["VendorStatus"]
           vendor_since?: string | null
+          website_url?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "vendor_profile_firm_id_fkey"
             columns: ["firm_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "firm"
             referencedColumns: ["id"]
           },
@@ -458,7 +471,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      custom_access_token_hook: { Args: { event: Json }; Returns: Json }
     }
     Enums: {
       EntityType: "company" | "individual" | "partnership" | "trust"

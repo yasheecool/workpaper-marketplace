@@ -1,32 +1,23 @@
 'use server';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import { createClient } from '@/lib/supabase/serverClient';
-import { Firm } from '@/types/types';
+export const setFirmInCookies = async (form: FormData) => {
+  const firmId = form.get('firm');
+  const target = form.get('target');
 
-export async function getFirms() {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase.auth.getClaims();
-
-  if (error) {
-    console.log('Error fetching auth claims:', error);
-  }
-
-  const firmsFromClaims: Firm[] = data?.claims.app_metadata?.workpapers.firms;
-
-  const { data: firms, error: dbFirmError } = await supabase
-    .from('firms')
-    .select('*')
-    .in(
-      'id',
-      firmsFromClaims.map((firm) => firm.id)
+  if (!firmId || !target) {
+    throw new Error(
+      'Please ensure a firm is selected and target route is provided'
     );
-
-  console.log('Firms fetched from DB:', firms);
-
-  if (dbFirmError) {
-    console.log('Error fetching firms from DB:', dbFirmError);
   }
 
-  return firms || [];
-}
+  const cookieStore = await cookies();
+  cookieStore.set('selected_firm_id', String(firmId), {
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+  });
+
+  return redirect(String(target));
+};
