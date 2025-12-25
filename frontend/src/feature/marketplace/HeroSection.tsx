@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import useAppStore from '@/store/appStore';
 import { useEffect, useState } from 'react';
@@ -13,15 +15,15 @@ const HeroSection = () => {
   }, [debouncedSearchTerm]);
 
   return (
-    <section className='bg-lavender py-18 relative overflow-hidden z-0 text-gray-800 h-[340px]'>
+    <section className='bg-accent py-18 relative overflow-hidden z-0 text-gray-800 h-[340px]'>
       <div className='section-container z-10 flex flex-col items-center'>
         <div className='absolute right-0 top-0 w-80 h-full'>
-          <Image
+          {/* <Image
             src='/workpapers_outline.svg'
             alt='cimplico workpapers logo'
             fill
             className='object-contain z-[-1] scale-105 opacity-75'
-          />
+          /> */}
         </div>
         <h1 className='text-5xl text-center font-semibold  mb-2 capitalize'>
           Browse verified content

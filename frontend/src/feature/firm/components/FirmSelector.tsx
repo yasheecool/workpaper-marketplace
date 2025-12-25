@@ -21,7 +21,7 @@ const FirmSelector = ({ firms }: { firms: FirmWithVendorFlag[] }) => {
           try {
             await setFirmInCookies(formData);
           } catch (e: unknown) {
-            console.log(e);
+            // console.log(e);
             toast.error(
               e instanceof Error
                 ? e.message

@@ -1,18 +1,18 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import Dropdown from '@/components/ui/Dropdown';
-import useAppStore from '@/store/appStore';
-import { useFirm } from '@/hooks/react-query/firm';
-import { useUser } from '@/hooks/react-query/user';
+// import useAppStore from '@/store/appStore';
+// import { useFirm } from '@/hooks/react-query/firm';
+// import { useUser } from '@/hooks/react-query/user';
 
 import Link from 'next/link';
 
 const UserHeaderNav = () => {
   const router = useRouter();
-  const { jwt, currentFirm } = useAppStore();
+  // const { jwt, currentFirm } = useAppStore();
 
-  const { data: user, error: userError } = useUser(); //current user from DB
-  const { data: firm, error: userErr } = useFirm(currentFirm!.id); //current firm from DB
+  // const { data: user, error: userError } = useUser(); //current user from DB
+  // const { data: firm, error: userErr } = useFirm(currentFirm!.id); //current firm from DB
 
   const navList = [
     {
@@ -27,29 +27,29 @@ const UserHeaderNav = () => {
       label: 'Saved Listings',
       href: '/saved-listings',
     },
-    ...(firm && firm.isVendor
-      ? [
-          {
-            label: 'Switch to Vendor View',
-            href: '/vendor',
-          },
-        ]
-      : []),
+    // ...(firm && firm.isVendor
+    //   ? [
+    //       {
+    //         label: 'Switch to Vendor View',
+    //         href: '/vendor',
+    //       },
+    //     ]
+    //   : []),
     { label: 'Logout', href: '/' },
   ];
 
   return (
     <div className='flex items-center'>
-      {firm && !firm.isVendor && (
+      {/* {firm && !firm.isVendor && (
         <Link href={'/vendor-request'}>
           <p className='text-sm link link-hover text-gray-600 hover:text-gray-800'>
             Become a Vendor
           </p>
         </Link>
-      )}
+      )} */}
 
       {/* FIRM Selection if firms more than 1 */}
-      {jwt?.workpapers.firms.length !== 1 && (
+      {/* {jwt?.workpapers.firms.length !== 1 && (
         <button
           className='btn flex items-center bg-white border-none rounded-none hover:shadow-sm hover:bg-gray-100'
           onClick={() => router.push('/firm-selection')}
@@ -70,7 +70,7 @@ const UserHeaderNav = () => {
           </svg>
           {firm ? <p>{firm.firmName}</p> : <p className='skeleton h-4 w-14' />}
         </button>
-      )}
+      )} */}
 
       <Dropdown
         displayChild={
@@ -90,13 +90,13 @@ const UserHeaderNav = () => {
               />
             </svg>
 
-            {user ? (
+            {/* {user ? (
               <p>
                 {user.firstName} {user.lastName}
               </p>
             ) : (
               <p className='skeleton h-4 w-14' />
-            )}
+            )} */}
           </>
         }
         listObject={navList}

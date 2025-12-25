@@ -1,4 +1,4 @@
-import MarketplacePage from './MarketplacePage';
+import { MarketplacePage } from '@/feature/marketplace';
 
 const page = () => {
   return <MarketplacePage />;
