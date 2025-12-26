@@ -1,2 +1,2 @@
-export { default as FirmSelector } from './components/FirmSelector';
 export * from './queries';
+export { default as FirmSelectorContainer } from './components/FirmSelectorContainer';

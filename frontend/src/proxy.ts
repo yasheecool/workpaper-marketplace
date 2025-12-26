@@ -1,8 +1,35 @@
 import { type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/proxy';
+import { NextResponse } from 'next/server';
 
 export async function proxy(request: NextRequest) {
-  return await updateSession(request);
+  const { supabaseResponse, user } = await updateSession(request);
+  const selectedFirm = request.cookies.get('selected_firm_id')?.value;
+
+  if (
+    !user &&
+    !request.nextUrl.pathname.startsWith('/login') &&
+    !request.nextUrl.pathname.startsWith('/auth')
+  ) {
+    console.log('No user session found');
+    // no user, potentially respond by redirecting the user to the login page
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  } else console.log('User logged in!');
+
+  if (
+    !selectedFirm &&
+    !request.nextUrl.pathname.startsWith('/firm-selection')
+  ) {
+    console.log('No firm selected');
+    // no firm selected, redirect to firm selection page
+    const url = request.nextUrl.clone();
+    url.pathname = '/firm-selection';
+    return NextResponse.redirect(url);
+  }
+
+  return supabaseResponse;
 }
 
 export const config = {

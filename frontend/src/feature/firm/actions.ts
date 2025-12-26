@@ -2,14 +2,15 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export const setFirmInCookies = async (form: FormData) => {
+export const setFirmInCookies = async (
+  _prevState: { error: null | string },
+  form: FormData
+) => {
   const firmId = form.get('firm');
   const target = form.get('target');
 
   if (!firmId || !target) {
-    throw new Error(
-      'Please ensure a firm is selected and target route is provided'
-    );
+    return { error: 'Please select a firm or target page to continue' };
   }
 
   const cookieStore = await cookies();
@@ -19,5 +20,5 @@ export const setFirmInCookies = async (form: FormData) => {
     secure: process.env.NODE_ENV === 'production',
   });
 
-  return redirect(String(target));
+  redirect(String(target));
 };

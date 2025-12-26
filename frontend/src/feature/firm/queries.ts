@@ -2,29 +2,37 @@
 
 import { createClient } from '@/lib/supabase/serverClient';
 import { FirmRow, mapFirmsFromDb, FirmFromPayload } from '@/types/domain/firm';
+import { cookies } from 'next/headers';
 
-export async function getFirms() {
+export async function getFirmsContext() {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.getClaims();
-  if (error) {
-    console.log('Error fetching auth claims:', error);
-  }
+  const { data } = await supabase.auth.getClaims();
 
   const firmsFromClaims: FirmFromPayload[] =
     data?.claims.app_metadata?.workpapers.firms || [];
+
+  const currentFirmIdFromCookies = (await cookies()).get(
+    'selected_firm_id'
+  )?.value;
+
   const mappedFirmIds = firmsFromClaims.map((firm) => firm.id);
 
   // Fetch firms and related vendor_profile rows (left join)
-  const { data: firms, error: dbFirmError } = await supabase
+  const { data: firmsFromDb, error: dbFirmError } = await supabase
     .from('firm')
     .select('*, vendor_profile:vendor_profile!left(firm_id)')
     .in('id', mappedFirmIds);
 
   if (dbFirmError) {
     console.error('Error fetching firms:', dbFirmError);
-    return [];
+    throw new Error('Failed to fetch firms from database');
   }
 
-  return mapFirmsFromDb(firms as FirmRow[]);
+  const firms = mapFirmsFromDb(firmsFromDb as FirmRow[]);
+
+  const currentFirm =
+    firms.find((f) => f.id === currentFirmIdFromCookies) || null;
+
+  return { allUserFirms: firms, currentFirm };
 }

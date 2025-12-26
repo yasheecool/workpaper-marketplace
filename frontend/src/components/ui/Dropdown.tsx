@@ -13,7 +13,7 @@ const Dropdown = ({
       <div
         tabIndex={0}
         role='button'
-        className='btn m-0 border-l-[0.5px] border-gray-400 bg-white border-0 rounded-sm  hover:shadow-sm hover:bg-gray-100'
+        className='btn m-0  border-gray-400 bg-white border-0 rounded-sm  hover:shadow-sm hover:bg-gray-100'
       >
         {displayChild}
       </div>
