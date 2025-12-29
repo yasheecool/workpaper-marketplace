@@ -1,51 +1,71 @@
+'use client';
+
 import CheckboxGroup from '@/components/input/CheckboxGroup';
 import {
-  CONTENT_TYPE,
-  ENTITY_TYPES,
-  REGIONS,
-  WORKPAPER_TYPES,
-} from '@/types/types';
-import useAppStore from '@/store/appStore';
+  workpaperTypeOptions,
+  listingTypeOptions,
+  entityTypeOptions,
+} from '@/types/domain/listing';
+import Form from 'next/form';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+function useSelectedValues(param: string) {
+  const searchParams = useSearchParams();
+  return searchParams.getAll(param); // supports multi-select
+}
 
 const SearchFilters = () => {
-  const {
-    workpaperType,
-    setWorkpaperType,
-    entityType,
-    setEntityType,
-    contentType,
-    setContentType,
-  } = useAppStore();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const contentSelected = useSelectedValues('content-type');
+  const workpaperSelected = useSelectedValues('workpaper-type');
+  const entitySelected = useSelectedValues('entity-type');
+
+  const toggleValue = (param: string, value: string) => {
+    const next = new URLSearchParams(searchParams.toString());
+    const current = next.getAll(param);
+    const exists = current.includes(value);
+
+    const updated = exists
+      ? current.filter((v) => v !== value)
+      : [...current, value];
+
+    next.delete(param);
+    updated.forEach((v) => next.append(param, v));
+
+    router.replace(`?${next.toString()}`, { scroll: false });
+  };
 
   return (
-    <>
-      <CheckboxGroup
-        legend='Content Type'
-        optionsObj={CONTENT_TYPE}
-        name='contentType'
-        setterFunction={setContentType}
-        stateValue={contentType}
-      />
+    <div className='flex-col gap-4 hidden min-[992px]:flex min-[992px]:row-start-2 min-[992px]:col-start-1 justify-start'>
+      <Form action=''>
+        <CheckboxGroup
+          legend='Content Type'
+          optionsObj={listingTypeOptions}
+          name='content-type'
+          selectedValues={contentSelected}
+          onToggle={toggleValue}
+        />
 
-      <CheckboxGroup
-        legend='Workpaper Type'
-        optionsObj={WORKPAPER_TYPES}
-        name='workpaperType'
-        setterFunction={setWorkpaperType}
-        stateValue={workpaperType}
-      />
+        <CheckboxGroup
+          legend='Workpaper Type'
+          optionsObj={workpaperTypeOptions}
+          name='workpaper-type'
+          selectedValues={workpaperSelected}
+          onToggle={toggleValue}
+        />
 
-      {/* OPTIONALLY, the listings can be filtered by region as well */}
-      {/* <CheckboxGroup legend='Region' optionsObj={REGIONS} name='region' /> */}
-
-      <CheckboxGroup
-        legend='Entity Type'
-        optionsObj={ENTITY_TYPES}
-        name='entityType'
-        setterFunction={setEntityType}
-        stateValue={entityType}
-      />
-    </>
+        <CheckboxGroup
+          legend='Entity Type'
+          optionsObj={entityTypeOptions}
+          name='entity-type'
+          selectedValues={entitySelected}
+          onToggle={toggleValue}
+        />
+      </Form>
+    </div>
   );
 };
+
 export default SearchFilters;

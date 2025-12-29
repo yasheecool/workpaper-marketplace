@@ -2,13 +2,15 @@ import { UseFormRegister } from 'react-hook-form';
 
 type CheckboxGroupProps = {
   legend: string;
-  optionsObj: {};
+  optionsObj: Record<string, string>;
   name: string;
   required?: boolean;
   register?: UseFormRegister<any>;
   stateValue?: string[];
   setterFunction?: (value: string) => void;
   checked?: boolean;
+  selectedValues?: string[];
+  onToggle?: (param: string, value: string) => void;
 };
 
 //These components can work with both react-hook-form and controlled components, but are tightly coupled to the setterFunction prop for controlled components.
@@ -21,8 +23,10 @@ const CheckboxGroup = ({
   optionsObj,
   register,
   name,
-  stateValue = [],
-  setterFunction,
+  // stateValue = [],
+  // setterFunction,
+  selectedValues,
+  onToggle,
 }: CheckboxGroupProps) => {
   return (
     <fieldset className='fieldset bg-base-100 border-base-300 rounded-box border p-4  w-full'>
@@ -44,13 +48,13 @@ const CheckboxGroup = ({
                 ? { ...register(name) }
                 : {
                     name: name,
-                    checked: stateValue.includes(key),
-                    onChange: (e) => {
-                      if (setterFunction) setterFunction(e.target.value);
+                    checked: selectedValues?.includes(key),
+                    onChange: () => {
+                      if (onToggle) onToggle(name, key);
                     },
                   })}
             />
-            {val as string}
+            {val}
           </label>
         );
         {

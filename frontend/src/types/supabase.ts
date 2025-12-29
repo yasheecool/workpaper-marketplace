@@ -150,61 +150,61 @@ export type Database = {
       }
       listing: {
         Row: {
-          content_type: Database["public"]["Enums"]["ListingType"]
+          content_type: Database["public"]["Enums"]["listing_type"]
           created_at: string
           created_by_user: string | null
           description: string
-          entity_type: Database["public"]["Enums"]["EntityType"][]
+          entity_type: Database["public"]["Enums"]["entity_type"][]
           getting_started_steps: string | null
           id: string
           images_link: string[] | null
           long_description: string | null
           name: string
           owned_by_firm: string
-          region: Database["public"]["Enums"]["Region"]
-          status: Database["public"]["Enums"]["ListingStatus"]
+          region: Database["public"]["Enums"]["region"]
+          status: Database["public"]["Enums"]["listing_status"]
           updated_at: string
           updated_by_user: string
-          visibility: Database["public"]["Enums"]["ListingVisibility"]
-          workpaper_type: Database["public"]["Enums"]["WorkpaperType"][]
+          visibility: Database["public"]["Enums"]["listing_visibility"]
+          workpaper_type: Database["public"]["Enums"]["workpaper_type"][]
         }
         Insert: {
-          content_type: Database["public"]["Enums"]["ListingType"]
+          content_type: Database["public"]["Enums"]["listing_type"]
           created_at?: string
           created_by_user?: string | null
           description: string
-          entity_type: Database["public"]["Enums"]["EntityType"][]
+          entity_type: Database["public"]["Enums"]["entity_type"][]
           getting_started_steps?: string | null
           id?: string
           images_link?: string[] | null
           long_description?: string | null
           name: string
           owned_by_firm: string
-          region?: Database["public"]["Enums"]["Region"]
-          status?: Database["public"]["Enums"]["ListingStatus"]
+          region?: Database["public"]["Enums"]["region"]
+          status?: Database["public"]["Enums"]["listing_status"]
           updated_at?: string
           updated_by_user: string
-          visibility?: Database["public"]["Enums"]["ListingVisibility"]
-          workpaper_type: Database["public"]["Enums"]["WorkpaperType"][]
+          visibility?: Database["public"]["Enums"]["listing_visibility"]
+          workpaper_type: Database["public"]["Enums"]["workpaper_type"][]
         }
         Update: {
-          content_type?: Database["public"]["Enums"]["ListingType"]
+          content_type?: Database["public"]["Enums"]["listing_type"]
           created_at?: string
           created_by_user?: string | null
           description?: string
-          entity_type?: Database["public"]["Enums"]["EntityType"][]
+          entity_type?: Database["public"]["Enums"]["entity_type"][]
           getting_started_steps?: string | null
           id?: string
           images_link?: string[] | null
           long_description?: string | null
           name?: string
           owned_by_firm?: string
-          region?: Database["public"]["Enums"]["Region"]
-          status?: Database["public"]["Enums"]["ListingStatus"]
+          region?: Database["public"]["Enums"]["region"]
+          status?: Database["public"]["Enums"]["listing_status"]
           updated_at?: string
           updated_by_user?: string
-          visibility?: Database["public"]["Enums"]["ListingVisibility"]
-          workpaper_type?: Database["public"]["Enums"]["WorkpaperType"][]
+          visibility?: Database["public"]["Enums"]["listing_visibility"]
+          workpaper_type?: Database["public"]["Enums"]["workpaper_type"][]
         }
         Relationships: [
           {
@@ -237,7 +237,7 @@ export type Database = {
           created_at: string
           id: string
           listing_id: string
-          request_status: Database["public"]["Enums"]["RequestStatus"]
+          request_status: Database["public"]["Enums"]["request_status"]
           requested_by_firm_id: string
           requested_by_user_id: string
         }
@@ -247,7 +247,7 @@ export type Database = {
           created_at?: string
           id?: string
           listing_id: string
-          request_status?: Database["public"]["Enums"]["RequestStatus"]
+          request_status?: Database["public"]["Enums"]["request_status"]
           requested_by_firm_id: string
           requested_by_user_id: string
         }
@@ -257,7 +257,7 @@ export type Database = {
           created_at?: string
           id?: string
           listing_id?: string
-          request_status?: Database["public"]["Enums"]["RequestStatus"]
+          request_status?: Database["public"]["Enums"]["request_status"]
           requested_by_firm_id?: string
           requested_by_user_id?: string
         }
@@ -372,7 +372,7 @@ export type Database = {
           firm_id: string
           firm_logo: string | null
           id: string
-          status: Database["public"]["Enums"]["VendorStatus"]
+          status: Database["public"]["Enums"]["vendor_status"]
           vendor_since: string | null
           website_url: string | null
         }
@@ -383,7 +383,7 @@ export type Database = {
           firm_id: string
           firm_logo?: string | null
           id?: string
-          status?: Database["public"]["Enums"]["VendorStatus"]
+          status?: Database["public"]["Enums"]["vendor_status"]
           vendor_since?: string | null
           website_url?: string | null
         }
@@ -394,7 +394,7 @@ export type Database = {
           firm_id?: string
           firm_logo?: string | null
           id?: string
-          status?: Database["public"]["Enums"]["VendorStatus"]
+          status?: Database["public"]["Enums"]["vendor_status"]
           vendor_since?: string | null
           website_url?: string | null
         }
@@ -414,7 +414,7 @@ export type Database = {
           actioned_by: string | null
           created_at: string
           id: string
-          request_status: Database["public"]["Enums"]["RequestStatus"]
+          request_status: Database["public"]["Enums"]["request_status"]
           requesting_firm_id: string
           requesting_user_id: string
           vendor_contact_email: string
@@ -425,7 +425,7 @@ export type Database = {
           actioned_by?: string | null
           created_at?: string
           id?: string
-          request_status?: Database["public"]["Enums"]["RequestStatus"]
+          request_status?: Database["public"]["Enums"]["request_status"]
           requesting_firm_id: string
           requesting_user_id: string
           vendor_contact_email: string
@@ -436,7 +436,7 @@ export type Database = {
           actioned_by?: string | null
           created_at?: string
           id?: string
-          request_status?: Database["public"]["Enums"]["RequestStatus"]
+          request_status?: Database["public"]["Enums"]["request_status"]
           requesting_firm_id?: string
           requesting_user_id?: string
           vendor_contact_email?: string
@@ -474,14 +474,19 @@ export type Database = {
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
     }
     Enums: {
-      EntityType: "company" | "individual" | "partnership" | "trust"
-      ListingStatus: "active" | "deleted"
-      ListingType: "calculation" | "checklist" | "report" | "procedure" | "wiki"
-      ListingVisibility: "public" | "request_access" | "private"
-      Region: "australia" | "newZealand" | "unitedKingdom" | "republicOfIreland"
-      RequestStatus: "pending" | "approved" | "rejected"
-      VendorStatus: "active" | "blocked"
-      WorkpaperType: "compliance" | "itr" | "bas" | "taxPlanning" | "fbt"
+      entity_type: "company" | "individual" | "partnership" | "trust"
+      listing_status: "active" | "deleted"
+      listing_type:
+        | "calculation"
+        | "checklist"
+        | "report"
+        | "procedure"
+        | "wiki"
+      listing_visibility: "public" | "request_access" | "private"
+      region: "australia" | "newZealand" | "unitedKingdom" | "republicOfIreland"
+      request_status: "pending" | "approved" | "rejected"
+      vendor_status: "active" | "blocked"
+      workpaper_type: "compliance" | "itr" | "bas" | "taxPlanning" | "fbt"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -612,14 +617,14 @@ export const Constants = {
   },
   public: {
     Enums: {
-      EntityType: ["company", "individual", "partnership", "trust"],
-      ListingStatus: ["active", "deleted"],
-      ListingType: ["calculation", "checklist", "report", "procedure", "wiki"],
-      ListingVisibility: ["public", "request_access", "private"],
-      Region: ["australia", "newZealand", "unitedKingdom", "republicOfIreland"],
-      RequestStatus: ["pending", "approved", "rejected"],
-      VendorStatus: ["active", "blocked"],
-      WorkpaperType: ["compliance", "itr", "bas", "taxPlanning", "fbt"],
+      entity_type: ["company", "individual", "partnership", "trust"],
+      listing_status: ["active", "deleted"],
+      listing_type: ["calculation", "checklist", "report", "procedure", "wiki"],
+      listing_visibility: ["public", "request_access", "private"],
+      region: ["australia", "newZealand", "unitedKingdom", "republicOfIreland"],
+      request_status: ["pending", "approved", "rejected"],
+      vendor_status: ["active", "blocked"],
+      workpaper_type: ["compliance", "itr", "bas", "taxPlanning", "fbt"],
     },
   },
 } as const

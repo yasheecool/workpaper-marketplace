@@ -15,16 +15,16 @@ const HeroSection = () => {
   }, [debouncedSearchTerm]);
 
   return (
-    <section className='bg-accent py-18 relative overflow-hidden z-0 text-gray-800 h-[340px]'>
+    <section className='bg-accent py-18 relative overflow-hidden z-0 text-gray-800 h-85'>
       <div className='section-container z-10 flex flex-col items-center'>
-        <div className='absolute right-0 top-0 w-80 h-full'>
-          {/* <Image
+        {/* <div className='absolute right-0 top-0 w-80 h-full'>
+          <Image
             src='/workpapers_outline.svg'
             alt='cimplico workpapers logo'
             fill
             className='object-contain z-[-1] scale-105 opacity-75'
-          /> */}
-        </div>
+          />
+        </div> */}
         <h1 className='text-5xl text-center font-semibold  mb-2 capitalize'>
           Browse verified content
         </h1>
@@ -33,7 +33,7 @@ const HeroSection = () => {
           workflow to the next level.
         </p>
 
-        <label className='input w-[90%] focus:outline-primary-500 max-w-[900px]'>
+        <label className='input w-[90%] focus:outline-primary-500 max-w-225'>
           <svg
             className='h-[1em] opacity-50'
             xmlns='http://www.w3.org/2000/svg'

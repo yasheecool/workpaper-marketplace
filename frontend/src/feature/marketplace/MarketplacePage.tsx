@@ -5,10 +5,11 @@ import SearchFilters from './SearchFilters';
 import { ListingCard } from '@/feature/listing';
 import { ListingType } from '@/types/schema';
 import { useFilteredListings } from '@/hooks/useFilteredListings';
-// import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
 import useAppStore from '@/store/appStore';
 import Loading from '@/components/ui/Loading';
+import Container from '@/components/layout/Container';
 
 const MarketplacePage = () => {
   // const {
@@ -22,7 +23,7 @@ const MarketplacePage = () => {
   // const resetFilters = useAppStore((s) => s.resetFilters);
   // const setPage = useAppStore((s) => s.setPage);
 
-  // const [showOverlay, setShowOverlay] = useState<Boolean>(false);
+  const [showOverlay, setShowOverlay] = useState<Boolean>(false);
 
   // useEffect(() => {
   //   return () => resetFilters(); // Reset filters when component unmounts
@@ -34,11 +35,13 @@ const MarketplacePage = () => {
       <HeroSection />
 
       <section className='py-18 bg-base-200 text-base-content'>
-        <div className='max-w-7xl w-[95vw] px-4 mx-auto grid grid-cols-1 grid-rows-[auto_1fr] gap-4 items-start min-[992px]:grid-cols-[275px_1fr] min-[992px]:grid-rows-[auto_1fr] gap-x-6 gap-y-2'>
+        {/* <Container>
+
+        </Container> */}
+        <div className='section-container px-4 grid grid-cols-1 grid-rows-[auto_1fr] items-start min-[992px]:grid-cols-[auto_1fr] min-[992px]:grid-rows-[auto_1fr] gap-x-6 gap-y-2'>
           {/* FILTERING SIDEBAR */}
-          <div className='flex-col gap-4 hidden min-[992px]:flex min-[992px]:row-start-2 min-[992px]:col-start-1 justify-start'>
-            <SearchFilters />
-          </div>
+          <SearchFilters />
+
           {/* FILTERING METADATA */}
           <div className='flex items-center justify-between min-[992px]:col-start-2 min-[992px]:col-end-3 min-[992px]:row-start-1'>
             {/* {Boolean(totalPages) && (
@@ -52,7 +55,7 @@ const MarketplacePage = () => {
 
             <button
               className='btn btn-primary justify-self-end min-[992px]:hidden hover:bg-secondary-700'
-              // onClick={() => setShowOverlay(!showOverlay)}
+              onClick={() => setShowOverlay(!showOverlay)}
             >
               Filter
             </button>
@@ -67,7 +70,7 @@ const MarketplacePage = () => {
             {/* CLOSE BUTTON FOR OVERLAY */}
             <button
               className='absolute top-4 right-4 cursor-pointer'
-              // onClick={() => setShowOverlay(false)}
+              onClick={() => setShowOverlay(false)}
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
