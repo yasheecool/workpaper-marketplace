@@ -1,14 +1,23 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+
 interface PaginationProps {
   totalPages: number;
   currentPage: number;
-  setCurrentPage: (page: number) => void;
 }
 
-const Pagination = ({
-  totalPages,
-  currentPage,
-  setCurrentPage,
-}: PaginationProps) => {
+const Pagination = ({ totalPages, currentPage }: PaginationProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`/marketplace?${params.toString()}`);
+  };
+
   if (!totalPages) return null;
   else
     return (
@@ -19,7 +28,7 @@ const Pagination = ({
               key={i}
               className={`join-item btn ${currentPage === i + 1 ? 'btn-active' : ''}`}
               onClick={() => {
-                setCurrentPage(i + 1);
+                handlePageChange(i + 1);
               }}
             >
               {i + 1}

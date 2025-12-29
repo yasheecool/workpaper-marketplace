@@ -1,30 +1,10 @@
-'use client';
-
-import Image from 'next/image';
-import useAppStore from '@/store/appStore';
-import { useEffect, useState } from 'react';
-import useDebounce from '@/hooks/useDebounce';
+import { ListingSearchInput } from '@/feature/listing';
+import { Suspense } from 'react';
 
 const HeroSection = () => {
-  const [localSearchTerm, setLocalSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(localSearchTerm, 300);
-  const setSearchTerm = useAppStore((s) => s.setSearchTerm);
-
-  useEffect(() => {
-    setSearchTerm(debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
-
   return (
     <section className='bg-accent py-18 relative overflow-hidden z-0 text-gray-800 h-85'>
       <div className='section-container z-10 flex flex-col items-center'>
-        {/* <div className='absolute right-0 top-0 w-80 h-full'>
-          <Image
-            src='/workpapers_outline.svg'
-            alt='cimplico workpapers logo'
-            fill
-            className='object-contain z-[-1] scale-105 opacity-75'
-          />
-        </div> */}
         <h1 className='text-5xl text-center font-semibold  mb-2 capitalize'>
           Browse verified content
         </h1>
@@ -50,15 +30,9 @@ const HeroSection = () => {
               <path d='m21 21-4.3-4.3'></path>
             </g>
           </svg>
-          <input
-            type='search'
-            required
-            placeholder='Search'
-            value={localSearchTerm}
-            onChange={(e) => {
-              setLocalSearchTerm(e.target.value);
-            }}
-          />
+          <Suspense fallback={<div className='skeleton h-6 w-full' />}>
+            <ListingSearchInput />
+          </Suspense>
         </label>
       </div>
     </section>

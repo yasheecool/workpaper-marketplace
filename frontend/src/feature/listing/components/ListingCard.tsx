@@ -1,6 +1,7 @@
 'use client';
 import { capitalize } from 'lodash';
-import { ListingType } from '@/types/schema';
+// import { ListingType } from '@/types/schema';
+import { type MarketplaceListing } from '../types';
 import Image from 'next/image';
 import { formatDate } from '@/utils/formatDate';
 import {
@@ -12,39 +13,39 @@ import Tooltip from '@/components/ui/Tooltip';
 import Link from 'next/link';
 import { getButtonText } from '@/utils/ui-utils';
 
-const ListingCard = ({ listing }: { listing?: ListingType }) => {
-  // const {
-  //   id,
-  //   name,
-  //   description,
-  //   contentType,
-  //   updatedAt,
-  //   imagesLink,
-  //   visibility,
-  //   ownedByFirm: { firmName, firmId: vendorId },
-  // } = listing;
-  const id = 'mock-id-123';
-  const name = 'Mock Listing Name';
-  const description =
-    'This is a mock description for the listing that contains some sample text to demonstrate the component.';
-  const contentType = 'template';
-  const updatedAt = '2024-01-15';
-  const imagesLink = ['https://via.placeholder.com/300'];
-  const visibility = 'public';
-  const firmName = 'Mock Firm Name';
-  const vendorId = 'vendor-123';
-
+const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
   const {
-    installUninstallListing,
-    isInstalling,
-    saveUnsaveListing,
-    requestListing,
-  } = useListingActions();
+    id,
+    name,
+    description,
+    contentType,
+    updatedAt,
+    imagesLink,
+    visibility,
+    ownedByFirm: { name: firmName, id: vendorId },
+  } = listing;
+  // const id = 'mock-id-123';
+  // const name = 'Mock Listing Name';
+  // const description =
+  //   'This is a mock description for the listing that contains some sample text to demonstrate the component.';
+  // const contentType = 'template';
+  // const updatedAt = '2024-01-15';
+  // const imagesLink = ['https://via.placeholder.com/300'];
+  // const visibility = 'public';
+  // const firmName = 'Mock Firm Name';
+  // const vendorId = 'vendor-123';
+
+  // const {
+  //   installUninstallListing,
+  //   isInstalling,
+  //   saveUnsaveListing,
+  //   requestListing,
+  // } = useListingActions();
 
   //this hook doesn't handle errors, hence we have to use optional chaining on request object
-  const { isSaved, isInstalled, isRequested, request } = useListingStatuses(
-    String(id)
-  );
+  // const { isSaved, isInstalled, isRequested, request } = useListingStatuses(
+  //   String(id)
+  // );
 
   // const handleSaveListing = () => {
   //   saveUnsaveListing(
@@ -79,11 +80,11 @@ const ListingCard = ({ listing }: { listing?: ListingType }) => {
   //     });
   // };
 
-  const buttonText = getButtonText(
-    isInstalled,
-    request?.requestStatus,
-    visibility
-  );
+  // const buttonText = getButtonText(
+  //   isInstalled,
+  //   request?.requestStatus,
+  //   visibility
+  // );
 
   const dataTip = {
     pending: 'The request is pending approval. Please check back later.',
@@ -158,9 +159,10 @@ const ListingCard = ({ listing }: { listing?: ListingType }) => {
               //   isInstalling
               // }
             >
-              {buttonText}
+              {/* {buttonText} */}
+              TODO
             </button>
-            {isRequested && !isInstalled && (
+            {/* {isRequested && !isInstalled && (
               <div
                 className='tooltip tooltip-left'
                 data-tip={
@@ -169,7 +171,7 @@ const ListingCard = ({ listing }: { listing?: ListingType }) => {
               >
                 <Tooltip />
               </div>
-            )}
+            )} */}
           </div>
 
           {/* SAVED LISTING BUTTON */}
@@ -177,7 +179,8 @@ const ListingCard = ({ listing }: { listing?: ListingType }) => {
             className='btn w-9/10 bg-transparent text-primary border-primary hover:bg-base-300'
             // onClick={handleSaveListing}
           >
-            {isSaved ? 'Unsave' : 'Save'}
+            TODO
+            {/* {isSaved ? 'Unsave' : 'Save'} */}
           </button>
         </div>
       </div>

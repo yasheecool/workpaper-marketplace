@@ -152,7 +152,7 @@ export type Database = {
         Row: {
           content_type: Database["public"]["Enums"]["listing_type"]
           created_at: string
-          created_by_user: string | null
+          created_by_user: string
           description: string
           entity_type: Database["public"]["Enums"]["entity_type"][]
           getting_started_steps: string | null
@@ -171,7 +171,7 @@ export type Database = {
         Insert: {
           content_type: Database["public"]["Enums"]["listing_type"]
           created_at?: string
-          created_by_user?: string | null
+          created_by_user: string
           description: string
           entity_type: Database["public"]["Enums"]["entity_type"][]
           getting_started_steps?: string | null
@@ -190,7 +190,7 @@ export type Database = {
         Update: {
           content_type?: Database["public"]["Enums"]["listing_type"]
           created_at?: string
-          created_by_user?: string | null
+          created_by_user?: string
           description?: string
           entity_type?: Database["public"]["Enums"]["entity_type"][]
           getting_started_steps?: string | null

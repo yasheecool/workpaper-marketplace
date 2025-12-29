@@ -32,39 +32,39 @@ const SearchFilters = () => {
       : [...current, value];
 
     next.delete(param);
-    updated.forEach((v) => next.append(param, v));
 
+    //reset pagination on filter change
+    next.delete('page');
+    updated.forEach((v) => next.append(param, v));
     router.replace(`?${next.toString()}`, { scroll: false });
   };
 
   return (
-    <div className='flex-col gap-4 hidden min-[992px]:flex min-[992px]:row-start-2 min-[992px]:col-start-1 justify-start'>
-      <Form action=''>
-        <CheckboxGroup
-          legend='Content Type'
-          optionsObj={listingTypeOptions}
-          name='content-type'
-          selectedValues={contentSelected}
-          onToggle={toggleValue}
-        />
+    <Form action=''>
+      <CheckboxGroup
+        legend='Content Type'
+        optionsObj={listingTypeOptions}
+        name='content-type'
+        selectedValues={contentSelected}
+        onToggle={toggleValue}
+      />
 
-        <CheckboxGroup
-          legend='Workpaper Type'
-          optionsObj={workpaperTypeOptions}
-          name='workpaper-type'
-          selectedValues={workpaperSelected}
-          onToggle={toggleValue}
-        />
+      <CheckboxGroup
+        legend='Workpaper Type'
+        optionsObj={workpaperTypeOptions}
+        name='workpaper-type'
+        selectedValues={workpaperSelected}
+        onToggle={toggleValue}
+      />
 
-        <CheckboxGroup
-          legend='Entity Type'
-          optionsObj={entityTypeOptions}
-          name='entity-type'
-          selectedValues={entitySelected}
-          onToggle={toggleValue}
-        />
-      </Form>
-    </div>
+      <CheckboxGroup
+        legend='Entity Type'
+        optionsObj={entityTypeOptions}
+        name='entity-type'
+        selectedValues={entitySelected}
+        onToggle={toggleValue}
+      />
+    </Form>
   );
 };
 
