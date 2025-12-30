@@ -1,9 +1,11 @@
-import HeroSection from './_components/HeroSection';
 import Container from '@/components/layout/Container';
-import { ListingSearchFilters } from '@/feature/listing';
+import {
+  ListingSearchFilters,
+  getMarketplaceListings,
+} from '@/feature/listing';
 import FilteringMetadataOverlay from './_components/FilteringMetadataOverlay';
+import HeroSection from './_components/HeroSection';
 import ListingDisplay from './_components/ListingDisplay';
-import { getMarketplaceListings } from '@/feature/listing/queries';
 import Pagination from '@/components/ui/Pagination';
 
 const page = async ({
@@ -21,6 +23,7 @@ const page = async ({
     totalPages,
   } = await getMarketplaceListings(params);
 
+  // TODO: Split this further and move fetching into one of the child components
   return (
     <>
       <HeroSection />
@@ -33,7 +36,12 @@ const page = async ({
 
           <div className='lg:col-span-9'>
             {/* Filtering Metadata + Overlay + Toggle Button */}
-            <FilteringMetadataOverlay />
+            <FilteringMetadataOverlay
+              count={count || 0}
+              currentPage={currentPage || 1}
+              totalPages={totalPages || 0}
+              itemsOnPage={count || 0}
+            />
 
             {/* LISTING DISPLAY + PAGINATION */}
             <div className='pt-5 grid grid-cols-1 gap-6 min-[992px]:col-start-2 min-[992px]:grid-rows-2'>

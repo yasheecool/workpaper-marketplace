@@ -12,6 +12,8 @@ export const workpaperTypeOptions: Record<WorkpaperType, string> = {
 
 export type EntityType = Database['public']['Enums']['entity_type'];
 
+export type RequestStatus = Database['public']['Enums']['request_status'];
+
 export const entityTypeOptions: Record<EntityType, string> = {
   individual: 'Individual',
   company: 'Company',
@@ -19,7 +21,7 @@ export const entityTypeOptions: Record<EntityType, string> = {
   partnership: 'Partnership',
 };
 
-export type ListingType = Database['public']['Enums']['listing_type'];
+export type ListingType = Database['public']['Enums']['listing_type']; // content_type
 
 export const listingTypeOptions: Record<ListingType, string> = {
   calculation: 'Calculation',
@@ -56,30 +58,4 @@ export type Listing = {
   ownedByFirm: string;
   updatedByUser: string;
   createdByUser: string;
-};
-
-export const mapListingFromDb = (listing: ListingRow): Listing => {
-  return {
-    id: listing.id,
-    createdAt: listing.created_at,
-    updatedAt: listing.updated_at,
-    name: listing.name,
-    description: listing.description,
-    longDescription: listing.long_description,
-    gettingStartedSteps: listing.getting_started_steps,
-    region: listing.region,
-    contentType: listing.content_type,
-    workpaperType: listing.workpaper_type,
-    entityType: listing.entity_type,
-    visibility: listing.visibility,
-    status: listing.status,
-    createdByUser: listing.created_by_user,
-    updatedByUser: listing.updated_by_user,
-    imagesLink: listing.images_link,
-    ownedByFirm: listing.owned_by_firm,
-  };
-};
-
-export const mapListingsFromDb = (listings: ListingRow[]): Listing[] => {
-  return listings.map((listing) => mapListingFromDb(listing));
 };

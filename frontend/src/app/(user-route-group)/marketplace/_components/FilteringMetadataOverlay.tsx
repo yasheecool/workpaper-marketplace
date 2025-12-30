@@ -3,21 +3,42 @@
 import { ListingSearchFilters } from '@/feature/listing';
 import { useState } from 'react';
 
-const FilteringMetadataOverlay = () => {
+interface FilteringMetadataOverlayProps {
+  count: number;
+  currentPage: number;
+  totalPages: number;
+  itemsOnPage: number;
+}
+
+const FilteringMetadataOverlay = ({
+  count,
+  currentPage,
+  totalPages,
+  itemsOnPage,
+}: FilteringMetadataOverlayProps) => {
   const [showOverlay, setShowOverlay] = useState<Boolean>(false);
+
+  // Calculate the range of items being displayed
+  const perPage = 10; // Should match the perPage value in queries.ts
+  const startItem = count > 0 ? (currentPage - 1) * perPage + 1 : 0;
+  const endItem = Math.min(currentPage * perPage, count);
 
   return (
     <>
       {/* FILTERING METADATA + OVERLAY TOGGLE BUTTON */}
       <div className='flex items-center justify-between mb-4'>
-        {/* {Boolean(totalPages) && (
-            )} */}
-        <span className='text-sm font-semibold'>
-          Showing {1} – {4} of {94} results{' '}
-          <span className='text-sm font-semibold text-gray-600'>
-            ( Page {1} of {1})
+        {count > 0 ? (
+          <span className='text-sm font-semibold'>
+            Showing {startItem} – {endItem} of {count} results{' '}
+            <span className='text-sm font-semibold text-gray-600'>
+              (Page {currentPage} of {totalPages})
+            </span>
           </span>
-        </span>
+        ) : (
+          <span className='text-sm font-semibold text-gray-600'>
+            No results found
+          </span>
+        )}
 
         <button
           className='btn btn-primary justify-self-end min-[992px]:hidden hover:bg-secondary-700'

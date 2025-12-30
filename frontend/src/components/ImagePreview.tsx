@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 const ImagePreview = ({
@@ -6,7 +8,7 @@ const ImagePreview = ({
   showCloseButton = true,
 }: {
   imgUrls: string[];
-  setUrls: (url: string) => void;
+  setUrls?: (url: string) => void;
   showCloseButton?: boolean;
 }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -22,10 +24,10 @@ const ImagePreview = ({
           <button
             type='button'
             className='absolute top-1 right-1 z-10 hover:cursor-pointer hover:scale-110 ease-in-out'
-            onClick={() => {
-              if (currentIdx !== 0) setCurrentIdx((prev) => prev - 1);
-              setUrls(imgUrls[currentIdx]);
-            }}
+            // onClick={() => {
+            //   if (currentIdx !== 0) setCurrentIdx((prev) => prev - 1);
+            //   setUrls(imgUrls[currentIdx]);
+            // }}
           >
             <svg
               xmlns='http://www.w3.org/2000/svg'

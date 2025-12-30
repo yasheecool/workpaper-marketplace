@@ -1,17 +1,22 @@
 'use client';
 import { capitalize } from 'lodash';
-// import { ListingType } from '@/types/schema';
 import { type MarketplaceListing } from '../types';
-import Image from 'next/image';
 import { formatDate } from '@/utils/formatDate';
-import {
-  useListingStatuses,
-  useListingActions,
-} from '@/hooks/react-query/helperHooks';
 import { toast } from 'react-toastify';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from 'next/link';
-import { getButtonText } from '@/utils/ui-utils';
+import {
+  saveListing,
+  installListing,
+  unsaveListing,
+  requestListing,
+} from '../actions';
+import {
+  getSavedButtonText,
+  getInstallButtonText,
+  isInstallButtonDisabled,
+} from '../utils';
+// import { getButtonText } from '@/utils/ui-utils';
 
 const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
   const {
@@ -23,68 +28,11 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
     imagesLink,
     visibility,
     ownedByFirm: { name: firmName, id: vendorId },
+    isSaved,
+    isInstalled,
+    isRequested,
+    requestStatus,
   } = listing;
-  // const id = 'mock-id-123';
-  // const name = 'Mock Listing Name';
-  // const description =
-  //   'This is a mock description for the listing that contains some sample text to demonstrate the component.';
-  // const contentType = 'template';
-  // const updatedAt = '2024-01-15';
-  // const imagesLink = ['https://via.placeholder.com/300'];
-  // const visibility = 'public';
-  // const firmName = 'Mock Firm Name';
-  // const vendorId = 'vendor-123';
-
-  // const {
-  //   installUninstallListing,
-  //   isInstalling,
-  //   saveUnsaveListing,
-  //   requestListing,
-  // } = useListingActions();
-
-  //this hook doesn't handle errors, hence we have to use optional chaining on request object
-  // const { isSaved, isInstalled, isRequested, request } = useListingStatuses(
-  //   String(id)
-  // );
-
-  // const handleSaveListing = () => {
-  //   saveUnsaveListing(
-  //     {
-  //       listingId: id,
-  //       action: isSaved ? 'unsave' : 'save',
-  //     },
-  //     {
-  //       onSuccess: (data) => toast.success(data.data.message),
-  //     }
-  //   );
-  // };
-
-  // const handleInstallRequestListing = () => {
-  //   if (
-  //     listing.visibility === 'public' ||
-  //     request?.requestStatus === 'approved'
-  //   )
-  //     installUninstallListing(
-  //       { listingId: String(id), action: 'install' },
-  //       {
-  //         onSuccess: (data) => {
-  //           toast.success('Listing installed successfully');
-  //         },
-  //       }
-  //     );
-  //   else if (listing.visibility === 'request_access')
-  //     requestListing(String(id), {
-  //       onSuccess: (data) => {
-  //         toast.success('Request sent successfully');
-  //       },
-  //     });
-  // };
-
-  // const buttonText = getButtonText(
-  //   isInstalled,
-  //   request?.requestStatus,
-  //   visibility
-  // );
 
   const dataTip = {
     pending: 'The request is pending approval. Please check back later.',
@@ -94,8 +42,33 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
       'The request has been rejected. Please contact the vendor support for more information.',
   };
 
+  const saveButtonText = getSavedButtonText(isSaved);
+  const installButtonText = getInstallButtonText(
+    visibility,
+    isRequested,
+    requestStatus,
+    isInstalled
+  );
+
+  const installButtonDisabled = isInstallButtonDisabled(
+    visibility,
+    isRequested,
+    requestStatus,
+    isInstalled
+  );
+
+  const handleInstallRequestListing = async () => {
+    //logic for install or request listing
+    await installListing(id);
+    toast.info('Feature coming soon!');
+  };
+
+  const handleSaveListing = () => {
+    toast.info('Feature coming soon!');
+  };
+
   return (
-    <div className='grid grid-cols-[2fr_3fr_minmax(40px,_220px)] gap-4 p-4 border border-gray-300 rounded-md hover:shadow-md transition-shadow ease-in-out bg-white'>
+    <div className='grid grid-cols-[2fr_3fr_minmax(40px,220px)] gap-4 p-4 border border-gray-300 rounded-md hover:shadow-md transition-shadow ease-in-out bg-white'>
       {/* IMAGE */}
       <div className='relative rounded-md flex justify-center items-center border-[0.5px] border-gray-300'>
         {imagesLink.length ? (
@@ -123,14 +96,17 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
           </h2>
         </Link>
 
-        <Link
-          href={`/vendor-details/${vendorId}`}
-          className='text-xs text-gray-600 hover:underline'
-        >
-          <p className='text-xs mb-4 text-gray-600'>
-            By <span className='link link-hover font-semibold'>{firmName}</span>
-          </p>
-        </Link>
+        <p className='text-xs mb-4 text-gray-600'>
+          By{' '}
+          <Link
+            href={`/vendor-details/${vendorId}`}
+            className='text-xs text-gray-600 hover:underline'
+          >
+            <span className='link link-hover font-semibold'>
+              {firmName}
+            </span>{' '}
+          </Link>
+        </p>
 
         <p className='text-sm text-gray-600'>
           {description.length > 100
@@ -151,23 +127,15 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
           <div className='flex items-center justify-between gap-2 mb-2'>
             <button
               className='btn btn-primary w-9/10'
-              // onClick={handleInstallRequestListing}
-              // disabled={true}
-              // disabled={
-              //   isInstalled ||
-              //   (isRequested && request?.requestStatus !== 'approved') ||
-              //   isInstalling
-              // }
+              onClick={handleInstallRequestListing}
+              disabled={installButtonDisabled}
             >
-              {/* {buttonText} */}
-              TODO
+              {installButtonText}
             </button>
             {/* {isRequested && !isInstalled && (
               <div
                 className='tooltip tooltip-left'
-                data-tip={
-                  dataTip[request.requestStatus as keyof typeof dataTip]
-                }
+                data-tip={dataTip[requestStatus as keyof typeof dataTip]}
               >
                 <Tooltip />
               </div>
@@ -177,10 +145,9 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
           {/* SAVED LISTING BUTTON */}
           <button
             className='btn w-9/10 bg-transparent text-primary border-primary hover:bg-base-300'
-            // onClick={handleSaveListing}
+            onClick={handleSaveListing}
           >
-            TODO
-            {/* {isSaved ? 'Unsave' : 'Save'} */}
+            {saveButtonText}
           </button>
         </div>
       </div>
