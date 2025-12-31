@@ -62,42 +62,41 @@ const page = async ({ params }: { params: { id: string } }) => {
     isInstalled
   );
 
+  const isRequestedMock = false;
+
   return (
     <section className='py-8 text-base-content'>
       {/* was isInstalled and isRequested */}
       <Container
-        styles={`grid gap-6 grid-rows-[auto_380px_1fr_auto] grid-cols-1 ${true || false ? 'grid-rows-[auto_auto_380px_1fr_auto]' : ''} lg:grid-cols-[7fr_minmax(275px,3fr)] lg:grid-rows-[380px_auto] lg:items-start`}
+        styles={`grid gap-6 grid-rows-[auto_auto_1fr_auto] grid-cols-1 lg:grid-cols-[7fr_minmax(70,3fr)] items-start`}
       >
         {/* ALERT MESSAGE */}
-        {/* {isInstalled || isRequested ? (
+        {isRequestedMock || isRequested ? (
+          <div role='alert' className={`alert lg:col-span-2`}>
             <div
-              role='alert'
-              className={`alert lg:col-span-2 row-end-1 flex flex-col gap-2 items-start`}
+              className={`flex items-center gap-2 ${true ? 'text-red-500' : 'text-primary'}`}
             >
-              <div
-                className={`flex items-center gap-2 ${isDeleted ? 'text-red-500' : 'text-secondary-600'}`}
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='size-6'
               >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='size-6'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z'
-                  />
-                </svg>
-                <p>{getAlertMessage()}</p>
-              </div>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z'
+                />
+              </svg>
+              <p>Alert message for requested, installed, deleted etc.</p>
             </div>
-          ) : null} */}
+          </div>
+        ) : null}
 
         {/* LISTING HEADER - Name, Save/Install/Request Access Buttons */}
-        <div className='flex flex-col gap-10 lg:order-3 order-2'>
+        <div className='flex flex-col gap-10 lg:col-start-2 '>
           <div className='grid grid-cols-[1fr_auto] gap-4 rounded-md bg-base-300 p-4'>
             <h1 className='text-2xl font-semibold'>{name}</h1>
 
@@ -136,7 +135,9 @@ const page = async ({ params }: { params: { id: string } }) => {
         </div>
 
         {/* LISTING IMAGES */}
-        <div className='order-3 overflow-hidden w-full relative h-full lg:order-2'>
+        <div
+          className={`overflow-hidden w-full relative h-96 ${isRequestedMock ? 'lg:row-start-2' : 'lg:row-start-1 '}`}
+        >
           {/* {listing.imagesLink.length ? (
               <ImagePreview
                 imgUrls={ []}
@@ -154,7 +155,7 @@ const page = async ({ params }: { params: { id: string } }) => {
         </div>
 
         {/* LISTING DESCRIPTIONS */}
-        <div className='rounded-md flex flex-col gap-8 order-4'>
+        <div className='rounded-md flex flex-col gap-8'>
           <div className='flex flex-col gap-6'>
             <div>
               <h2 className='text-xl font-semibold'>Short Description</h2>
@@ -189,7 +190,7 @@ const page = async ({ params }: { params: { id: string } }) => {
         </div>
 
         {/* ADDITIONAL DETAILS */}
-        <div className='bg-base-200 p-4 order-5'>
+        <div className='bg-base-300 p-4 rounded-b-md'>
           <h2 className='text-xl font-semibold mb-4'>Additional Details</h2>
           <div className='flex flex-col gap-2 text-sm'>
             <p>
