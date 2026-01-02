@@ -12,13 +12,10 @@ import {
   getInstallButtonText,
   isInstallButtonDisabled,
 } from '../utils';
-import { useTransition } from 'react';
 // import { getButtonText } from '@/utils/ui-utils'
 
 // TODO: split ListingCard into smaller components
 const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
-  // const { isSavingUnsaving, startSavingUnsaving } = useTransition();
-
   const {
     id,
     name,
@@ -43,12 +40,14 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
   };
 
   const saveButtonText = getSavedButtonText(isSaved);
+
   const installButtonText = getInstallButtonText(
     visibility,
     isRequested,
     requestStatus,
     isInstalled
   );
+
   const installButtonDisabled = isInstallButtonDisabled(
     visibility,
     isRequested,
@@ -63,15 +62,21 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
     toast.info('Feature coming soon!');
   };
 
-  const handleSaveListing = async () => {
-    toast.info('Feature coming soon!');
+  const handleSaveUnsaveListing = async () => {
+    const action = isSaved ? 'unsave' : 'save';
 
-    if (isSaved) {
-      const res = await saveListing(id, 'unsave');
-      console.log('Save Listing Response:', res);
-    } else {
-      const res = await saveListing(id, 'save');
-      console.log('Save Listing Response:', res);
+    try {
+      const res = await saveListing(id, action);
+
+      if (res.error) throw new Error(res.error.message);
+
+      toast.success(`Listing ${action}d successfully!`);
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while saving the listing.';
+      toast.error(errorMessage);
     }
   };
 
@@ -154,7 +159,7 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
           {/* SAVED LISTING BUTTON */}
           <button
             className='btn w-9/10 bg-transparent text-primary border-primary hover:bg-base-300'
-            onClick={async () => await handleSaveListing()}
+            onClick={handleSaveUnsaveListing}
           >
             {saveButtonText}
           </button>

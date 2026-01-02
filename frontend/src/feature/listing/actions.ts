@@ -38,7 +38,6 @@ export const saveListing = async (
       .eq('listing_id', listingId)
       .eq('saved_by_firm', firmId);
   }
-  console.log(`Save/Unsave Response:`, response);
 
   refresh(); // Refresh the cache to reflect changes
   return response;
