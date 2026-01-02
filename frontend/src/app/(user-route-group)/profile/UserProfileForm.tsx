@@ -14,7 +14,7 @@ type ImageObject = {
   url: string;
   file: File | null; //null for the cases if image is from the server
 };
-
+// Refactor component - styles and migrate logic to server components + supabase buckets
 const UserProfileForm = () => {
   const { data: userProfile, error } = useUser(); //get user from DB
 

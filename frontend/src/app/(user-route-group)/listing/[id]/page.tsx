@@ -13,6 +13,7 @@ import {
   getInstallButtonText,
 } from '@/feature/listing';
 
+// TODO: Split this page into client and server components
 const page = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
   const { data: listing, error } = await getListingById(String(id));
@@ -190,20 +191,16 @@ const page = async ({ params }: { params: { id: string } }) => {
         </div>
 
         {/* ADDITIONAL DETAILS */}
-        <div className='bg-base-300 p-4 rounded-b-md'>
+        <div className='bg-base-300 p-4 rounded-md'>
           <h2 className='text-xl font-semibold mb-4'>Additional Details</h2>
           <div className='flex flex-col gap-2 text-sm'>
             <p>
               Listing type:{' '}
-              <span className='badge badge-primary'>
-                {/* {listing?.contentType} */}
-                Listing's Content Type
-              </span>
+              <span className='badge badge-primary'>{contentType}</span>
             </p>
 
-            <p>Applicable for: Listing Entity Types</p>
-            <p>Workpaper Type: Listing Workpaper Types</p>
-            <p>Tags: Listing Tags</p>
+            <p>Applicable for: {entityType.join(', ')}</p>
+            <p>Workpaper Type: {workpaperType.join(', ')}</p>
           </div>
         </div>
       </Container>

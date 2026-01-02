@@ -5,20 +5,20 @@ import { formatDate } from '@/utils/formatDate';
 import { toast } from 'react-toastify';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from 'next/link';
-import {
-  saveListing,
-  installListing,
-  unsaveListing,
-  requestListing,
-} from '../actions';
+import Image from 'next/image';
+import { saveListing, installListing, requestListing } from '../actions';
 import {
   getSavedButtonText,
   getInstallButtonText,
   isInstallButtonDisabled,
 } from '../utils';
-// import { getButtonText } from '@/utils/ui-utils';
+import { useTransition } from 'react';
+// import { getButtonText } from '@/utils/ui-utils'
 
+// TODO: split ListingCard into smaller components
 const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
+  // const { isSavingUnsaving, startSavingUnsaving } = useTransition();
+
   const {
     id,
     name,
@@ -49,7 +49,6 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
     requestStatus,
     isInstalled
   );
-
   const installButtonDisabled = isInstallButtonDisabled(
     visibility,
     isRequested,
@@ -59,12 +58,21 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
 
   const handleInstallRequestListing = async () => {
     //logic for install or request listing
+    toast.info('install or request listing feature coming soon!');
     await installListing(id);
     toast.info('Feature coming soon!');
   };
 
-  const handleSaveListing = () => {
+  const handleSaveListing = async () => {
     toast.info('Feature coming soon!');
+
+    if (isSaved) {
+      const res = await saveListing(id, 'unsave');
+      console.log('Save Listing Response:', res);
+    } else {
+      const res = await saveListing(id, 'save');
+      console.log('Save Listing Response:', res);
+    }
   };
 
   return (
@@ -72,11 +80,12 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
       {/* IMAGE */}
       <div className='relative rounded-md flex justify-center items-center border-[0.5px] border-gray-300'>
         {imagesLink.length ? (
-          <img
-            src={imagesLink[0]}
+          <Image
+            src={'/undraw_approve.svg'}
             alt='listing image'
-            className='object-contain border-[0.5px] border-gray-300'
-            style={{ width: '100%', height: 'auto' }}
+            fill
+            className='object-contain border-[0.5px] border-gray-300 max'
+            // style={{ width: '100%', height: 'auto' }}
           />
         ) : (
           <div className='text-sm justify-center items-center flex'>
@@ -132,20 +141,20 @@ const ListingCard = ({ listing }: { listing: MarketplaceListing }) => {
             >
               {installButtonText}
             </button>
-            {/* {isRequested && !isInstalled && (
+            {isRequested && !isInstalled && (
               <div
                 className='tooltip tooltip-left'
                 data-tip={dataTip[requestStatus as keyof typeof dataTip]}
               >
                 <Tooltip />
               </div>
-            )} */}
+            )}
           </div>
 
           {/* SAVED LISTING BUTTON */}
           <button
             className='btn w-9/10 bg-transparent text-primary border-primary hover:bg-base-300'
-            onClick={handleSaveListing}
+            onClick={async () => await handleSaveListing()}
           >
             {saveButtonText}
           </button>
