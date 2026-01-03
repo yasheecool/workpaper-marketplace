@@ -81,13 +81,17 @@ export const getMarketplaceListings = async (params: {
 
   if (error) {
     console.error('Error fetching listings:', error);
-    return {
-      data: null,
-      error: error.message || 'an error occurred',
-      count: 0,
-      totalPages: 0,
-      currentPage: Number(page),
-    };
+
+    throw new Error(
+      error.message || 'An error occurred while fetching listings.'
+    );
+
+    // return {
+    //   data: null,
+    //   count: 0,
+    //   totalPages: 0,
+    //   currentPage: Number(page),
+    // };
   }
 
   const totalPages = count ? Math.ceil(count / PER_PAGE) : 0;
@@ -98,7 +102,6 @@ export const getMarketplaceListings = async (params: {
 
   return {
     data,
-    error: null,
     count,
     totalPages,
     currentPage: Number(page),

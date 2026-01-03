@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import ReactQueryProvider from '@/components/QueryProvider';
+import Providers from './providers';
 import { ToastContainer } from 'react-toastify';
 
 import Footer from '@/components/layout/Footer';
@@ -22,8 +22,10 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <ReactQueryProvider>{children}</ReactQueryProvider>
-        <ToastContainer position='bottom-right' />
+        <Providers>
+          {children}
+          <ToastContainer position='bottom-right' />
+        </Providers>
         <Footer />
       </body>
     </html>

@@ -1,7 +1,7 @@
 import { type MarketplaceListing } from '@/feature/listing/types';
-import { ListingCard } from '@/feature/listing';
+import ListingCard from './ListingCard';
 
-const ListingDisplay = ({ listings }: { listings: MarketplaceListing[] }) => {
+const Listings = ({ listings }: { listings: MarketplaceListing[] }) => {
   {
     listings.length === 0 && (
       <div>
@@ -18,4 +18,4 @@ const ListingDisplay = ({ listings }: { listings: MarketplaceListing[] }) => {
     </>
   );
 };
-export default ListingDisplay;
+export default Listings;
