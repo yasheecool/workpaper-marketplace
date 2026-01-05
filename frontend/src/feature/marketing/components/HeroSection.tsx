@@ -1,10 +1,8 @@
 import Image from 'next/image';
-import useMockLogin from '@/hooks/useLogin';
+
 import Container from '@/components/layout/Container';
 
 const HeroSection = () => {
-  const { login } = useMockLogin();
-
   return (
     <section className='bg-linear-to-br from-[#c9ccffa0] to-[#edd7fbba]  py-20 lg:py-28'>
       <Container styles='flex flex-col items-center gap-8 lg:flex-row'>
@@ -18,10 +16,7 @@ const HeroSection = () => {
           </p>
           <div>
             <button className='btn btn-primary mr-2'>Sign Up</button>
-            <button
-              className='btn bg-transparent  border-primary  text-primary hover:bg-base-200'
-              onClick={login}
-            >
+            <button className='btn bg-transparent  border-primary  text-primary hover:bg-base-200'>
               Log In
             </button>
           </div>
@@ -55,4 +50,5 @@ const HeroSection = () => {
     </section>
   );
 };
+
 export default HeroSection;

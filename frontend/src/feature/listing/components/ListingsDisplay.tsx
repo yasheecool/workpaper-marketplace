@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { getMarketplaceListings } from '../queries';
+import { getMarketplaceListings } from '../dbQueries';
 import FilteringMetadataOverlay from './FilteringMetadataOverlay';
 import Listings from './Listings';
 import Pagination from '@/components/ui/Pagination';
@@ -15,14 +15,14 @@ const ListingsDisplay = ({
   initialData?: Awaited<ReturnType<typeof getMarketplaceListings>>;
 }) => {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['marketplaceListings', params],
+    queryKey: ['marketplace-listings', params],
     queryFn: () => getMarketplaceListings(params),
     // initialData: initialData,
   });
 
-  useEffect(() => {
-    console.log('ListingsDisplay data:', data);
-  }, [data]);
+  // useEffect(() => {
+  //   console.log('ListingsDisplay data:', data);
+  // }, [data]);
 
   if (isLoading) {
     return (
@@ -62,4 +62,5 @@ const ListingsDisplay = ({
     </>
   );
 };
+
 export default ListingsDisplay;

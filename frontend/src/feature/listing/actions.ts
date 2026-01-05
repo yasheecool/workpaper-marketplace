@@ -2,12 +2,28 @@
 import { getUserClaims } from '../user';
 import { getFirmsContext } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
-import { refresh } from 'next/cache';
 
 export const installListing = async (listingId: string) => {
   const userClaims = await getUserClaims();
-  console.log('User Claims:', userClaims);
-  //logic to install listing
+  const { sub: userId } = userClaims;
+  const { currentFirm } = await getFirmsContext();
+
+  const firmId = currentFirm!!.id;
+
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.from('installed_listing').insert({
+    installed_by_user: userId,
+    installed_by_firm: firmId,
+    listing_id: listingId,
+  });
+
+  if (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+
+  return { data };
 };
 
 export const saveListing = async (
@@ -39,10 +55,28 @@ export const saveListing = async (
       .eq('saved_by_firm', firmId);
   }
 
-  refresh(); // Refresh the cache to reflect changes
   return response;
 };
 
 export const requestListing = async (listingId: string) => {
-  //logic to request listing access
+  const userClaims = await getUserClaims();
+  const { sub: userId } = userClaims;
+  const { currentFirm } = await getFirmsContext();
+
+  const firmId = currentFirm!!.id;
+
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.from('listing_access_control').insert({
+    requested_by_user: userId,
+    requested_by_firm: firmId,
+    listing_id: listingId,
+  });
+
+  if (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+
+  return { data };
 };

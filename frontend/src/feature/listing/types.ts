@@ -5,10 +5,6 @@ import {
 } from '@/types/domain/listing';
 
 export type ListingStatusesFromDb = {
-  owned_by_firm: {
-    id: string;
-    name: string;
-  };
   saved_listing: {
     id: string;
     saved_by_firm: string;
@@ -19,7 +15,7 @@ export type ListingStatusesFromDb = {
   }[];
   listing_access_control: {
     id: string;
-    requested_by_firm_id: string;
+    requested_by_firm: string;
     request_status: RequestStatus;
   }[];
 };
@@ -32,6 +28,14 @@ export type MarketplaceListingFromDb = {
   updated_at: string;
   images_link: string[];
   visibility: string;
+  isSaved: boolean;
+  isInstalled: boolean;
+  isRequested: boolean;
+  requestStatus: RequestStatus | null;
+  owned_by_firm: {
+    id: string;
+    name: string;
+  };
 } & ListingStatusesFromDb;
 
 type ListingStatuses = {
@@ -39,10 +43,6 @@ type ListingStatuses = {
   isInstalled: boolean;
   isRequested: boolean;
   requestStatus: RequestStatus | null;
-  ownedByFirm: {
-    id: string;
-    name: string;
-  };
 };
 
 export type MarketplaceListing = {
@@ -74,15 +74,10 @@ export const mapMarketplaceListingFromDb = (
       id: listing.owned_by_firm.id,
       name: listing.owned_by_firm.name,
     },
-    isSaved:
-      Array.isArray(listing.saved_listing) && listing.saved_listing.length > 0,
-    isInstalled:
-      Array.isArray(listing.installed_listing) &&
-      listing.installed_listing.length > 0,
-    isRequested:
-      Array.isArray(listing.listing_access_control) &&
-      listing.listing_access_control.length > 0,
-    requestStatus: listing.listing_access_control?.[0]?.request_status || null,
+    isSaved: listing.isSaved,
+    isInstalled: listing.isInstalled,
+    isRequested: listing.isRequested,
+    requestStatus: listing.requestStatus,
   };
 };
 

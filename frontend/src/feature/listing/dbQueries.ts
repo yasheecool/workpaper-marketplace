@@ -9,8 +9,15 @@ import {
 } from './types';
 import { type ListingRow } from '@/types/domain/listing';
 import { getFirmsContext } from '@/feature/firm';
+import listings from '@/mockData/listings';
 
-type ListingWithStatusesFromDb = ListingRow & ListingStatusesFromDb;
+type ListingWithStatusesFromDb = ListingRow &
+  ListingStatusesFromDb & {
+    owned_by_firm: {
+      id: string;
+      name: string;
+    };
+  };
 
 const SELECT_FIELDS = `
   id,
@@ -21,9 +28,9 @@ const SELECT_FIELDS = `
   images_link,
   visibility,
   owned_by_firm:firm!listing_owned_by_firm_fkey(id, name),
-  saved_listing!saved_listing_listing_id_fkey(id, saved_by_firm),
-  installed_listing!installed_listing_listing_id_fkey(id, installed_by_firm),
-  listing_access_control!listing_access_control_listing_id_fkey(id, requested_by_firm_id, request_status)
+  saved_listing(id, saved_by_firm),
+  installed_listing(id, installed_by_firm),
+  listing_access_control(id, requested_by_firm, request_status)
 `;
 
 export const getMarketplaceListings = async (params: {
@@ -32,25 +39,19 @@ export const getMarketplaceListings = async (params: {
   const supabase = await createClient();
   const { currentFirm } = await getFirmsContext();
 
-  const { search, page = 1 } = params;
+  const { search, page } = params;
   const contentType = params['content-type'];
   const workpaperType = params['workpaper-type'];
   const entityType = params['entity-type'];
   const PER_PAGE = 10;
+  const pageNum = Number(page) || 1;
 
   const query = supabase
     .from('listing')
     .select(SELECT_FIELDS, {
       count: 'estimated',
     })
-    .range((Number(page) - 1) * PER_PAGE, Number(page) * PER_PAGE - 1);
-
-  // Filter the joined tables to only show records for current firm
-  if (currentFirm?.id) {
-    query.eq('saved_listing.saved_by_firm', currentFirm.id);
-    query.eq('installed_listing.installed_by_firm', currentFirm.id);
-    query.eq('listing_access_control.requested_by_firm_id', currentFirm.id);
-  }
+    .range((pageNum - 1) * PER_PAGE, pageNum * PER_PAGE - 1);
 
   if (search && typeof search === 'string' && search.trim().length > 0) {
     query.textSearch('name', search.trim(), {
@@ -85,26 +86,25 @@ export const getMarketplaceListings = async (params: {
     throw new Error(
       error.message || 'An error occurred while fetching listings.'
     );
-
-    // return {
-    //   data: null,
-    //   count: 0,
-    //   totalPages: 0,
-    //   currentPage: Number(page),
-    // };
   }
+  const listingsWithStatus = listingsFromDb?.map((listing) =>
+    listingWithDerivedStatuses(
+      listing as unknown as ListingWithStatusesFromDb,
+      currentFirm!!.id
+    )
+  );
 
   const totalPages = count ? Math.ceil(count / PER_PAGE) : 0;
 
   const data = mapMarketplaceListingsFromDb(
-    listingsFromDb as unknown as MarketplaceListingFromDb[]
+    listingsWithStatus as unknown as MarketplaceListingFromDb[]
   );
 
   return {
     data,
     count,
     totalPages,
-    currentPage: Number(page),
+    currentPage: pageNum,
   };
 };
 
@@ -118,7 +118,7 @@ export const getListingById = async (listingId: string) => {
       owned_by_firm:firm!listing_owned_by_firm_fkey(id, name),
       saved_listing!saved_listing_listing_id_fkey(id, saved_by_firm),
       installed_listing!installed_listing_listing_id_fkey(id, installed_by_firm),
-      listing_access_control!listing_access_control_listing_id_fkey(id, requested_by_firm_id, request_status)`
+      listing_access_control!listing_access_control_listing_id_fkey(id, requested_by_firm, request_status)`
     )
     .eq('id', listingId)
     .single();
@@ -131,3 +131,38 @@ export const getListingById = async (listingId: string) => {
 
   return { data: listing, error: null };
 };
+
+//function that checks if a listing is saved, installed, or requested by the current firm
+function listingWithDerivedStatuses(
+  listing: ListingWithStatusesFromDb,
+  currentFirmId: string
+) {
+  const isSaved =
+    Array.isArray(listing.saved_listing) &&
+    listing.saved_listing.some((save) => save.saved_by_firm === currentFirmId);
+
+  const isInstalled =
+    Array.isArray(listing.installed_listing) &&
+    listing.installed_listing.some(
+      (install) => install.installed_by_firm === currentFirmId
+    );
+
+  const isRequested =
+    Array.isArray(listing.listing_access_control) &&
+    listing.listing_access_control.some(
+      (request) => request.requested_by_firm === currentFirmId
+    );
+
+  const requestStatus =
+    listing.listing_access_control?.find(
+      (request) => request.requested_by_firm === currentFirmId
+    )?.request_status || null;
+
+  return {
+    isSaved,
+    isInstalled,
+    isRequested,
+    requestStatus,
+    ...listing,
+  };
+}

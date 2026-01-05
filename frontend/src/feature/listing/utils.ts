@@ -1,5 +1,5 @@
 export const getSavedButtonText = (isSaved: boolean) =>
-  isSaved ? 'Unsave' : 'Save';
+  isSaved ? 'unsave' : 'save';
 
 export const getInstallButtonText = (
   visibility: string,
@@ -7,14 +7,15 @@ export const getInstallButtonText = (
   requestStatus: string | null,
   isInstalled: boolean
 ) => {
-  if (visibility === 'request_access') return 'Request';
+  if (isInstalled) return 'Installed';
 
   if (isRequested) {
     if (requestStatus === 'pending') return 'Requested';
     if (requestStatus === 'rejected') return 'Rejected';
     // if (requestStatus === 'approved') return 'Install';
   }
-  if (isInstalled) return 'Installed';
+
+  if (visibility === 'request_access') return 'Request';
 
   return 'Install'; //for public listings not yet installed and for approved requests
 };

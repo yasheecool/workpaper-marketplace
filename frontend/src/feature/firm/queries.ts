@@ -31,8 +31,7 @@ export async function getFirmsContext() {
 
   const firms = mapFirmsFromDb(firmsFromDb as FirmRow[]);
 
-  const currentFirm =
-    firms.find((f) => f.id === currentFirmIdFromCookies) || null;
+  const currentFirm = firms.find((f) => f.id === currentFirmIdFromCookies);
 
   return { allUserFirms: firms, currentFirm };
 }

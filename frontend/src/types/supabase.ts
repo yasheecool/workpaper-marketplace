@@ -238,8 +238,8 @@ export type Database = {
           id: string
           listing_id: string
           request_status: Database["public"]["Enums"]["request_status"]
-          requested_by_firm_id: string
-          requested_by_user_id: string
+          requested_by_firm: string
+          requested_by_user: string
         }
         Insert: {
           actioned_at?: string | null
@@ -248,8 +248,8 @@ export type Database = {
           id?: string
           listing_id: string
           request_status?: Database["public"]["Enums"]["request_status"]
-          requested_by_firm_id: string
-          requested_by_user_id: string
+          requested_by_firm: string
+          requested_by_user: string
         }
         Update: {
           actioned_at?: string | null
@@ -258,8 +258,8 @@ export type Database = {
           id?: string
           listing_id?: string
           request_status?: Database["public"]["Enums"]["request_status"]
-          requested_by_firm_id?: string
-          requested_by_user_id?: string
+          requested_by_firm?: string
+          requested_by_user?: string
         }
         Relationships: [
           {
@@ -271,14 +271,14 @@ export type Database = {
           },
           {
             foreignKeyName: "listing_access_control_requested_by_firm_id_fkey"
-            columns: ["requested_by_firm_id"]
+            columns: ["requested_by_firm"]
             isOneToOne: false
             referencedRelation: "firm"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "listing_access_control_requested_by_user_id_fkey"
-            columns: ["requested_by_user_id"]
+            columns: ["requested_by_user"]
             isOneToOne: false
             referencedRelation: "user"
             referencedColumns: ["id"]
