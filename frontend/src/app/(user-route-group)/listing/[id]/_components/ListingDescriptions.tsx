@@ -1,12 +1,12 @@
 import Link from 'next/link';
 
-interface ListingDescriptionsProps {
+type ListingDescriptionsProps = {
   description: string;
-  longDescription: string;
-  gettingStartedSteps: string;
+  longDescription: string | null;
+  gettingStartedSteps: string | null;
   vendorId: string;
   vendorName: string;
-}
+};
 
 const ListingDescriptions = ({
   description,
@@ -34,9 +34,11 @@ const ListingDescriptions = ({
         </div>
       </div>
 
+      {/* Listing Support */}
       <div>
         <h2 className='text-xl font-semibold'>Listing Support</h2>
         <p>Support Email: Support Email</p>
+
         <p>
           Vendor Information:{' '}
           <Link href={`/vendor-details/${vendorId}`}>
@@ -47,5 +49,4 @@ const ListingDescriptions = ({
     </div>
   );
 };
-
 export default ListingDescriptions;

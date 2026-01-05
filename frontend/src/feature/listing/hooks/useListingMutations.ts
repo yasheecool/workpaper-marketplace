@@ -3,14 +3,18 @@ import { toast } from 'react-toastify';
 import { saveListing, installListing, requestListing } from '../actions';
 import { getQueryClient } from '@/lib/queryClient';
 
+const invalidateListingQueries = (listingId: string) => {
+  const client = getQueryClient();
+  client.invalidateQueries({ queryKey: ['listing', listingId] });
+  client.invalidateQueries({ queryKey: ['marketplace-listings'] });
+};
+
 export const useSaveListingMutation = (id: string) => {
   return useMutation({
     mutationFn: (type: 'save' | 'unsave') => saveListing(id, type),
     onSuccess: (_, variables) => {
       toast.success(`Listing ${variables}d successfully!`);
-      getQueryClient().invalidateQueries({
-        queryKey: ['marketplace-listings'],
-      });
+      invalidateListingQueries(id);
     },
     onError: (error: unknown) => {
       const errorMessage =
@@ -27,9 +31,7 @@ export const useInstallListingMutation = (id: string) => {
     mutationFn: () => installListing(id),
     onSuccess: () => {
       toast.success(`Listing installed successfully!`);
-      getQueryClient().invalidateQueries({
-        queryKey: ['marketplace-listings'],
-      });
+      invalidateListingQueries(id);
     },
     onError: (error: unknown) => {
       const errorMessage =
@@ -46,9 +48,7 @@ export const useRequestListingMutation = (id: string) => {
     mutationFn: () => requestListing(id),
     onSuccess: () => {
       toast.success(`Listing request sent successfully!`);
-      getQueryClient().invalidateQueries({
-        queryKey: ['marketplace-listings'],
-      });
+      invalidateListingQueries(id);
     },
     onError: (error: unknown) => {
       const errorMessage =

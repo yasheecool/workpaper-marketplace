@@ -35,3 +35,11 @@ export const isInstallButtonDisabled = (
   }
   return false; //for public listings not yet installed and for approved requests
 };
+
+export const REQUEST_STATUS_MESSAGES = {
+  pending: 'The request is pending approval. Please check back later.',
+  approved:
+    'The request has been approved. You can proceed with the installation.',
+  rejected:
+    'The request has been rejected. Please contact the vendor support for more information.',
+} as const;

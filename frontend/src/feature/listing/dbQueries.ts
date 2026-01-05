@@ -131,7 +131,7 @@ export const getListingById = async (listingId: string) => {
     currentFirmId
   );
   const listing = mapListingFromDb(listingWithStatuses); // ✅ Now works without union type error
-  return { data: listing };
+  return listing;
 };
 
 //function that checks if a listing is saved, installed, or requested by the current firm

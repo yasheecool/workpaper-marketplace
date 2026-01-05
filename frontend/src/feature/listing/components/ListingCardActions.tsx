@@ -13,6 +13,7 @@ import {
 } from '../utils';
 import { formatDate } from '@/utils/formatDate';
 import { capitalize } from 'lodash';
+import { REQUEST_STATUS_MESSAGES } from '../utils';
 
 interface ListingCardActionsProps {
   id: string;
@@ -23,14 +24,6 @@ interface ListingCardActionsProps {
   isRequested: boolean;
   requestStatus: 'pending' | 'approved' | 'rejected' | null;
 }
-
-const REQUEST_STATUS_MESSAGES = {
-  pending: 'The request is pending approval. Please check back later.',
-  approved:
-    'The request has been approved. You can proceed with the installation.',
-  rejected:
-    'The request has been rejected. Please contact the vendor support for more information.',
-} as const;
 
 const ListingCardActions = ({
   id,
