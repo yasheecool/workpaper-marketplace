@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { getMarketplaceListings } from '../dbQueries';
 import FilteringMetadataOverlay from './FilteringMetadataOverlay';
 import Listings from './Listings';
@@ -9,7 +8,6 @@ import { useQuery } from '@tanstack/react-query';
 
 const ListingsDisplay = ({
   params,
-  initialData,
 }: {
   params: { [key: string]: string | string[] | undefined };
   initialData?: Awaited<ReturnType<typeof getMarketplaceListings>>;
@@ -17,12 +15,7 @@ const ListingsDisplay = ({
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['marketplace-listings', params],
     queryFn: () => getMarketplaceListings(params),
-    // initialData: initialData,
   });
-
-  // useEffect(() => {
-  //   console.log('ListingsDisplay data:', data);
-  // }, [data]);
 
   if (isLoading) {
     return (

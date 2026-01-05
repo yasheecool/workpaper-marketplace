@@ -5,19 +5,16 @@ import {
   type MarketplaceListingFromDb,
   mapMarketplaceListingsFromDb,
   mapListingFromDb,
-  ListingStatusesFromDb,
+  ListingFromDb,
+  ListingStatuses,
 } from './types';
 import { type ListingRow } from '@/types/domain/listing';
 import { getFirmsContext } from '@/feature/firm';
-import listings from '@/mockData/listings';
 
-type ListingWithStatusesFromDb = ListingRow &
-  ListingStatusesFromDb & {
-    owned_by_firm: {
-      id: string;
-      name: string;
-    };
-  };
+// type ListingWithStatusesFromDb = ListingRow &
+//   ListingStatusesFromDb & {
+//     owned_by_firm: FirmReference;
+//   };
 
 const SELECT_FIELDS = `
   id,
@@ -87,18 +84,16 @@ export const getMarketplaceListings = async (params: {
       error.message || 'An error occurred while fetching listings.'
     );
   }
-  const listingsWithStatus = listingsFromDb?.map((listing) =>
+  const listingsWithStatus = listingsFromDb!!.map((listing) =>
     listingWithDerivedStatuses(
-      listing as unknown as ListingWithStatusesFromDb,
+      listing as unknown as MarketplaceListingFromDb,
       currentFirm!!.id
     )
   );
 
   const totalPages = count ? Math.ceil(count / PER_PAGE) : 0;
 
-  const data = mapMarketplaceListingsFromDb(
-    listingsWithStatus as unknown as MarketplaceListingFromDb[]
-  );
+  const data = mapMarketplaceListingsFromDb(listingsWithStatus);
 
   return {
     data,
@@ -110,33 +105,39 @@ export const getMarketplaceListings = async (params: {
 
 export const getListingById = async (listingId: string) => {
   const supabase = await createClient();
+  const { currentFirm } = await getFirmsContext();
+  const currentFirmId = currentFirm!!.id;
 
   const { data: listingFromDb, error } = await supabase
     .from('listing')
     .select(
       `*, 
       owned_by_firm:firm!listing_owned_by_firm_fkey(id, name),
-      saved_listing!saved_listing_listing_id_fkey(id, saved_by_firm),
-      installed_listing!installed_listing_listing_id_fkey(id, installed_by_firm),
-      listing_access_control!listing_access_control_listing_id_fkey(id, requested_by_firm, request_status)`
+      saved_listing(id, saved_by_firm),
+      installed_listing(id, installed_by_firm),
+      listing_access_control(id, requested_by_firm, request_status)`
     )
     .eq('id', listingId)
     .single();
 
   if (error) {
-    console.error('Error fetching listing by ID:', error);
-    return { data: null, error: error.message || 'an error occurred' };
+    throw new Error(
+      error.message || 'An error occurred while fetching the listing.'
+    );
   }
-  const listing = mapListingFromDb(listingFromDb as ListingWithStatusesFromDb);
 
-  return { data: listing, error: null };
+  const listingWithStatuses = listingWithDerivedStatuses(
+    listingFromDb as ListingFromDb,
+    currentFirmId
+  );
+  const listing = mapListingFromDb(listingWithStatuses); // ✅ Now works without union type error
+  return { data: listing };
 };
 
 //function that checks if a listing is saved, installed, or requested by the current firm
-function listingWithDerivedStatuses(
-  listing: ListingWithStatusesFromDb,
-  currentFirmId: string
-) {
+function listingWithDerivedStatuses<
+  T extends ListingFromDb | MarketplaceListingFromDb,
+>(listing: T, currentFirmId: string): T & ListingStatuses {
   const isSaved =
     Array.isArray(listing.saved_listing) &&
     listing.saved_listing.some((save) => save.saved_by_firm === currentFirmId);
@@ -159,10 +160,10 @@ function listingWithDerivedStatuses(
     )?.request_status || null;
 
   return {
+    ...listing,
     isSaved,
     isInstalled,
     isRequested,
     requestStatus,
-    ...listing,
-  };
+  } as T & ListingStatuses;
 }

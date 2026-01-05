@@ -12,16 +12,26 @@ import {
   getSavedButtonText,
   getInstallButtonText,
 } from '@/feature/listing';
+import { capitalize } from 'lodash';
+// import { useQuery } from '@tanstack/react-query';
 
-// TODO: Split this page into client and server components
-const page = async ({ params }: { params: { id: string } }) => {
+const ListingDetailsPage = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
-  const { data: listing, error } = await getListingById(String(id));
+  const { data: listing } = await getListingById(String(id));
+  // const {
+  //   data: listing,
+  //   isLoading,
+  //   isError,
+  //   error,
+  // } = useQuery({
+  //   queryKey: ['listing', id],
+  //   queryFn: () => getListingById(String(id)),
+  // });
 
   if (!listing) {
     return (
       <div className='min-h-[calc(100vh-70px)] flex items-center justify-center'>
-        <p className='text-red-500'>Error loading listing: {error}</p>
+        <p className='text-red-500'>Error loading listing</p>
       </div>
     );
   }
@@ -63,7 +73,7 @@ const page = async ({ params }: { params: { id: string } }) => {
     isInstalled
   );
 
-  const isRequestedMock = false;
+  const isRequestedMock = true;
 
   return (
     <section className='py-8 text-base-content'>
@@ -107,7 +117,7 @@ const page = async ({ params }: { params: { id: string } }) => {
                 // onClick={handleSaveListing}
                 // disabled={isDeleted}
               >
-                {saveButtonText}
+                {capitalize(saveButtonText)}
               </button>
               {/* TODO: add disabled styles for this button */}
               <button
@@ -139,15 +149,6 @@ const page = async ({ params }: { params: { id: string } }) => {
         <div
           className={`overflow-hidden w-full relative h-96 ${isRequestedMock ? 'lg:row-start-2' : 'lg:row-start-1 '}`}
         >
-          {/* {listing.imagesLink.length ? (
-              <ImagePreview
-                imgUrls={ []}
-                setUrls={() => {}}
-                showCloseButton={false}
-              />
-            ) : (
-              <div className=''>No images available</div>
-            )} */}
           <ImagePreview
             imgUrls={[]}
             // setUrls={}
@@ -208,4 +209,4 @@ const page = async ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default page;
+export default ListingDetailsPage;

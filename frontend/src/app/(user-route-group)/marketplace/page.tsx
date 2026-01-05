@@ -1,8 +1,5 @@
 import Container from '@/components/layout/Container';
-import { getMarketplaceListings } from '@/feature/listing';
-
 import HeroSection from './_components/HeroSection';
-
 import { ListingsDisplay, ListingSearchFilters } from '@/feature/listing';
 
 const MarketplacePage = async ({
@@ -11,7 +8,6 @@ const MarketplacePage = async ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const params = await searchParams;
-  // const initialData = await getMarketplaceListings(params);
 
   return (
     <>
