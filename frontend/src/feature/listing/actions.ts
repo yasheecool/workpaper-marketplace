@@ -1,5 +1,5 @@
 'use server';
-import { getUserClaims } from '../user';
+import { getUserClaims } from '../auth';
 import { getFirmsContext } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
 

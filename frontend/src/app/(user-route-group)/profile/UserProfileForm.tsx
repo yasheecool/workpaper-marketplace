@@ -3,94 +3,163 @@ import LabelText from '@/components/input/LabelText';
 import { useForm } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import useUser from '@/hooks/react-query/user/useUser';
-import { useUpdateUserProfile } from '@/hooks/react-query/user';
-import { userProfileFormSchema, UserProfileType } from '@/types/schema';
+import { userProfileFormSchema, UserProfileType } from '@/feature/user';
 import { getChangedFields } from '@/utils/getChangedFields';
-import { uploadToCloudinary } from '@/lib/cloudinary';
 import { toast } from 'react-toastify';
+import { FieldErrors } from 'react-hook-form';
+import { type User } from '@/types/domain/user';
+import { updateUserProfile } from '@/feature/user/actions';
+import {
+  deleteProfileImage,
+  uploadProfileImage,
+  getProfileImageUrl,
+} from '@/lib/supabase/storage';
+import Image from 'next/image';
 
 type ImageObject = {
   url: string;
   file: File | null; //null for the cases if image is from the server
 };
-// Refactor component - styles and migrate logic to server components + supabase buckets
-const UserProfileForm = () => {
-  const { data: userProfile, error } = useUser(); //get user from DB
 
+const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
   const {
     handleSubmit,
-    reset,
     register,
     formState: { isSubmitting },
   } = useForm<UserProfileType>({
     resolver: zodResolver(userProfileFormSchema),
+    defaultValues: userProfile,
   });
 
-  const { mutate: update, data } = useUpdateUserProfile();
+  const onError = (errors: FieldErrors<UserProfileType>) => {
+    const firstErrorField = Object.values(errors)[0];
+    if (firstErrorField && firstErrorField.message) {
+      toast.error(firstErrorField.message.toString());
+    }
+  };
 
   const [userProfileImage, setUserProfileImage] = useState<ImageObject | null>(
-    null
+    userProfile.profileImage
+      ? { url: '', file: null } // Set empty initially
+      : null
   );
+
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (userProfile) {
-      reset(userProfile);
-      userProfile.profileImage &&
-        setUserProfileImage({
-          url: userProfile.profileImage,
-          file: null,
-        });
-    }
-  }, [userProfile]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLocalImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
-    if (!file) return console.log('No file selected');
+    if (!file) return toast.error('No file selected');
+
     setUserProfileImage({
       url: URL.createObjectURL(file),
       file: file,
     });
+
     if (inputRef.current) inputRef.current.value = ''; //Clear the image input field
   };
 
-  const onSubmit = async (data: UserProfileType) => {
-    // console.log('Data:', data);
-    const changedFields = getChangedFields(data, userProfile);
+  const removeImage = () => {
+    URL.revokeObjectURL(userProfileImage?.url || ''); //free up memory
+    setUserProfileImage(null);
+  };
 
-    if (
-      userProfileImage?.file &&
-      userProfileImage?.url !== userProfile.profileImage //and the new image is different from the existing one
-    ) {
-      const url = await uploadToCloudinary(userProfileImage.file);
+  const handleServerImageUpload = async (
+    changedFields: Record<string, any>
+  ) => {
+    //case 1: user had no image, and uploaded one
+    if (userProfile.profileImage === null && userProfileImage) {
+      //upload image and get url
+      const url = await uploadProfileImage(
+        userProfileImage.file as File,
+        userProfile.id
+      );
       changedFields.profileImage = url;
-    } else if (userProfileImage === null && userProfile.profileImage) {
-      // the above if statement checks if the user has removed the image
+    }
+
+    //case 2: user had an image, and removed it
+    if (userProfile.profileImage && userProfileImage === null) {
+      await deleteProfileImage(userProfile.profileImage);
       changedFields.profileImage = null;
+    }
+
+    //case 3: user had an image, and changed it
+    if (
+      userProfileImage?.url &&
+      userProfileImage.url !== userProfile.profileImage
+    ) {
+      const url = await uploadProfileImage(
+        userProfileImage.file as File,
+        userProfile.id
+      );
+      changedFields.profileImage = url;
+    }
+    return changedFields;
+  };
+
+  const onSubmit = async (data: UserProfileType) => {
+    let changedFields = getChangedFields(data, userProfile);
+
+    try {
+      changedFields = await handleServerImageUpload(changedFields);
+    } catch (e) {
+      console.log('Error in image upload handling');
+      console.error('Error uploading profile image:', e);
+      toast.error(
+        e instanceof Error
+          ? e.message
+          : 'An error occurred while uploading the profile image.'
+      );
+      return;
     }
 
     if (Object.keys(changedFields).length === 0) {
       toast.info('No changes made to the profile');
       return;
     }
-    // console.log('Changed Fields:', changedFields);
-    update(changedFields, {
-      onSuccess: (data) => {
-        const updatedProfile = data.data;
-        reset(updatedProfile);
-        toast.success('Profile updated successfully');
-      },
-    });
+
+    // Type-safe snake_case conversion
+    const snakeCaseChangedFields: Record<string, any> = {};
+
+    (Object.keys(changedFields) as Array<keyof typeof changedFields>).forEach(
+      (key) => {
+        const snakeCaseKey = key.replace(
+          /[A-Z]/g,
+          (letter) => `_${letter.toLowerCase()}`
+        );
+        snakeCaseChangedFields[snakeCaseKey] = changedFields[key];
+      }
+    );
+
+    try {
+      const data = await updateUserProfile(snakeCaseChangedFields);
+      console.log(data);
+      toast.success('Profile updated successfully!');
+    } catch (e) {
+      console.error('Error updating profile:', e);
+      toast.error(
+        e instanceof Error
+          ? e.message
+          : 'An error occurred while updating the profile.'
+      );
+      return;
+    }
   };
 
-  //this form can be further split up by using an object, which can be used to render the input fields dynamically while also passing the props
+  useEffect(() => {
+    if (userProfile.profileImage) {
+      getProfileImageUrl(userProfile.profileImage).then((url) => {
+        console.log('Fetched profile image URL:', url);
+        setUserProfileImage({ url, file: null });
+      });
+    }
+  }, [userProfile.profileImage]);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className='flex flex-col gap-8'>
         {/* PROFILE IMAGE */}
-        <div className='flex flex-col gap-2 px-4 border-l-3 border-primary-500'>
+        <div className='flex flex-col gap-2 px-4 border-l-3 border-secondary'>
           <p className='text-lg font-semibold'>Profile Image</p>
           <div
             className='w-32 h-32 bg-base-300 rounded-full flex items-center justify-center text-sm text-gray-500 cursor-pointer border-[0.5px] border-gray-300 relative'
@@ -104,8 +173,7 @@ const UserProfileForm = () => {
                 <button
                   className='absolute right-0 top-0 border-gray-300 text-black hover:bg-base-200 cursor-pointer rounded-full'
                   onClick={(e) => {
-                    URL.revokeObjectURL(userProfileImage.url);
-                    setUserProfileImage(null);
+                    removeImage();
                     e.stopPropagation();
                   }}
                 >
@@ -124,11 +192,19 @@ const UserProfileForm = () => {
                     />
                   </svg>
                 </button>
-                <img
+                <Image
+                  src={userProfileImage.url || ''}
+                  alt='Profile Image'
+                  className='w-full h-full object-cover rounded-full'
+                  width={128}
+                  height={128}
+                />
+                {/* <Image
+
                   src={userProfileImage.url}
                   alt='Firm Logo'
                   className='w-full h-full object-cover rounded-full'
-                />
+                /> */}
               </>
             ) : (
               <p className='text-center'>Click to upload</p>
@@ -138,14 +214,14 @@ const UserProfileForm = () => {
               accept='image/*'
               multiple={false}
               className='hidden'
-              onChange={handleImageChange}
+              onChange={handleLocalImageUpload}
               ref={inputRef}
             />
           </div>
         </div>
 
         {/* FIRST NAME, LASTNAME */}
-        <div className='flex flex-col gap-4 px-4 border-l-3 border-primary-500'>
+        <div className='flex flex-col gap-4 px-4 border-l-3 border-secondary'>
           <div>
             <LabelText
               required={true}
@@ -168,7 +244,7 @@ const UserProfileForm = () => {
         </div>
 
         {/* EMAIL */}
-        <div className='flex flex-col gap-4 px-4 border-l-3 border-primary-500'>
+        <div className='flex flex-col gap-4 px-4 border-l-3 border-secondary'>
           <p className='font-semibold text-lg'>Contact info</p>
           <LabelText
             required={true}
@@ -180,7 +256,7 @@ const UserProfileForm = () => {
         </div>
 
         <button
-          className='btn bg-primary-400 hover:bg-primary-300 text-white mb-4'
+          className='btn btn-secondary text-white'
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Saving...' : 'Save'}

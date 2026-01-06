@@ -12,8 +12,9 @@ const LabelText = ({
   label: String;
   required: Boolean;
   type: 'input' | 'textarea';
-  name?: string;
+  name: string;
   register?: UseFormRegister<any>;
+
   extraProps?: {};
 }) => {
   const inputProps = register && name ? { ...register(name) } : {};
@@ -25,6 +26,7 @@ const LabelText = ({
           {required ? '(required)' : '(optional)'}
         </span>
       </label>
+
       {type === 'input' && (
         <input
           type='text'
@@ -33,10 +35,12 @@ const LabelText = ({
           {...extraProps}
         />
       )}
+
       {type === 'textarea' && (
         <textarea className='textarea w-full min-h-40' {...inputProps} />
       )}
     </div>
   );
 };
+
 export default LabelText;

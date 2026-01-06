@@ -17,7 +17,5 @@ export const getChangedFields = <T>(data: T, initialData: T) => {
     }
   }
 
-  // console.log('changedFields', changedFields);
-
   return changedFields;
 };

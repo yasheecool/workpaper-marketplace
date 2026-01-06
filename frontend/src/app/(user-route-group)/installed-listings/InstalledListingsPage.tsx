@@ -1,38 +1,18 @@
 'use client';
 import FormSelect from '@/components/input/FormSelect';
 import { CONTENT_TYPE } from '@/types/types';
-import {
-  useFirmInstalledListings,
-  useFirmRequestedListings,
-} from '@/hooks/react-query/firm';
+
 import { useState } from 'react';
 import TableWrapper from './TableWrapper';
 import Loading from '@/components/ui/Loading';
 import { ContentType } from '@/types/types';
 
 const InstalledListingsPage = () => {
-  const { data: installedListingsRecords, isLoading } =
-    useFirmInstalledListings();
-  const { data: requestedListingsRecords, isLoading: isLoadingRequested } =
-    useFirmRequestedListings();
-
   const [selectedStatus, setSelectedStatus] = useState<
     'installed' | 'requested'
   >('installed'); // for toggling between installed and requested listings
 
   const [contentType, setContentType] = useState<ContentType | 'all'>('all'); //for filtering by content type
-
-  const currentRecords =
-    selectedStatus === 'installed'
-      ? installedListingsRecords
-      : requestedListingsRecords;
-
-  const filteredRecords = currentRecords?.filter(
-    (record: Record<string, any>) => {
-      if (contentType === 'all') return true; // Show all records if 'all' is selected
-      return record.listing.contentType === contentType;
-    }
-  );
 
   return (
     <section className='py-8 min-h-[calc(100vh-140px)]'>
@@ -57,7 +37,7 @@ const InstalledListingsPage = () => {
             setStateValue={setContentType}
           />
         </div>
-
+        {/* 
         <div className='h-full rounded-md overflow-x-auto border-[0.5px] border-gray-200 max-w-full'>
           {isLoading || isLoadingRequested ? (
             <Loading />
@@ -70,7 +50,7 @@ const InstalledListingsPage = () => {
         </div>
         <p className=' text-sm text-gray-600'>
           Total {selectedStatus} listings: {currentRecords?.length}
-        </p>
+        </p> */}
       </div>
     </section>
   );

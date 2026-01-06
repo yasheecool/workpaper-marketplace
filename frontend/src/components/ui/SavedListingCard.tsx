@@ -1,13 +1,13 @@
 'use client';
 import Image from 'next/image';
 import { ListingType } from '@/types/schema';
-import { useUpdateUserSavedListings } from '@/hooks/react-query/listing';
+// import { useUpdateUserSavedListings } from '@/hooks/react-query/listing';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import Tooltip from '@/components/ui/Tooltip';
 
 const SavedListingCard = ({ listing }: { listing: ListingType }) => {
-  const { mutate: updateSavedListings } = useUpdateUserSavedListings();
+  // const { mutate: updateSavedListings } = useUpdateUserSavedListings();
   const {
     id,
     imagesLink,
@@ -18,23 +18,23 @@ const SavedListingCard = ({ listing }: { listing: ListingType }) => {
   const isDeleted = status === 'deleted';
 
   const handleUnsave = () => {
-    updateSavedListings(
-      { listingId: id, action: 'unsave' },
-      {
-        onSuccess: (data) => {
-          toast.success(data.data.message);
-        },
-        onError: (error) => {
-          toast.error(error.message);
-        },
-      }
-    );
+    // updateSavedListings(
+    //   { listingId: id, action: 'unsave' },
+    //   {
+    //     onSuccess: (data) => {
+    //       toast.success(data.data.message);
+    //     },
+    //     onError: (error) => {
+    //       toast.error(error.message);
+    //     },
+    //   }
+    // );
   };
 
   return (
-    <div className='rounded-md flex flex-col gap-4 shadow-sm  hover:shadow-md min-w-[250px] w-[350px] border border-gray-200 bg-white max-h-[380px]'>
+    <div className='rounded-md flex flex-col gap-4 shadow-sm  hover:shadow-md min-w-62.5 w-87.5 border border-gray-200 bg-white max-h-95'>
       {/* IMAGE */}
-      <div className='relative h-[300px] w-full border-b-[0.25]'>
+      <div className='relative h-75 w-full border-b-[0.25]'>
         <Image
           src={imagesLink?.[0] || '/undraw_approve.svg'}
           fill

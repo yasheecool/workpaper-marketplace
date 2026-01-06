@@ -22,13 +22,13 @@ const HeroSection = () => {
           </div>
         </div>
         <div className='flex justify-center w-1/2'>
-          <div className='relative h-[350px] w-full max-w-[350px]'>
+          <div className='relative h-87.5 w-full max-w-87.5'>
             <Image
               src='./undraw_approve.svg'
               alt='logo'
               height={350}
               width={175}
-              className='absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 lg:top-1 lg:translate-y-0 w-[275px] lg:max-w-1/2 lg:scale-100'
+              className='absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 lg:top-1 lg:translate-y-0 w-68.75 lg:max-w-1/2 lg:scale-100'
             />
             <Image
               src='./undraw_screen.svg'
