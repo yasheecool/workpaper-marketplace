@@ -289,28 +289,28 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          listing_id: string
+          listing: string
           saved_by_firm: string
           saved_by_user: string
         }
         Insert: {
           created_at?: string
           id?: string
-          listing_id: string
+          listing: string
           saved_by_firm: string
           saved_by_user: string
         }
         Update: {
           created_at?: string
           id?: string
-          listing_id?: string
+          listing?: string
           saved_by_firm?: string
           saved_by_user?: string
         }
         Relationships: [
           {
             foreignKeyName: "saved_listing_listing_id_fkey"
-            columns: ["listing_id"]
+            columns: ["listing"]
             isOneToOne: false
             referencedRelation: "listing"
             referencedColumns: ["id"]

@@ -9,6 +9,7 @@ import {
   type FirmReference,
   type ListingFromDbWithStatuses,
 } from './listingStatuses';
+import { type SavedListingFromDb, SavedListing } from './savedListingTypes';
 import { type ListingWithStatuses } from './listingWithStatuses';
 
 export function mapMarketplaceListingFromDb<T extends MarketplaceListing>(
@@ -75,4 +76,22 @@ export const mapListingsFromDb = (
     })[]
 ): ListingWithStatuses[] => {
   return listings.map(mapListingFromDb);
+};
+
+export const mapSavedListingsFromDb = (
+  savedListings: SavedListingFromDb[]
+): SavedListing[] => {
+  return savedListings.map((savedListing) => ({
+    id: savedListing.id,
+    listingId: savedListing.listing.id,
+    savedByFirm: savedListing.saved_by_firm,
+    createdAt: savedListing.created_at,
+    listing: {
+      id: savedListing.listing.id,
+      name: savedListing.listing.name,
+      contentType: savedListing.listing.content_type,
+      imagesLink: savedListing.listing.images_link,
+      ownedByFirm: savedListing.listing.owned_by_firm,
+    },
+  }));
 };

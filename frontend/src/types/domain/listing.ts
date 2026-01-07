@@ -59,3 +59,6 @@ export type Listing = {
   updatedByUser: string;
   createdByUser: string;
 };
+
+export type SavedListingRow =
+  Database['public']['Tables']['saved_listing']['Row'];

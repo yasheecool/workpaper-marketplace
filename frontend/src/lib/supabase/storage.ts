@@ -8,13 +8,16 @@ export const uploadProfileImage = async (file: File, userId: string) => {
   }
 
   const supabase = createClient();
-  const filename = `profile-image-${Date.now()}-${file.name}`;
+  const filename = `profile-image`;
 
   const { data, error } = await supabase.storage
     .from('user_profile_image')
     .upload(`${userId}/${filename}`, file, { upsert: true });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
 
   return data.path;
 };
@@ -22,11 +25,15 @@ export const uploadProfileImage = async (file: File, userId: string) => {
 export const deleteProfileImage = async (path: string) => {
   const supabase = createClient();
 
-  const { error } = await supabase.storage
+  const { error, data } = await supabase.storage
     .from('user_profile_image')
     .remove([path]);
 
-  if (error) throw new Error(error.message);
+  console.log(data);
+  if (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
 };
 
 export const getProfileImageUrl = async (path: string) => {

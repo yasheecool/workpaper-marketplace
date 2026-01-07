@@ -1,4 +1,5 @@
 'use server';
+import { refresh } from 'next/cache';
 import { getUserClaims } from '../auth';
 import { getFirmsContext } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
@@ -34,7 +35,7 @@ export const saveListing = async (
 
   const { sub: userId } = await getUserClaims();
   const { currentFirm } = await getFirmsContext();
-
+  console.log('invoked saveListing with', { listingId, type });
   const firmId = currentFirm!!.id;
   let response;
   if (type === 'save') {
@@ -43,18 +44,17 @@ export const saveListing = async (
       .upsert({
         saved_by_user: userId,
         saved_by_firm: firmId,
-        listing_id: listingId,
+        listing: listingId,
       })
       .select();
   } else {
-    console.log(userId, firmId, listingId);
     response = await supabase
       .from('saved_listing')
       .delete()
-      .eq('listing_id', listingId)
+      .eq('listing', listingId)
       .eq('saved_by_firm', firmId);
   }
-
+  refresh();
   return response;
 };
 

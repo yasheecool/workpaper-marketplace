@@ -1,14 +1,16 @@
 'use client';
 import LabelText from '@/components/input/LabelText';
-import { useForm } from 'react-hook-form';
+import { useForm, FieldErrors } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { userProfileFormSchema, UserProfileType } from '@/feature/user';
+import {
+  userProfileFormSchema,
+  UserProfileType,
+  updateUserProfile,
+} from '@/feature/user';
 import { getChangedFields } from '@/utils/getChangedFields';
 import { toast } from 'react-toastify';
-import { FieldErrors } from 'react-hook-form';
 import { type User } from '@/types/domain/user';
-import { updateUserProfile } from '@/feature/user/actions';
 import {
   deleteProfileImage,
   uploadProfileImage,
@@ -199,12 +201,6 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
                   width={128}
                   height={128}
                 />
-                {/* <Image
-
-                  src={userProfileImage.url}
-                  alt='Firm Logo'
-                  className='w-full h-full object-cover rounded-full'
-                /> */}
               </>
             ) : (
               <p className='text-center'>Click to upload</p>

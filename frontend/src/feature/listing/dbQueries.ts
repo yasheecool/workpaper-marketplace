@@ -7,14 +7,10 @@ import {
   mapListingFromDb,
   ListingFromDb,
   ListingStatuses,
+  mapSavedListingsFromDb,
 } from './types';
-import { type ListingRow } from '@/types/domain/listing';
 import { getFirmsContext } from '@/feature/firm';
-
-// type ListingWithStatusesFromDb = ListingRow &
-//   ListingStatusesFromDb & {
-//     owned_by_firm: FirmReference;
-//   };
+import { type SavedListingFromDb } from './types/savedListingTypes';
 
 const SELECT_FIELDS = `
   id,
@@ -132,6 +128,33 @@ export const getListingById = async (listingId: string) => {
   );
   const listing = mapListingFromDb(listingWithStatuses); // ✅ Now works without union type error
   return listing;
+};
+
+export const getSavedListings = async () => {
+  const firms = await getFirmsContext();
+  const currentFirmId = firms.currentFirm!!.id;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('saved_listing')
+    .select(
+      `*,
+      listing(id, name, images_link, content_type, owned_by_firm(id, name))`
+    )
+    .eq('saved_by_firm', currentFirmId);
+
+  if (error) {
+    console.error(error);
+    throw new Error(
+      error.message || 'An error occurred while fetching saved listings.'
+    );
+  }
+
+  const mappedData = mapSavedListingsFromDb(
+    data as unknown as SavedListingFromDb[]
+  );
+
+  return mappedData;
 };
 
 //function that checks if a listing is saved, installed, or requested by the current firm
