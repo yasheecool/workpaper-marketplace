@@ -2,6 +2,7 @@
 
 import { ListingSearchFilters } from '@/feature/listing';
 import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface FilteringMetadataOverlayProps {
   count: number;
@@ -17,15 +18,27 @@ const FilteringMetadataOverlay = ({
   itemsOnPage,
 }: FilteringMetadataOverlayProps) => {
   const [showOverlay, setShowOverlay] = useState<Boolean>(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Calculate the range of items being displayed
   const perPage = 10; // Should match the perPage value in queries.ts
   const startItem = count > 0 ? (currentPage - 1) * perPage + 1 : 0;
   const endItem = Math.min(currentPage * perPage, count);
 
+  // Get current sort from URL, default to 'name'
+  const currentSort = searchParams.get('sort') || 'name';
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSort = e.target.value;
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('sort', newSort);
+    router.push(`?${params.toString()}`);
+  };
+
   return (
     <>
-      {/* FILTERING METADATA + OVERLAY TOGGLE BUTTON */}
+      {/* FILTERING METADATA + SORT & FILTER BUTTONS */}
       <div className='flex items-center justify-between mb-4'>
         {count > 0 ? (
           <span className='text-sm font-semibold'>
@@ -40,12 +53,26 @@ const FilteringMetadataOverlay = ({
           </span>
         )}
 
-        <button
-          className='btn btn-primary justify-self-end min-[992px]:hidden hover:bg-secondary-700'
-          onClick={() => setShowOverlay(!showOverlay)}
-        >
-          Filter
-        </button>
+        {/* SORT AND FILTER BUTTONS FLEX CONTAINER */}
+        <div className='flex gap-2 items-center'>
+          {/* SORT DROPDOWN - VISIBLE ON ALL SCREEN SIZES */}
+          <select
+            value={currentSort}
+            onChange={handleSortChange}
+            className='select select-bordered select-sm'
+          >
+            <option value='name'>Name (A-Z)</option>
+            <option value='updated_at'>Last Updated</option>
+          </select>
+
+          {/* FILTER BUTTON - HIDDEN ON DESKTOP */}
+          <button
+            className='btn btn-primary btn-sm min-[992px]:hidden hover:bg-secondary-700'
+            onClick={() => setShowOverlay(!showOverlay)}
+          >
+            Filter
+          </button>
+        </div>
       </div>
       {/* FILTERING OVERLAY */}
       <div

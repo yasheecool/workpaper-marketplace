@@ -32,7 +32,7 @@ export const getMarketplaceListings = async (params: {
   const supabase = await createClient();
   const { currentFirm } = await getFirmsContext();
 
-  const { search, page } = params;
+  const { search, page, sort } = params;
   const contentType = params['content-type'];
   const workpaperType = params['workpaper-type'];
   const entityType = params['entity-type'];
@@ -69,6 +69,14 @@ export const getMarketplaceListings = async (params: {
     const values = Array.isArray(entityType) ? entityType : [entityType];
 
     query.overlaps('entity_type', values);
+  }
+
+  // Handle sorting
+  const sortBy = sort || 'name'; // Default to 'name'
+  if (sortBy === 'name') {
+    query.order('name', { ascending: true });
+  } else if (sortBy === 'updated_at') {
+    query.order('updated_at', { ascending: false }); // Newest first
   }
 
   const { data: listingsFromDb, error, count } = await query;
