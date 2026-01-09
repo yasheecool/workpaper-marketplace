@@ -13,8 +13,8 @@ const UserHeaderNav = async () => {
       href: '/profile',
     },
     {
-      label: 'Installed Listings',
-      href: '/installed-listings',
+      label: 'My Listings',
+      href: '/my-listings',
     },
     {
       label: 'Saved Listings',

@@ -236,7 +236,7 @@ export type Database = {
           actioned_by_user_id: string | null
           created_at: string
           id: string
-          listing_id: string
+          listing: string
           request_status: Database["public"]["Enums"]["request_status"]
           requested_by_firm: string
           requested_by_user: string
@@ -246,7 +246,7 @@ export type Database = {
           actioned_by_user_id?: string | null
           created_at?: string
           id?: string
-          listing_id: string
+          listing: string
           request_status?: Database["public"]["Enums"]["request_status"]
           requested_by_firm: string
           requested_by_user: string
@@ -256,7 +256,7 @@ export type Database = {
           actioned_by_user_id?: string | null
           created_at?: string
           id?: string
-          listing_id?: string
+          listing?: string
           request_status?: Database["public"]["Enums"]["request_status"]
           requested_by_firm?: string
           requested_by_user?: string
@@ -264,7 +264,7 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "listing_access_control_listing_id_fkey"
-            columns: ["listing_id"]
+            columns: ["listing"]
             isOneToOne: false
             referencedRelation: "listing"
             referencedColumns: ["id"]

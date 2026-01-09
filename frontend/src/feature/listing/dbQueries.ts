@@ -8,6 +8,10 @@ import {
   ListingFromDb,
   ListingStatuses,
   mapSavedListingsFromDb,
+  mapInstalledListingsFromDb,
+  InstalledListingFromDb,
+  RequestedListingFromDb,
+  mapRequestedListingsFromDb,
 } from './types';
 import { getFirmsContext } from '@/feature/firm';
 import { type SavedListingFromDb } from './types/savedListingTypes';
@@ -198,3 +202,62 @@ function listingWithDerivedStatuses<
     requestStatus,
   } as T & ListingStatuses;
 }
+
+export const getInstalledListings = async () => {
+  const supabase = await createClient();
+  const { currentFirm } = await getFirmsContext();
+
+  const { data, error } = await supabase
+    .from('installed_listing')
+    .select(
+      `id,
+      created_at,
+      installed_by_user(first_name, last_name),
+      listing(id,name,content_type, owned_by_firm(id, name))
+      `
+    )
+    .eq('installed_by_firm', currentFirm!!.id);
+
+  if (error) {
+    console.error('Error fetching installed listings:', error);
+    throw new Error(
+      error.message || 'An error occurred while fetching installed listings.'
+    );
+  }
+
+  const mappedData = mapInstalledListingsFromDb(
+    data as unknown as InstalledListingFromDb[]
+  );
+
+  return mappedData;
+};
+
+export const getRequestedListings = async () => {
+  const supabase = await createClient();
+  const { currentFirm } = await getFirmsContext();
+
+  const { data, error } = await supabase
+    .from('listing_access_control')
+    .select(
+      `
+      created_at,
+      requested_by_user(first_name, last_name),
+      listing(id, name, owned_by_firm(id, name), content_type),
+      request_status
+      `
+    )
+    .eq('requested_by_firm', currentFirm!!.id);
+
+  if (error || !data) {
+    console.error('Error fetching requested listings:', error);
+    throw new Error(
+      error?.message || 'An error occurred while fetching requested listings.'
+    );
+  }
+
+  const mappedData = mapRequestedListingsFromDb(
+    data as unknown as RequestedListingFromDb[]
+  );
+
+  return mappedData;
+};

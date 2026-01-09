@@ -11,6 +11,14 @@ import {
 } from './listingStatuses';
 import { type SavedListingFromDb, SavedListing } from './savedListingTypes';
 import { type ListingWithStatuses } from './listingWithStatuses';
+import {
+  type InstalledListingFromDb,
+  InstalledListing,
+} from './installedListing';
+import {
+  type RequestedListingFromDb,
+  RequestedListing,
+} from './requestedListing';
 
 export function mapMarketplaceListingFromDb<T extends MarketplaceListing>(
   listing: MarketplaceListingFromDbWithStatuses
@@ -95,3 +103,42 @@ export const mapSavedListingsFromDb = (
     },
   }));
 };
+
+export function mapInstalledListingsFromDb(
+  installedListing: InstalledListingFromDb[]
+): InstalledListing[] {
+  return installedListing.map((item) => ({
+    id: item.id,
+    createdAt: item.created_at,
+    installedByUser: {
+      lastName: item.installed_by_user.last_name,
+      firstName: item.installed_by_user.first_name,
+    },
+    listing: {
+      id: item.listing.id,
+      name: item.listing.name,
+      contentType: item.listing.content_type,
+      ownedByFirm: item.listing.owned_by_firm,
+    },
+  }));
+}
+
+export function mapRequestedListingsFromDb(
+  listings: RequestedListingFromDb[]
+): RequestedListing[] {
+  return listings.map((listing) => ({
+    id: listing.id,
+    createdAt: listing.created_at,
+    requestStatus: listing.request_status,
+    requestedByUser: {
+      firstName: listing.requested_by_user.first_name,
+      lastName: listing.requested_by_user.last_name,
+    },
+    listing: {
+      id: listing.listing.id,
+      name: listing.listing.name,
+      contentType: listing.listing.content_type,
+      ownedByFirm: listing.listing.owned_by_firm,
+    },
+  }));
+}

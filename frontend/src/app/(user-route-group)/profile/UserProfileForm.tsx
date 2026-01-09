@@ -41,9 +41,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
   };
 
   const [userProfileImage, setUserProfileImage] = useState<ImageObject | null>(
-    userProfile.profileImage
-      ? { url: '', file: null } // Set empty initially
-      : null
+    null
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -195,7 +193,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
                   </svg>
                 </button>
                 <Image
-                  src={userProfileImage.url || ''}
+                  src={userProfileImage.url}
                   alt='Profile Image'
                   className='w-full h-full object-cover rounded-full'
                   width={128}

@@ -3,3 +3,5 @@ export * from './types/marketplaceListingTypes';
 export * from './types/listingWithStatuses';
 export * from './types/mappers';
 export * from './types/savedListingTypes';
+export * from './types/installedListing';
+export * from './types/requestedListing';
