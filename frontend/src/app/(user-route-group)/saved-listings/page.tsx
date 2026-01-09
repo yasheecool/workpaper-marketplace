@@ -1,5 +1,4 @@
-import SavedListingCard from '@/components/ui/SavedListingCard';
-import Loading from '@/components/ui/Loading';
+import SavedListingCard from '@/feature/listing/components/SavedListingCard';
 import { getSavedListings } from '@/feature/listing';
 
 const SavedListings = async () => {

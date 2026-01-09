@@ -27,6 +27,29 @@ export const installListing = async (listingId: string) => {
   return { data };
 };
 
+export const uninstallListing = async (listingId: string) => {
+  const supabase = await createClient();
+  const { currentFirm } = await getFirmsContext();
+  const { sub: userId } = await getUserClaims();
+
+  const firmId = currentFirm!!.id;
+
+  const { data, error } = await supabase
+    .from('installed_listing')
+    .delete()
+    .eq('listing_id', listingId)
+    .eq('installed_by_firm', firmId)
+    .eq('installed_by_user', userId)
+    .select('listing_id');
+
+  if (error || !data) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+
+  return data[0].listing_id.name;
+};
+
 export const saveListing = async (
   listingId: string,
   type: 'save' | 'unsave'

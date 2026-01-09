@@ -12,4 +12,4 @@ const TableHeaderRow = ({ headings }: { headings: string[] }) => {
   );
 };
 
-export { TableHeaderRow };
+export default TableHeaderRow;

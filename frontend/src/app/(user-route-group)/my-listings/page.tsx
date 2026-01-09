@@ -1,9 +1,6 @@
 import TableWrapper from './_components/TableWrapper';
-import Loading from '@/components/ui/Loading';
 import Container from '@/components/layout/Container';
 import Filters from './_components/Filters';
-import { ListingType } from '@/types/domain/listing';
-import { getInstalledListings, getRequestedListings } from '@/feature/listing';
 
 const InstalledListingsPage = async ({
   searchParams,

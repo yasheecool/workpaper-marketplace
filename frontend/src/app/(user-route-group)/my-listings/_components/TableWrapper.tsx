@@ -1,28 +1,30 @@
 'use client';
 
-import { TableHeaderRow } from '@/components/ui/TableRows';
 import { formatDate } from '@/utils/formatDate';
 import { capitalize } from 'lodash';
 import { toast } from 'react-toastify';
-import Ellipsis from '@/components/ui/Ellipsis';
-import Tooltip from '@/components/ui/Tooltip';
+import { Ellipsis, Tooltip, TableHeaderRow } from '@/components/ui';
 import Link from 'next/link';
 import { getStatusClass } from '@/utils/ui-utils';
-import { useQuery } from '@tanstack/react-query';
-import { ListingType } from '@/types/domain/listing';
-import { getInstalledListings, getRequestedListings } from '@/feature/listing';
-import { InstalledListing, RequestedListing } from '@/feature/listing/types';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  getInstalledListings,
+  getRequestedListings,
+  uninstallListing as uninstallListingAction,
+  type InstalledListing,
+  type RequestedListing,
+} from '@/feature/listing';
+import { getQueryClient } from '@/lib/queryClient';
 
 type ResponseType = InstalledListing[] | RequestedListing[];
-
-const TableWrapper = ({
-  filters,
-}: {
+type Props = {
   filters: {
     status: 'installed' | 'requested';
     // contentType: ListingType | 'all';
   };
-}) => {
+};
+
+const TableWrapper = ({ filters }: Props) => {
   const { status } = filters;
 
   const queryFn =
@@ -33,23 +35,27 @@ const TableWrapper = ({
     queryFn: queryFn,
   });
 
-  console.log(data);
+  const { mutate: uninstallListing, isPending } = useMutation({
+    mutationKey: ['uninstall-listing'],
+    mutationFn: (listingId: string) => uninstallListingAction(listingId),
+    onSuccess: (name: string) => {
+      toast.success(`Successfully uninstalled listing: ${name}`);
+      getQueryClient().invalidateQueries({ queryKey: ['installed-listings'] });
+    },
+    onError: (error: any) => {
+      toast.error(
+        `Error uninstalling listing: ${
+          error?.message || 'Please try again later.'
+        }`
+      );
+    },
+  });
 
   const handleUninstall = (listingId: string) => {
-    // installUninstallListing(
-    //   { listingId, action: 'uninstall' },
-    //   {
-    //     onSuccess: () => {
-    //       toast.success('Listing uninstalled successfully!');
-    //     },
-    //     onError: () => {
-    //       toast.error('Failed to uninstall listing.');
-    //     },
-    //   }
-    // );
+    uninstallListing(listingId);
   };
 
-  const headings = [
+  const tableHeadings = [
     'No.',
     'Name',
     'Vendor Name',
@@ -86,7 +92,7 @@ const TableWrapper = ({
     <>
       <table className='table border-[0.5px] border-gray-200 rounded-md'>
         <thead className='bg-base-200 '>
-          <TableHeaderRow headings={headings} />
+          <TableHeaderRow headings={tableHeadings} />
         </thead>
 
         <tbody>
@@ -145,7 +151,11 @@ const TableWrapper = ({
                           actions={[
                             {
                               label: 'Uninstall',
-                              className: 'text-red-500',
+                              className: `text-red-500 ${
+                                isPending
+                                  ? 'pointer-events-none opacity-50'
+                                  : ''
+                              }`,
                               action: () => handleUninstall(listingId),
                             },
                           ]}
