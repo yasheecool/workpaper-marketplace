@@ -6,7 +6,7 @@ import Tabs from '@/components/ui/Tabs';
 import Loading from '@/components/ui/Loading';
 import TableWrapper from '@/app/admin/requests/TableWrapper';
 
-import { useVendorRequests } from '@/hooks/react-query/admin';
+// import { useVendorRequests } from '@/hooks/react-query/admin';
 
 const AdminPage = () => {
   const [view, setView] = useState<'pending' | 'approved' | 'rejected' | 'all'>(
@@ -14,11 +14,11 @@ const AdminPage = () => {
   );
 
   //check the query's select function in the queries.ts file to see how the data is transformed
-  const { data: requests, isLoading } = useVendorRequests();
+  // const { data: requests, isLoading } = useVendorRequests();
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
 
   return (
     <section>
@@ -31,7 +31,7 @@ const AdminPage = () => {
       {/* SUMMARY CARDS */}
       <div className='mt-8 mb-4'>
         <div className='flex gap-4 items-center'>
-          <SummaryCard
+          {/* <SummaryCard
             Icon={() => (
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -49,7 +49,7 @@ const AdminPage = () => {
               </svg>
             )}
             label='Pending Requests'
-            value={requests['pending'].length} // Example value, replace with actual data
+            // value={requests['pending'].length} // Example value, replace with actual data
             style='flex-1'
           />
           <SummaryCard
@@ -93,7 +93,7 @@ const AdminPage = () => {
             label='Rejected Requests'
             value={requests['rejected'].length} // Example value, replace with actual data
             style='flex-1'
-          />
+          /> */}
         </div>
       </div>
 
@@ -123,7 +123,7 @@ const AdminPage = () => {
         ]}
       />
       {/* TABLE */}
-      <div className='rounded-md overflow-x-auto w-full'>
+      {/* <div className='rounded-md overflow-x-auto w-full'>
         {requests[view].length ? (
           <TableWrapper requests={requests[view]} view={view} />
         ) : (
@@ -131,7 +131,7 @@ const AdminPage = () => {
             No requests available.
           </div>
         )}
-      </div>
+      </div> */}
     </section>
   );
 };

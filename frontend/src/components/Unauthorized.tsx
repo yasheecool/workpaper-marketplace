@@ -1,9 +1,10 @@
+'use client';
+
 import Header from './layout/Header';
-import Footer from './layout/Footer';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-const Unauthorized = ({ text }: { text: string }) => {
+const Unauthorized = ({ message }: { message: string }) => {
   const router = useRouter();
   return (
     <>
@@ -20,11 +21,8 @@ const Unauthorized = ({ text }: { text: string }) => {
           <h1 className='text-2xl font-semibold text-gray-800'>
             Access Denied
           </h1>
-          <p>{text}</p>
-          <button
-            className='bg-secondary-500 btn text-white hover:bg-secondary-700'
-            onClick={() => router.back()}
-          >
+          <p>{message}</p>
+          <button className='btn btn-primary' onClick={() => router.back()}>
             Go Back
           </button>
         </div>
@@ -32,4 +30,5 @@ const Unauthorized = ({ text }: { text: string }) => {
     </>
   );
 };
+
 export default Unauthorized;

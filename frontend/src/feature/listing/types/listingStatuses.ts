@@ -1,10 +1,6 @@
 import { type RequestStatus } from '@/types/domain/listing';
 import { ListingRow } from '@/types/domain/listing';
-
-export type FirmReference = {
-  id: string;
-  name: string;
-};
+import { FirmReference } from '../types';
 
 export type ListingStatusesFromDb = {
   saved_listing: {

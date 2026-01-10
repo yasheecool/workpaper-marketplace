@@ -1,5 +1,4 @@
 'use server';
-
 import { createClient } from '@/lib/supabase/serverClient';
 import { FirmRow, mapFirmsFromDb, FirmFromPayload } from '@/types/domain/firm';
 import { cookies } from 'next/headers';
@@ -9,8 +8,9 @@ export async function getFirmsContext() {
 
   const { data } = await supabase.auth.getClaims();
 
+  //data and app_metadata are guaranteed to be non-null - proxy checks user claims, app metadata is always added by supabase when logging in!
   const firmsFromClaims: FirmFromPayload[] =
-    data?.claims.app_metadata?.workpapers.firms || [];
+    data!!.claims.app_metadata!!.workpapers.firms;
 
   const currentFirmIdFromCookies = (await cookies()).get(
     'selected_firm_id'

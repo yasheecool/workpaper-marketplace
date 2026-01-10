@@ -1,8 +1,8 @@
 import {
   type ListingStatusesFromDb,
   type ListingStatuses,
-  type FirmReference,
 } from './listingStatuses';
+import { FirmReference } from '../types';
 
 export type MarketplaceListingFromDb = {
   id: string;

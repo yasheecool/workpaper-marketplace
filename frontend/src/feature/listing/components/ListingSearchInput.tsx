@@ -9,6 +9,7 @@ const ListingSearchInput = () => {
   const searchParams = useSearchParams();
   const initialSearchTerm = searchParams.get('search') || '';
   const [localSearchTerm, setLocalSearchTerm] = useState(initialSearchTerm);
+
   const debouncedSearchTerm = useDebounce(localSearchTerm, 300);
   const router = useRouter();
 
@@ -42,4 +43,5 @@ const ListingSearchInput = () => {
     />
   );
 };
+
 export default ListingSearchInput;

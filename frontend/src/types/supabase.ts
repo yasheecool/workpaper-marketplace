@@ -482,7 +482,7 @@ export type Database = {
         | "report"
         | "procedure"
         | "wiki"
-      listing_visibility: "public" | "request_access" | "private"
+      listing_visibility: "public" | "request_access"
       region: "australia" | "newZealand" | "unitedKingdom" | "republicOfIreland"
       request_status: "pending" | "approved" | "rejected"
       vendor_status: "active" | "blocked"
@@ -620,7 +620,7 @@ export const Constants = {
       entity_type: ["company", "individual", "partnership", "trust"],
       listing_status: ["active", "deleted"],
       listing_type: ["calculation", "checklist", "report", "procedure", "wiki"],
-      listing_visibility: ["public", "request_access", "private"],
+      listing_visibility: ["public", "request_access"],
       region: ["australia", "newZealand", "unitedKingdom", "republicOfIreland"],
       request_status: ["pending", "approved", "rejected"],
       vendor_status: ["active", "blocked"],

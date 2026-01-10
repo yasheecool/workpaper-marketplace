@@ -26,10 +26,6 @@ const InstalledListingsPage = async ({
             }}
           />
         </div>
-
-        <p className=' text-sm text-gray-600'>
-          {/* Total {selectedStatus} listings: {currentRecords?.length} */}
-        </p>
       </Container>
     </section>
   );

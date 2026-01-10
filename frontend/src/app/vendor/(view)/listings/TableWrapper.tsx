@@ -1,4 +1,6 @@
-import { TableHeaderRow } from '@/components/ui/TableRows';
+'use client';
+
+import { TableHeaderRow } from '@/components/ui';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -6,7 +8,6 @@ import { ListingType } from '@/types/schema';
 import { formatDate } from '@/utils/formatDate';
 import { capitalize } from 'lodash';
 import Ellipsis from '@/components/ui/Ellipsis';
-import { useUpdateListing } from '@/hooks/react-query/listing';
 
 const tableHeadings = [
   'Select',
@@ -19,22 +20,14 @@ const tableHeadings = [
   'Actions',
 ];
 
-const TableWrapper = ({
-  filteredListings,
-}: {
-  filteredListings: Partial<ListingType>[];
-}) => {
-  const { mutate: updateListing, isSuccess } = useUpdateListing();
+const TableWrapper = (
+  {
+    // filteredListings,
+  }: {
+    // filteredListings: Partial<ListingType>[];
+  }
+) => {
   const router = useRouter();
-  const [selectedListings, setSelectedListings] = useState<string[]>([]); //no bulk actions implemented yet
-
-  const selectListing = (id: string) => {
-    if (selectedListings.includes(id)) {
-      setSelectedListings((prev) => prev.filter((listing) => listing !== id));
-    } else {
-      setSelectedListings((prev) => [...prev, id]);
-    }
-  };
 
   const navigateToEditor = (id: string) => {
     router.push(`/vendor/listing/edit/${id}`);
@@ -42,19 +35,19 @@ const TableWrapper = ({
 
   const restoreDeleteListing = (id: string, isDeleted: boolean) => {
     const newStatus = isDeleted ? 'active' : 'deleted';
-    updateListing(
-      {
-        listingId: id,
-        updatedFields: { status: newStatus },
-      },
-      {
-        onSuccess: () => {
-          toast.success(
-            `Listing ${isDeleted ? 'restored' : 'deleted'} successfully!`
-          );
-        },
-      }
-    );
+    // updateListing(
+    //   {
+    //     listingId: id,
+    //     updatedFields: { status: newStatus },
+    //   },
+    //   {
+    //     onSuccess: () => {
+    //       toast.success(
+    //         `Listing ${isDeleted ? 'restored' : 'deleted'} successfully!`
+    //       );
+    //     },
+    //   }
+    // );
   };
 
   return (
@@ -64,7 +57,7 @@ const TableWrapper = ({
       </thead>
 
       <tbody>
-        {filteredListings.map((listing: Partial<ListingType>, idx: number) => {
+        {/* {filteredListings.map((listing: Partial<ListingType>, idx: number) => {
           const {
             name,
             id,
@@ -83,9 +76,9 @@ const TableWrapper = ({
                 <div className='w-full flex items-center justify-center'>
                   <input
                     type='checkbox'
-                    checked={selectedListings.includes(id!)}
+                    // checked={selectedListings.includes(id!)}
                     className='checkbox checkbox-sm'
-                    onChange={() => selectListing(id!)}
+                    // onChange={() => selectListing(id!)}
                   />
                 </div>
               </td>
@@ -128,9 +121,10 @@ const TableWrapper = ({
               </td>
             </tr>
           );
-        })}
+        })} */}
       </tbody>
     </table>
   );
 };
+
 export default TableWrapper;

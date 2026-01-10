@@ -3,11 +3,11 @@ import { updateSession } from '@/lib/supabase/proxy';
 import { NextResponse } from 'next/server';
 
 export async function proxy(request: NextRequest) {
-  const { supabaseResponse, user } = await updateSession(request);
+  const { supabaseResponse, userClaims } = await updateSession(request);
   const selectedFirm = request.cookies.get('selected_firm_id')?.value;
 
   if (
-    !user &&
+    !userClaims &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth')
   ) {

@@ -1,15 +1,14 @@
 'use client';
-import { useFirm } from '@/hooks/react-query/firm';
 import RequestForm from './RequestForm';
 import useAppStore from '@/store/appStore';
 
 const RequestPage = () => {
   const currentFirm = useAppStore((s) => s.currentFirm);
-  const { data: firm } = useFirm(currentFirm!.id);
+  // const { data: firm } = useFirm(currentFirm!.id);
 
   return (
     <section className='section-container max-w-5xl py-10 text-gray-800'>
-      {!firm.vendorRequest && (
+      {/* {!firm.vendorRequest && (
         <header className='border-b border-gray-200 pb-4 mb-8 flex flex-col gap-2'>
           <h2 className='text-3xl font-semibold'>Your Contact Information</h2>
           <p className='text-gray-600 text-sm'>
@@ -39,7 +38,7 @@ const RequestPage = () => {
           </p>
         )}
         {!firm.vendorRequest && <RequestForm />}
-      </div>
+      </div> */}
     </section>
   );
 };

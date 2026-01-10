@@ -3,7 +3,7 @@
 import { formatDate } from '@/utils/formatDate';
 import { capitalize } from 'lodash';
 import { toast } from 'react-toastify';
-import { Ellipsis, Tooltip, TableHeaderRow } from '@/components/ui';
+import { Ellipsis, Tooltip, TableHeaderRow, Loading } from '@/components/ui';
 import Link from 'next/link';
 import { getStatusClass } from '@/utils/ui-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -79,7 +79,7 @@ const TableWrapper = ({ filters }: Props) => {
   };
 
   if (isLoading) {
-    return <p className='p-4'>Loading...</p>;
+    return <Loading />;
   }
 
   if (isError || data === undefined) {

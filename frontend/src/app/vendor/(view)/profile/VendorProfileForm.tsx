@@ -2,14 +2,11 @@
 
 import LabelText from '@/components/input/LabelText';
 import { useForm } from 'react-hook-form';
-import useAppStore from '@/store/appStore';
 import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useVendorProfile } from '@/hooks/react-query/firm';
-import { useUpdateVendorProfile } from '@/hooks/react-query/firm';
+
 import { vendorProfileFormSchema, VendorProfileType } from '@/types/schema';
 import { getChangedFields } from '@/utils/getChangedFields';
-import { uploadToCloudinary } from '@/lib/cloudinary';
 import { toast } from 'react-toastify';
 
 type ImageObject = {
@@ -18,8 +15,7 @@ type ImageObject = {
 };
 
 const VendorProfileForm = () => {
-  const currentFirm = useAppStore((s) => s.currentFirm);
-  const { vendorProfile, error } = useVendorProfile(currentFirm!.id);
+  
   const {
     handleSubmit,
     reset,
@@ -28,18 +24,18 @@ const VendorProfileForm = () => {
   } = useForm<VendorProfileType>({
     resolver: zodResolver(vendorProfileFormSchema),
   });
-  const { mutate: update, data } = useUpdateVendorProfile(currentFirm!.id);
+  
   const [firmLogo, setFirmLogo] = useState<ImageObject | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    // console.log('Vendor Profile:', vendorProfile);
-    if (vendorProfile) {
-      reset(vendorProfile);
-      vendorProfile.firmLogo &&
-        setFirmLogo({ url: vendorProfile.firmLogo, file: null });
-    }
-  }, [vendorProfile]);
+  // useEffect(() => {
+  //   // console.log('Vendor Profile:', vendorProfile);
+  //   if (vendorProfile) {
+  //     reset(vendorProfile);
+  //     vendorProfile.firmLogo &&
+  //       setFirmLogo({ url: vendorProfile.firmLogo, file: null });
+  //   }
+  // }, [vendorProfile]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,30 +50,30 @@ const VendorProfileForm = () => {
 
   const onSubmit = async (data: VendorProfileType) => {
     console.log('Submitting form with data:', data);
-    const changedFields = getChangedFields(
-      { ...data, firmLogo: firmLogo?.url || null },
-      vendorProfile
-    );
-    // console.log('Changed Fields:', changedFields); // Added logging for changed fields
-    if (firmLogo?.file && firmLogo?.url !== vendorProfile?.firmLogo) {
-      const url = await uploadToCloudinary(firmLogo.file);
-      changedFields.firmLogo = url;
-    } else if (firmLogo === null && vendorProfile?.firmLogo) {
-      changedFields.firmLogo = null; // If firmLogo is removed
-    }
+    // const changedFields = getChangedFields(
+    //   { ...data, firmLogo: firmLogo?.url || null },
+    //   vendorProfile
+    // );
+    // // console.log('Changed Fields:', changedFields); // Added logging for changed fields
+    // if (firmLogo?.file && firmLogo?.url !== vendorProfile?.firmLogo) {
+    //   const url = await uploadToCloudinary(firmLogo.file);
+    //   changedFields.firmLogo = url;
+    // } else if (firmLogo === null && vendorProfile?.firmLogo) {
+    //   changedFields.firmLogo = null; // If firmLogo is removed
+    // }
 
-    if (Object.keys(changedFields).length === 0) {
-      toast.info('No changes made to the profile');
-      return;
-    }
+    // if (Object.keys(changedFields).length === 0) {
+    //   toast.info('No changes made to the profile');
+    //   return;
+    // }
 
-    update(changedFields, {
-      onSuccess: (data) => {
-        const { updatedProfile } = data.data;
-        reset(updatedProfile);
-        toast.success('Profile updated successfully');
-      },
-    });
+    // update(changedFields, {
+    //   onSuccess: (data) => {
+    //     const { updatedProfile } = data.data;
+    //     reset(updatedProfile);
+    //     toast.success('Profile updated successfully');
+    //   },
+    // });
   };
 
   return (
@@ -139,7 +135,7 @@ const VendorProfileForm = () => {
 
         <div className='flex flex-col gap-4 px-4 border-l-3 border-primary-500'>
           <div>
-            <LabelText
+            {/* <LabelText
               required={true}
               label={'Firm Name'}
               type='input'
@@ -147,7 +143,7 @@ const VendorProfileForm = () => {
                 defaultValue: vendorProfile?.vendor.firmName,
                 readOnly: true,
               }}
-            />
+            /> */}
           </div>
 
           <div>
