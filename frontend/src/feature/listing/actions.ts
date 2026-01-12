@@ -1,8 +1,10 @@
 'use server';
+
 import { refresh } from 'next/cache';
 import { getUserClaims } from '../auth';
 import { getFirmsContext } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
+import { ListingWithStatuses } from './types';
 
 export const installListing = async (listingId: string) => {
   const userClaims = await getUserClaims();
@@ -102,4 +104,22 @@ export const requestListing = async (listingId: string) => {
   }
 
   return { data };
+};
+
+export const updateListing = async (
+  id: string,
+  fields: Partial<ListingWithStatuses>
+) => {
+  const supabase = await createClient();
+
+  const response = await supabase
+    .from('listing')
+    .update({ ...fields, updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (response.error) {
+    throw new Error(response.error.message);
+  }
+
+  return response;
 };

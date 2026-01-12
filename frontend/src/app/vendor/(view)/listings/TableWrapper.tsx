@@ -1,16 +1,18 @@
 'use client';
 
-import { TableHeaderRow } from '@/components/ui';
+import { TableHeaderRow, Loading } from '@/components/ui';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { ListingType } from '@/types/schema';
+import { useQuery } from '@tanstack/react-query';
+import { VendorListing } from '@/feature/vendor/types';
 import { formatDate } from '@/utils/formatDate';
 import { capitalize } from 'lodash';
 import Ellipsis from '@/components/ui/Ellipsis';
+import { getVendorListings } from '@/feature/vendor';
+import Link from 'next/link';
 
 const tableHeadings = [
-  'Select',
+  'No.',
   'Listing Name',
   'Type',
   'Updated',
@@ -20,14 +22,27 @@ const tableHeadings = [
   'Actions',
 ];
 
-const TableWrapper = (
-  {
-    // filteredListings,
-  }: {
-    // filteredListings: Partial<ListingType>[];
-  }
-) => {
+type Filters = {
+  listingType: string;
+  visibility: string;
+  sortBy: string;
+  searchQuery: string;
+};
+
+const TableWrapper = ({
+  initialData,
+  filters,
+}: {
+  initialData: VendorListing[];
+  filters: Filters;
+}) => {
   const router = useRouter();
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['vendor-listings', filters],
+    queryFn: () => getVendorListings(filters),
+    initialData,
+  });
 
   const navigateToEditor = (id: string) => {
     router.push(`/vendor/listing/edit/${id}`);
@@ -50,6 +65,16 @@ const TableWrapper = (
     // );
   };
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <div className='p-4'>Error loading listings. Please try again later.</div>
+    );
+  }
+
   return (
     <table className='table'>
       <thead className='bg-base-200 text-gray-600 '>
@@ -57,13 +82,13 @@ const TableWrapper = (
       </thead>
 
       <tbody>
-        {/* {filteredListings.map((listing: Partial<ListingType>, idx: number) => {
+        {data.map((listing, idx: number) => {
           const {
             name,
             id,
             contentType,
             updatedAt,
-            updatedBy,
+            updatedByUser,
             visibility,
             status,
           } = listing;
@@ -71,27 +96,30 @@ const TableWrapper = (
           const isDeleted = status === 'deleted';
 
           return (
-            <tr className='hover:bg-base-200 h-[50px]' key={idx}>
+            <tr className='hover:bg-base-200 h-12.5' key={idx}>
               <td>
-                <div className='w-full flex items-center justify-center'>
+                {idx + 1}
+                {/* <div className='w-full flex items-center justify-center'>
                   <input
                     type='checkbox'
                     // checked={selectedListings.includes(id!)}
                     className='checkbox checkbox-sm'
                     // onChange={() => selectListing(id!)}
                   />
-                </div>
+                </div> */}
               </td>
-              <td
-                className='link link-hover font-semibold'
-                onClick={() => navigateToEditor(listing.id!)}
-              >
-                {name}
+              <td>
+                <Link
+                  href={`/vendor/listing/edit/${id}`}
+                  className='link link-hover font-semibold'
+                >
+                  {name}
+                </Link>
               </td>
               <td className='text-gray-600'>{capitalize(contentType)}</td>
               <td className='text-gray-600'>{formatDate(updatedAt!)}</td>
               <td className='text-gray-600'>
-                {updatedBy?.firstName} {updatedBy?.lastName}
+                {updatedByUser.firstName} {updatedByUser.lastName}
               </td>
               <td className='text-gray-600'>
                 {capitalize(visibility?.split('_').join(' '))}
@@ -121,7 +149,7 @@ const TableWrapper = (
               </td>
             </tr>
           );
-        })} */}
+        })}
       </tbody>
     </table>
   );

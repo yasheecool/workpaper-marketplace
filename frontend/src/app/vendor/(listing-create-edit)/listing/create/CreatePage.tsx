@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import ListingEditor from '@/app/vendor/components/ListingEditor';
-import { useFirmContent } from '@/hooks/react-query/firm';
+// import { useFirmContent } from '@/hooks/react-query/firm';
 import Tabs from '@/components/ui/Tabs';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import Loading from '@/components/ui/Loading';
@@ -11,7 +11,7 @@ const CreatePage = () => {
   const [currentView, setCurrentView] = useState<'editor' | 'whitelist'>(
     'editor'
   );
-  const { data: firmContent, error, isLoading } = useFirmContent(); // fetch the available content for creation again from react query
+  // const { data: firmContent, error, isLoading } = useFirmContent(); // fetch the available content for creation again from react query
 
   const { id } = useParams(); //receive the listingId from the URL params
 

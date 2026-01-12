@@ -1,7 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { saveListing, installListing, requestListing } from '../actions';
+import {
+  saveListing,
+  installListing,
+  requestListing,
+  updateListing,
+} from '../actions';
 import { getQueryClient } from '@/lib/queryClient';
+import { ListingWithStatuses } from '../types';
 
 const invalidateListingQueries = (listingId: string) => {
   const client = getQueryClient();
@@ -55,6 +61,25 @@ export const useRequestListingMutation = (id: string) => {
         error instanceof Error
           ? error.message
           : 'An error occurred while requesting the listing.';
+      toast.error(errorMessage);
+    },
+  });
+};
+
+export const useUpdateListingMutation = (id: string) => {
+  return useMutation({
+    mutationFn: (updatedData: Partial<ListingWithStatuses>) =>
+      updateListing(id, updatedData),
+
+    onSuccess: () => {
+      toast.success(`Listing updated successfully!`);
+      invalidateListingQueries(id);
+    },
+    onError: (error: unknown) => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while updating the listing.';
       toast.error(errorMessage);
     },
   });

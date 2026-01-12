@@ -1,13 +1,14 @@
 'use client';
-import { useQuery } from '@tanstack/react-query';
-import ImagePreview from '@/components/ImagePreview';
+
+import ImagePreview from '@/components/ui/ImagePreview';
 import { ListingWithStatuses } from '@/feature/listing/types';
 import {
   ListingAlert,
   ListingHeader,
   ListingDescriptions,
 } from './_components';
-import { getListingById } from '@/feature/listing';
+import { useListingById } from '@/feature/listing';
+import { Loading } from '@/components/ui';
 
 const ListingDetailsClient = ({
   listing: initialData,
@@ -16,16 +17,25 @@ const ListingDetailsClient = ({
   listing: ListingWithStatuses;
   id: string;
 }) => {
-  const {
-    data: listing,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['listing', id],
-    queryFn: () => getListingById(id),
-    initialData,
-  });
+  // const {
+  //   data: listing,
+  //   isLoading,
+  //   error,
+  // } = useQuery({
+  //   queryKey: ['listing', id],
+  //   queryFn: () => getListingById(id),
+  //   initialData,
+  // });
 
+  const { data: listing, isLoading, error } = useListingById(id, initialData);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (error || !listing) {
+    return <p>Error loading listing: {String(error?.message)}</p>;
+  }
   const {
     name,
     updatedAt,

@@ -1,11 +1,9 @@
 import FormSelect from '@/components/input/FormSelect';
-import { TableHeaderRow } from '../../../components/ui/TableRows';
+import { TableHeaderRow } from '@/components/ui';
 import { capitalize } from 'lodash';
 import { useEffect, useState } from 'react';
-import { useListingRequests } from '@/hooks/react-query/listing';
 import Loading from '@/components/ui/Loading';
 import { formatDate } from '@/utils/formatDate';
-import { useUpdateListingRequest } from '@/hooks/react-query/listing';
 import { toast } from 'react-toastify';
 import { getStatusClass } from '@/utils/ui-utils';
 
@@ -26,6 +24,8 @@ const WhitelistEditor = ({ listing }: { listing: Record<string, any> }) => {
       ? ['Status', 'Action']
       : ['Actioned Date', 'Actioned By', 'Status']),
   ];
+
+  return <p>Under refactor</p>;
 
   const {
     data: requests,

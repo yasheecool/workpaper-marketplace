@@ -128,6 +128,11 @@ export const getListingById = async (listingId: string) => {
     .single();
 
   if (error) {
+    if (error.code === 'PGRST116') {
+      // No rows found
+      return null;
+    }
+
     throw new Error(
       error.message || 'An error occurred while fetching the listing.'
     );

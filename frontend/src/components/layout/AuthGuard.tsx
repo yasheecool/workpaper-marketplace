@@ -1,5 +1,6 @@
 import Loading from '../ui/Loading';
-import Unauthorized from '../Unauthorized';
+import Unauthorized from '../ui/Unauthorized';
+
 import { getFirmsContext } from '@/feature/firm';
 
 interface AuthGuardProps {

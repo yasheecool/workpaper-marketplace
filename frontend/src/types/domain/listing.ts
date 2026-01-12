@@ -43,6 +43,13 @@ export type ListingStatus = Database['public']['Enums']['listing_status'];
 
 export type Region = Database['public']['Enums']['region'];
 
+export const regionOptions: Record<Region, string> = {
+  australia: 'Australia',
+  newZealand: 'New Zealand',
+  unitedKingdom: 'United Kingdom',
+  republicOfIreland: 'Republic of Ireland',
+};
+
 export type ListingRow = Database['public']['Tables']['listing']['Row'];
 
 export type Listing = {

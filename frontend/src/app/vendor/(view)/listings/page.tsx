@@ -4,18 +4,25 @@ import { Header } from './_components';
 import Filters from './_components/Filters';
 import { getVendorListings } from '@/feature/vendor';
 
+type Filters = {
+  listingType: string;
+  visibility: string;
+  sortBy: string;
+  searchQuery: string;
+};
+
 const ListingPage = async ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
   const searchStr = await searchParams;
+
   const filters = {
     listingType: searchStr['listing-type'] || 'all',
     visibility: searchStr['access-type'] || 'all',
-    sortBy: searchStr['sort-by'] || 'updatedAt',
+    sortBy: searchStr['sort-by'] || 'updated_at',
     searchQuery: searchStr['search'] || '',
-    // sortOrder: searchStr['sort-order'] || 'desc',
   };
 
   const vendorListings = await getVendorListings(filters);
@@ -36,7 +43,7 @@ const ListingPage = async ({
 
       {vendorListings.length > 0 && (
         <div className='overflow-x-auto h-full rounded-md border-[0.5px] border-gray-200 relative'>
-          <TableWrapper />
+          <TableWrapper initialData={vendorListings} filters={filters} />
         </div>
       )}
     </div>

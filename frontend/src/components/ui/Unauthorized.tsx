@@ -1,6 +1,6 @@
 'use client';
 
-import Header from './layout/Header';
+import Header from '../layout/Header';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 

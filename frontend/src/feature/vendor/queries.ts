@@ -1,3 +1,5 @@
+'use server';
+
 import { createClient } from '@/lib/supabase/serverClient';
 import {
   type VendorProfileRow,
@@ -41,13 +43,14 @@ export const getVendorListings = async (filters: {
 }) => {
   const supabase = await createClient();
   const { currentFirm } = await getFirmsContext();
+  const vendorId = currentFirm!!.id;
 
   const query = supabase
     .from('listing')
     .select(
       `id, name, content_type, updated_at, updated_by_user(first_name, last_name), visibility, status`
     )
-    .eq('owned_by_firm(id)', currentFirm!!.id);
+    .eq('owned_by_firm(id)', vendorId);
 
   if (filters.listingType !== 'all') {
     query.eq('content_type', filters.listingType);
@@ -68,10 +71,6 @@ export const getVendorListings = async (filters: {
     query.order(filters.sortBy, { ascending: isAscending });
   }
 
-  // if (filters.searchQuery) {
-  //   query.ilike('name', `%${filters.searchQuery}%`);
-  // }
-
   const { data, error } = await query;
 
   if (error || !data) {
@@ -81,8 +80,6 @@ export const getVendorListings = async (filters: {
   const mappedData = mapVendorListingsFromDb(
     data as unknown as VendorListingFromDb[]
   );
-
-  console.log(mappedData);
 
   return mappedData;
 };

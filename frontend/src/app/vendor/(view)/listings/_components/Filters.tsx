@@ -69,7 +69,7 @@ const Filters = () => {
         />
       </div>
       <select
-        defaultValue={'Last Updated'}
+        defaultValue={'updated_at'}
         onChange={(e) => updateSearchParams('sort-by', e.target.value)}
         className='select select-bordered select-sm w-30 justify-self-end col-start-2 row-start-2'
       >
@@ -79,4 +79,5 @@ const Filters = () => {
     </>
   );
 };
+
 export default Filters;

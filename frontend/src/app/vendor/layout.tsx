@@ -1,6 +1,5 @@
-import Header from '@/components/layout/Header';
+import { AuthGuard, Header } from '@/components/layout';
 import VendorHeaderNav from './VendorHeaderNav';
-import AuthGuard from '@/components/layout/AuthGuard';
 
 const VendorLayout = ({ children }: { children: React.ReactElement }) => {
   return (

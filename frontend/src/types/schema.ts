@@ -1,11 +1,12 @@
 import { z } from 'zod';
+
 import {
-  REGIONS,
-  WORKPAPER_TYPES,
-  CONTENT_TYPE,
-  ENTITY_TYPES,
-  LISTING_VISIBILITY,
-} from '@/types/types';
+  regionOptions,
+  workpaperTypeOptions,
+  listingTypeOptions,
+  listingVisibilityOptions,
+  entityTypeOptions,
+} from './domain/listing';
 
 export const listingInputSchema = z.object({
   id: z.string(), //needed by the backend to uniquely identify the listing
@@ -29,30 +30,38 @@ export const listingInputSchema = z.object({
   gettingStartedSteps: z
     .string()
     .max(1500, 'Getting started steps must be under 1500 characters')
-    .optional(),
+    .optional()
+    .nullable(),
 
-  region: z.enum(Object.keys(REGIONS) as [keyof typeof REGIONS]),
+  region: z.enum(Object.keys(regionOptions) as [keyof typeof regionOptions]),
 
   workpaperType: z
     .array(
-      z.enum(Object.keys(WORKPAPER_TYPES) as [keyof typeof WORKPAPER_TYPES])
+      z.enum(
+        Object.keys(workpaperTypeOptions) as [keyof typeof workpaperTypeOptions]
+      )
     )
     .min(1, 'Select at least one workpaper type'),
 
   entityType: z
-    .array(z.enum(Object.keys(ENTITY_TYPES) as [keyof typeof ENTITY_TYPES]))
+    .array(
+      z.enum(Object.keys(entityTypeOptions) as [keyof typeof entityTypeOptions])
+    )
     .min(1, 'Select at least one entity type'),
 
-  contentType: z.enum(Object.keys(CONTENT_TYPE) as [keyof typeof CONTENT_TYPE]),
+  contentType: z.enum(
+    Object.keys(listingTypeOptions) as [keyof typeof listingTypeOptions]
+  ),
 
   visibility: z.enum(
-    Object.keys(LISTING_VISIBILITY) as [keyof typeof LISTING_VISIBILITY],
+    Object.keys(listingVisibilityOptions) as [
+      keyof typeof listingVisibilityOptions,
+    ],
     {
       errorMap: () => ({ message: 'Please select a visibility option' }),
     }
   ),
   imagesLink: z.array(z.string()),
-  tags: z.array(z.string()),
 });
 
 export type ListingInputType = z.infer<typeof listingInputSchema>;
@@ -79,5 +88,3 @@ export const vendorProfileFormSchema = z.object({
 });
 
 export type VendorProfileType = z.infer<typeof vendorProfileFormSchema> & {};
-
-
