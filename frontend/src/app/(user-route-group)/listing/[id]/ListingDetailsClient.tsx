@@ -26,8 +26,6 @@ const ListingDetailsClient = ({
     initialData,
   });
 
-  const isRequestedMock = true;
-
   const {
     name,
     updatedAt,
@@ -54,7 +52,6 @@ const ListingDetailsClient = ({
 
   return (
     <>
-      {' '}
       {/* ALERT MESSAGE */}
       {isInstalled || isRequested ? (
         <ListingAlert requestStatus={requestStatus} isInstalled={isInstalled} />
@@ -77,7 +74,7 @@ const ListingDetailsClient = ({
       </div>
       {/* LISTING IMAGES */}
       <div
-        className={`overflow-hidden w-full relative h-96 ${isRequestedMock ? 'lg:row-start-2' : 'lg:row-start-1 '}`}
+        className={`overflow-hidden w-full relative h-96 ${isRequested ? 'lg:row-start-2' : 'lg:row-start-1 '}`}
       >
         <ImagePreview
           imgUrls={[]}

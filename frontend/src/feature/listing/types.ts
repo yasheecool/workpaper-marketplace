@@ -1,12 +1,165 @@
 import {
+  type ListingRow,
   type RequestStatus,
   type SavedListingRow,
+  type Listing,
 } from '@/types/domain/listing';
 
 export type FirmReference = {
   id: string;
   name: string;
 };
+
+export type ListingStatusesFromDb = {
+  saved_listing: {
+    id: string;
+    saved_by_firm: string;
+  }[];
+  installed_listing: {
+    id: string;
+    installed_by_firm: string;
+  }[];
+  listing_access_control: {
+    id: string;
+    requested_by_firm: string;
+    request_status: RequestStatus;
+  }[];
+};
+
+export type ListingStatuses = {
+  isSaved: boolean;
+  isInstalled: boolean;
+  isRequested: boolean;
+  requestStatus: RequestStatus | null;
+};
+
+//MARKETPLACE LISTING TYPES + MAPPERS
+export type MarketplaceListingFromDb = {
+  id: string;
+  name: string;
+  description: string;
+  content_type: string;
+  updated_at: string;
+  images_link: string[];
+  visibility: string;
+  owned_by_firm: FirmReference;
+} & ListingStatusesFromDb;
+
+export type MarketplaceListing = {
+  id: string;
+  name: string;
+  description: string;
+  contentType: string;
+  updatedAt: string;
+  imagesLink: string[];
+  visibility: string;
+  ownedByFirm: FirmReference;
+} & ListingStatuses;
+
+export function mapMarketplaceListingFromDb(
+  listing: MarketplaceListingFromDb,
+  currentFirmId: string
+): MarketplaceListing {
+  const isSaved =
+    Array.isArray(listing.saved_listing) &&
+    listing.saved_listing.some((save) => save.saved_by_firm === currentFirmId);
+
+  const isInstalled =
+    Array.isArray(listing.installed_listing) &&
+    listing.installed_listing.some(
+      (install) => install.installed_by_firm === currentFirmId
+    );
+
+  const isRequested =
+    Array.isArray(listing.listing_access_control) &&
+    listing.listing_access_control.some(
+      (request) => request.requested_by_firm === currentFirmId
+    );
+
+  const requestStatus =
+    listing.listing_access_control?.find(
+      (request) => request.requested_by_firm === currentFirmId
+    )?.request_status || null;
+
+  return {
+    id: listing.id,
+    name: listing.name,
+    description: listing.description,
+    contentType: listing.content_type,
+    updatedAt: listing.updated_at,
+    imagesLink: listing.images_link,
+    visibility: listing.visibility,
+    ownedByFirm: listing.owned_by_firm,
+    isSaved,
+    isInstalled,
+    isRequested,
+    requestStatus,
+  };
+}
+
+//FULL LISTING TYPES + MAPPERS
+export type ListingFromDb = ListingRow &
+  ListingStatusesFromDb & {
+    owned_by_firm: FirmReference;
+  };
+
+export type ListingWithStatuses = Omit<Listing, 'ownedByFirm'> &
+  ListingStatuses & {
+    ownedByFirm: FirmReference;
+  };
+
+export function mapListingFromDb(
+  listing: ListingFromDb,
+  currentFirmId: string
+): ListingWithStatuses {
+  const isSaved =
+    Array.isArray(listing.saved_listing) &&
+    listing.saved_listing.some((save) => save.saved_by_firm === currentFirmId);
+
+  const isInstalled =
+    Array.isArray(listing.installed_listing) &&
+    listing.installed_listing.some(
+      (install) => install.installed_by_firm === currentFirmId
+    );
+
+  const isRequested =
+    Array.isArray(listing.listing_access_control) &&
+    listing.listing_access_control.some(
+      (request) => request.requested_by_firm === currentFirmId
+    );
+
+  const requestStatus =
+    listing.listing_access_control?.find(
+      (request) => request.requested_by_firm === currentFirmId
+    )?.request_status || null;
+
+  return {
+    id: listing.id,
+    createdAt: listing.created_at,
+    updatedAt: listing.updated_at,
+    name: listing.name,
+    description: listing.description,
+    longDescription: listing.long_description,
+    gettingStartedSteps: listing.getting_started_steps,
+    region: listing.region,
+    contentType: listing.content_type,
+    workpaperType: listing.workpaper_type,
+    entityType: listing.entity_type,
+    visibility: listing.visibility,
+    status: listing.status,
+    createdByUser: listing.created_by_user,
+    updatedByUser: listing.updated_by_user,
+    imagesLink: listing.images_link,
+    ownedByFirm: {
+      id: listing.owned_by_firm.id,
+      name: listing.owned_by_firm.name,
+    },
+    isSaved,
+    isInstalled,
+    isRequested,
+    requestStatus,
+  };
+}
 
 //INSTALLED LISTING TYPES + MAPPER
 export type InstalledListingFromDb = {
@@ -141,8 +294,4 @@ export const mapSavedListingsFromDb = (
   }));
 };
 
-export * from './types/listingStatuses';
-export * from './types/marketplaceListingTypes';
-export * from './types/listingWithStatuses';
-export * from './types/mappers';
 export * from '@/types/domain/listing';
