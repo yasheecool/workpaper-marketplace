@@ -1,12 +1,14 @@
 'use client';
 import { FieldValues, useForm } from 'react-hook-form';
 import {
-  type ListingWithStatuses,
   entityTypeOptions,
   listingTypeOptions,
   listingVisibilityOptions,
   regionOptions,
   workpaperTypeOptions,
+  useCreateListingMutation,
+  useUpdateListingMutation,
+  type ListingContent,
 } from '@/feature/listing';
 import { LabelText, FormSelect, CheckboxGroup } from '@/components/input';
 import { ImageUpload, ImagePreview } from '@/components/ui';
@@ -15,12 +17,12 @@ import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getChangedFields } from '@/utils/getChangedFields';
-import { useUpdateListingMutation } from '@/feature/listing';
 import { toSnakeCase } from '@/utils/convertToSnakeCase';
 import { getQueryClient } from '@/lib/queryClient';
+import { useRouter } from 'next/navigation';
 
 type props = {
-  listingData: ListingInputType;
+  listingData: ListingInputType | ListingContent;
   mode: 'create' | 'edit';
 };
 
@@ -28,7 +30,11 @@ type ImageObject = {
   url: string;
   file: File | null; //file will be null if the image is already uploaded
 };
-
+function isListingInputType(
+  data: ListingInputType | ListingContent
+): data is ListingInputType {
+  return Array.isArray((data as any).imagesLink);
+}
 //flow: fetch listing in editorPage/createPage -> receive here as prop (this component/page is used for both creating and editing a listing)-> prefill form with the received listing data -> check logic in useEffect hook which resets/prefills the form with the received listing data
 
 const ListingEditor = ({ listingData, mode }: props) => {
@@ -43,8 +49,10 @@ const ListingEditor = ({ listingData, mode }: props) => {
     resolver: zodResolver(listingInputSchema),
   });
 
+  const router = useRouter();
   const [images, setImages] = useState<ImageObject[]>([]);
   const { mutate: updateListing } = useUpdateListingMutation(listingData.id);
+  const { mutate: createListing } = useCreateListingMutation();
 
   useEffect(() => {
     if (listingData) {
@@ -53,7 +61,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
       if (mode === 'create') setValue('imagesLink', []); //set imagesLink to empty array if mode is create
 
       //set image objects if listing already has some images
-      if (listingData?.imagesLink?.length) {
+      if (isListingInputType(listingData) && listingData.imagesLink?.length) {
         const imageObjects = listingData.imagesLink.map((url) => ({
           url,
           file: null,
@@ -104,6 +112,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
       );
 
       const isEmpty = Object.keys(changedFields).length === 0;
+
       if (!isEmpty) {
       } else toast.info('No changes made to the listing');
 
@@ -111,7 +120,6 @@ const ListingEditor = ({ listingData, mode }: props) => {
         ...changedFields,
         imagesLink: finalImagesLink,
       });
-
       await updateListing(changedFields, {
         onSuccess: () => {
           getQueryClient().invalidateQueries({
@@ -122,8 +130,19 @@ const ListingEditor = ({ listingData, mode }: props) => {
       });
     }
 
-    if (mode === 'create') {
-      const listing = { ...data, imagesLink: finalImagesLink }; //spread the data and add imagesLink
+    if (mode === 'create' && !isListingInputType(listingData)) {
+      const listing = toSnakeCase({
+        ...data,
+        ownedByFirm: listingData.ownedByFirm,
+        imagesLink: finalImagesLink,
+      });
+      console.log(listing);
+
+      createListing(listing, {
+        onSuccess: () => {
+          router.replace(`/vendor/listing/edit/${listingData.id}`);
+        },
+      });
     }
   };
 

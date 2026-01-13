@@ -5,6 +5,7 @@ import {
   installListing,
   requestListing,
   updateListing,
+  createListing,
 } from '../actions';
 import { getQueryClient } from '@/lib/queryClient';
 import { ListingWithStatuses } from '../types';
@@ -80,6 +81,27 @@ export const useUpdateListingMutation = (id: string) => {
         error instanceof Error
           ? error.message
           : 'An error occurred while updating the listing.';
+      toast.error(errorMessage);
+    },
+  });
+};
+
+export const useCreateListingMutation = () => {
+  return useMutation({
+    mutationKey: ['create-listing'],
+    mutationFn: (newData: Partial<ListingWithStatuses>) =>
+      createListing(newData),
+    onSuccess: () => {
+      toast.success(`Listing created successfully!`);
+      const client = getQueryClient();
+      client.invalidateQueries({ queryKey: ['marketplace-listings'] });
+      client.invalidateQueries({ queryKey: ['vendor-listings'] });
+    },
+    onError: (error: unknown) => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while creating the listing.';
       toast.error(errorMessage);
     },
   });

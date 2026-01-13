@@ -63,6 +63,7 @@ const EditorPage = ({ listingId, listing: initialData }: Props) => {
           />
         )}
 
+        {/* TODO: Enable whitelist editor */}
         {currentView === 'whitelist' && <WhitelistEditor listing={listing} />}
       </div>
     </>

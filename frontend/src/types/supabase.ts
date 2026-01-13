@@ -285,6 +285,50 @@ export type Database = {
           },
         ]
       }
+      listing_content: {
+        Row: {
+          content_type: Database["public"]["Enums"]["listing_type"]
+          created_at: string
+          description: string
+          entity_type: Database["public"]["Enums"]["entity_type"][]
+          id: string
+          name: string
+          owned_by_firm: string
+          region: Database["public"]["Enums"]["region"]
+          workpaper_type: Database["public"]["Enums"]["workpaper_type"][]
+        }
+        Insert: {
+          content_type: Database["public"]["Enums"]["listing_type"]
+          created_at?: string
+          description: string
+          entity_type: Database["public"]["Enums"]["entity_type"][]
+          id?: string
+          name: string
+          owned_by_firm?: string
+          region: Database["public"]["Enums"]["region"]
+          workpaper_type: Database["public"]["Enums"]["workpaper_type"][]
+        }
+        Update: {
+          content_type?: Database["public"]["Enums"]["listing_type"]
+          created_at?: string
+          description?: string
+          entity_type?: Database["public"]["Enums"]["entity_type"][]
+          id?: string
+          name?: string
+          owned_by_firm?: string
+          region?: Database["public"]["Enums"]["region"]
+          workpaper_type?: Database["public"]["Enums"]["workpaper_type"][]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_content_owned_by_firm_fkey"
+            columns: ["owned_by_firm"]
+            isOneToOne: false
+            referencedRelation: "firm"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_listing: {
         Row: {
           created_at: string

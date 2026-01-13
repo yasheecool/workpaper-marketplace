@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { TableHeaderRow } from '../../../../components/ui/TableRows';
-import { useFirmListingRequests } from '@/hooks/react-query/firm';
+import { TableHeaderRow } from '@/components/ui';
 import Loading from '@/components/ui/Loading';
 import { formatDate } from '@/utils/formatDate';
 import { capitalize } from 'lodash';
@@ -17,16 +16,16 @@ const headings = [
 ];
 
 const CompletedRequests = () => {
-  const { data: requests, isLoading } = useFirmListingRequests('completed');
+  // const { data: requests, isLoading } = useFirmListingRequests('completed');
 
-  useEffect(() => {
-    console.log(requests);
-  }, [requests]);
+  // useEffect(() => {
+  //   console.log(requests);
+  // }, [requests]);
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
+  return <p>Being Refactored</p>;
   return (
     <div className='rounded-md border-1 shadow-sm border-base-300 overflow-auto'>
       <table className='table rounded-md'>

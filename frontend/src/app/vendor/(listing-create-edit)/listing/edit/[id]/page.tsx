@@ -4,7 +4,6 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const id = (await params).id;
-
   const listing = await getListingById(id);
 
   if (!listing) {

@@ -97,17 +97,7 @@ const TableWrapper = ({
 
           return (
             <tr className='hover:bg-base-200 h-12.5' key={idx}>
-              <td>
-                {idx + 1}
-                {/* <div className='w-full flex items-center justify-center'>
-                  <input
-                    type='checkbox'
-                    // checked={selectedListings.includes(id!)}
-                    className='checkbox checkbox-sm'
-                    // onChange={() => selectListing(id!)}
-                  />
-                </div> */}
-              </td>
+              <td>{idx + 1}</td>
               <td>
                 <Link
                   href={`/vendor/listing/edit/${id}`}
@@ -136,7 +126,7 @@ const TableWrapper = ({
                   actions={[
                     {
                       label: 'Edit',
-                      action: () => navigateToEditor(listing.id!), // clicking a listing will navigate to the editor
+                      action: () => navigateToEditor(listing.id!),
                     },
                     {
                       label: `${isDeleted ? 'Restore' : 'Delete'}`,

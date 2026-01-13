@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { TableHeaderRow } from '../../../../components/ui/TableRows';
+import { TableHeaderRow } from '@/components/ui';
 import { capitalize } from 'lodash';
 import { formatDate } from '@/utils/formatDate';
-import { useUpdateListingRequest } from '@/hooks/react-query/listing';
+
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 
@@ -17,21 +17,21 @@ const RequestAccordion = ({ requests }: { requests: any[] }) => {
     listingId,
   } = requests[0];
   // console.log(requests[0]);
-  const { mutate: updateRequest } = useUpdateListingRequest();
+  // const { mutate: updateRequest } = useUpdateListingRequest();
 
-  const handleRequestUpdate = (
-    requestId: string,
-    action: 'approve' | 'reject'
-  ) => {
-    updateRequest(
-      { action, requestId },
-      {
-        onSuccess: (data) => {
-          toast.success(`Request ${data.data.requestStatus} successfully`);
-        },
-      }
-    );
-  };
+  // const handleRequestUpdate = (
+  //   requestId: string,
+  //   action: 'approve' | 'reject'
+  // ) => {
+  //   updateRequest(
+  //     { action, requestId },
+  //     {
+  //       onSuccess: (data) => {
+  //         toast.success(`Request ${data.data.requestStatus} successfully`);
+  //       },
+  //     }
+  //   );
+  // };
 
   return (
     <div className=' border-gray-300 bg-base-100 overflow-hidden'>
@@ -121,17 +121,17 @@ const RequestAccordion = ({ requests }: { requests: any[] }) => {
                     <div className='flex gap-2'>
                       <button
                         className='btn btn-sm btn-outline border-1  border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
-                        onClick={() =>
-                          handleRequestUpdate(request.id, 'reject')
-                        }
+                        // onClick={() =>
+                        //   handleRequestUpdate(request.id, 'reject')
+                        // }
                       >
                         Reject
                       </button>
                       <button
                         className='btn btn-sm btn-outline border-1 border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
-                        onClick={() =>
-                          handleRequestUpdate(request.id, 'approve')
-                        }
+                        // onClick={() =>
+                        //   handleRequestUpdate(request.id, 'approve')
+                        // }
                       >
                         Approve
                       </button>

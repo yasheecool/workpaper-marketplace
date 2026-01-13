@@ -74,3 +74,18 @@ export type Listing = {
 
 export type SavedListingRow =
   Database['public']['Tables']['saved_listing']['Row'];
+
+export type ListingContentRow =
+  Database['public']['Tables']['listing_content']['Row'];
+
+export type ListingContent = {
+  id: string;
+  contentType: ListingType;
+  workpaperType: WorkpaperType[];
+  entityType: EntityType[];
+  region: Region;
+  description: string;
+  name: string;
+  createdAt: string;
+  ownedByFirm: string;
+};

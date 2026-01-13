@@ -3,6 +3,8 @@ import {
   type RequestStatus,
   type SavedListingRow,
   type Listing,
+  type ListingContentRow,
+  type ListingContent,
 } from '@/types/domain/listing';
 
 export type FirmReference = {
@@ -292,6 +294,22 @@ export const mapSavedListingsFromDb = (
       ownedByFirm: savedListing.listing.owned_by_firm,
     },
   }));
+};
+
+export const mapListingContentFromDb = (
+  listingContent: ListingContentRow
+): ListingContent => {
+  return {
+    id: listingContent.id,
+    createdAt: listingContent.created_at,
+    name: listingContent.name,
+    description: listingContent.description,
+    contentType: listingContent.content_type,
+    workpaperType: listingContent.workpaper_type,
+    entityType: listingContent.entity_type,
+    ownedByFirm: listingContent.owned_by_firm,
+    region: listingContent.region,
+  };
 };
 
 export * from '@/types/domain/listing';

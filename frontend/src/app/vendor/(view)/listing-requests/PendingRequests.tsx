@@ -1,29 +1,31 @@
 import RequestAccordion from './RequestAccordion';
 import SummaryCard from '@/components/ui/SummaryCard';
-import { useFirmListingRequests } from '@/hooks/react-query/firm';
+// import { useFirmListingRequests } from '@/hooks/react-query/firm';
 import { useState, useEffect } from 'react';
 import { groupBy } from 'lodash';
 import Loading from '@/components/ui/Loading';
 
 const PendingRequests = () => {
-  const { data, isLoading } = useFirmListingRequests('pending');
+  // const { data, isLoading } = useFirmListingRequests('pending');
   //The data received from the API is just an object containing requests. So in order to display them in a an accordion, we need to group them by listingId and then display under the accordion of that listingId
   const [groupedRequests, setGroupedRequests] = useState<Record<
     string,
     any
   > | null>(null);
 
-  useEffect(() => {
-    if (data) {
-      const grouped = groupBy(data.listingRequests, (r) => r.listingId);
-      setGroupedRequests(grouped);
-      console.log(data);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     const grouped = groupBy(data.listingRequests, (r) => r.listingId);
+  //     setGroupedRequests(grouped);
+  //     console.log(data);
+  //   }
+  // }, [data]);
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
+
+  return <p>Being Refactored</p>;
 
   return (
     <>

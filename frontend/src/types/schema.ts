@@ -53,15 +53,18 @@ export const listingInputSchema = z.object({
     Object.keys(listingTypeOptions) as [keyof typeof listingTypeOptions]
   ),
 
-  visibility: z.enum(
-    Object.keys(listingVisibilityOptions) as [
-      keyof typeof listingVisibilityOptions,
-    ],
-    {
-      errorMap: () => ({ message: 'Please select a visibility option' }),
-    }
-  ),
-  imagesLink: z.array(z.string()),
+  visibility: z
+    .enum(
+      Object.keys(listingVisibilityOptions) as [
+        keyof typeof listingVisibilityOptions,
+      ],
+      {
+        errorMap: () => ({ message: 'Please select a visibility option' }),
+      }
+    )
+    .default('public')
+    .optional(),
+  imagesLink: z.array(z.string()).default([]).optional(),
 });
 
 export type ListingInputType = z.infer<typeof listingInputSchema>;

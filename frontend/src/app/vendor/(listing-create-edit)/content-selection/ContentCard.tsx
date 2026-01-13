@@ -1,34 +1,30 @@
 import Link from 'next/link';
-import { BaseContent } from '@/types/types';
-import _ from 'lodash';
+import { type ListingContent } from '@/feature/listing';
+import { capitalize } from 'lodash';
 
-const ContentCard = ({ content }: { content: BaseContent }) => {
-  console.log(content);
+const ContentCard = ({ content }: { content: ListingContent }) => {
   return (
-    <div className='border border-gray-300 rounded-md shadow-sm p-4 bg-white hover:shadow-md transition-all max-w-[66.5rem] flex flex-col gap-1'>
-      <div className='badge badge-soft badge-primary badge-sm'>
-        {_.capitalize(content.contentType)}
-      </div>
-      <div className='flex justify-between items-center'>
-        <h3 className='text-lg font-semibold'>{content.name}</h3>
-      </div>
+    <div className='border border-base-300 rounded-md shadow-sm p-4 bg-white hover:shadow-md transition-all flex flex-col gap-1 mr-4'>
+      <p className='badge badge-soft badge-primary badge-sm'>
+        {capitalize(content.contentType)}
+      </p>
+
+      <h3 className='text-lg font-semibold'>{content.name}</h3>
       <p className='text-sm text-gray-600'>{content.description}</p>
 
-      {/* TODO: Format the below types properly rather than the raw value */}
       <div className='flex gap-6 items-center mt-3'>
-        {content.workpaperType?.length > 0 && (
-          <p className='text-sm text-gray-500'>
-            <strong>Workpaper:</strong> {content.workpaperType.join(', ')}
-          </p>
-        )}
+        <p className='text-sm text-gray-500'>
+          <strong>Workpaper:</strong>{' '}
+          {content.workpaperType.map((type) => capitalize(type)).join(', ')}
+        </p>
 
-        {content.entityType?.length > 0 && (
-          <p className='text-sm text-gray-500'>
-            <strong>Entity:</strong> {content.entityType.join(', ')}
-          </p>
-        )}
+        <p className='text-sm text-gray-500'>
+          <strong>Entity:</strong>{' '}
+          {content.entityType.map((type) => capitalize(type)).join(', ')}
+        </p>
+
         <Link href={`/vendor/listing/create/${content.id}`} className='ml-auto'>
-          <span className='flex gap-1 text-primary-500 hover:scale-105 transition-all ease-in-out'>
+          <span className='flex gap-1 text-secondary hover:scale-105 transition-all ease-in-out bg-primary/10 p-2 rounded-md hover:bg-primary/15'>
             Create Listing
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -50,4 +46,5 @@ const ContentCard = ({ content }: { content: BaseContent }) => {
     </div>
   );
 };
+
 export default ContentCard;

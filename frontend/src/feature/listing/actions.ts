@@ -123,3 +123,18 @@ export const updateListing = async (
 
   return response;
 };
+
+export const createListing = async (
+  listingData: Partial<ListingWithStatuses>
+) => {
+  const supabase = await createClient();
+
+  const response = await supabase.from('listing').upsert({ ...listingData });
+
+  if (response.error) {
+    console.log(response.error);
+    throw new Error(response.error.message);
+  }
+
+  return response;
+};

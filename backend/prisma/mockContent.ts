@@ -10,17 +10,7 @@ const mockContent = [
       'Confirm active partners, import earnings data, and assign reviewers.',
     tags: ['partner', 'review', 'distribution'],
   },
-  {
-    name: 'Annual Partner Review Process',
-    description:
-      'Procedure to review partner performance and approve profit distributions.',
-    contentType: 'procedure',
-    workpaperType: ['taxPlanning', 'compliance'],
-    entityType: ['partnership'],
-    gettingStartedSteps:
-      'Confirm active partners, import earnings data, and assign reviewers.',
-    tags: ['partner', 'review', 'distribution'],
-  },
+
   {
     name: 'Asset Disposal Summary Report',
     description:

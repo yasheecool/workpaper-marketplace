@@ -15,6 +15,7 @@ import {
 } from './types';
 
 import { getFirmsContext } from '@/feature/firm';
+import { mapListingContentFromDb } from './types';
 
 export const getMarketplaceListings = async (params: {
   [key: string]: string | string[] | undefined;
@@ -227,6 +228,27 @@ export const getRequestedListings = async () => {
   const mappedData = mapRequestedListingsFromDb(
     data as unknown as RequestedListingFromDb[]
   );
+
+  return mappedData;
+};
+
+export const getAvailableContent = async () => {
+  const supabase = await createClient();
+  const { currentFirm } = await getFirmsContext();
+
+  const { data, error } = await supabase
+    .from('listing_content')
+    .select(`*`)
+    .eq('owned_by_firm', currentFirm!!.id);
+
+  if (error || !data) {
+    console.error('Error fetching available content:', error);
+    throw new Error(
+      error.message || 'An error occurred while fetching available content.'
+    );
+  }
+
+  const mappedData = data.map((content) => mapListingContentFromDb(content));
 
   return mappedData;
 };
