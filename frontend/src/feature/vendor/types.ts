@@ -40,3 +40,5 @@ export function mapVendorListingsFromDb(
     status: item.status,
   }));
 }
+
+export * from '@/types/domain/vendor';

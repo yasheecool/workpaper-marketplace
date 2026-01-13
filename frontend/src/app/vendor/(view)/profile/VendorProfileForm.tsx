@@ -1,46 +1,60 @@
 'use client';
 
 import LabelText from '@/components/input/LabelText';
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldErrors } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import { vendorProfileFormSchema, VendorProfileType } from '@/types/schema';
-import { getChangedFields } from '@/utils/getChangedFields';
+import { getChangedFields, toSnakeCase } from '@/utils';
 import { toast } from 'react-toastify';
+import { type VendorProfile, updateVendorProfile } from '@/feature/vendor';
+import { getImageUrl, deleteImage, uploadImage } from '@/lib/supabase/storage';
 
 type ImageObject = {
   url: string;
   file: File | null; //null for the cases if image is from the server
 };
 
-const VendorProfileForm = () => {
-  
+const VENDOR_PROFILE_IMAGE_BUCKET = 'vendor_profile_image';
+
+const VendorProfileForm = ({
+  vendorProfile,
+}: {
+  vendorProfile: VendorProfile;
+}) => {
   const {
     handleSubmit,
-    reset,
     register,
     formState: { isSubmitting },
   } = useForm<VendorProfileType>({
     resolver: zodResolver(vendorProfileFormSchema),
+    defaultValues: {
+      description: vendorProfile.description,
+      firmEmail: vendorProfile.firmEmail,
+      websiteUrl: vendorProfile.websiteUrl,
+      firmLogo: vendorProfile.firmLogo,
+    },
   });
-  
+
   const [firmLogo, setFirmLogo] = useState<ImageObject | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // useEffect(() => {
-  //   // console.log('Vendor Profile:', vendorProfile);
-  //   if (vendorProfile) {
-  //     reset(vendorProfile);
-  //     vendorProfile.firmLogo &&
-  //       setFirmLogo({ url: vendorProfile.firmLogo, file: null });
-  //   }
-  // }, [vendorProfile]);
+  useEffect(() => {
+    if (vendorProfile) {
+      if (vendorProfile.firmLogo) {
+        getImageUrl(vendorProfile.firmLogo, VENDOR_PROFILE_IMAGE_BUCKET).then(
+          (url) => {
+            setFirmLogo({ url, file: null });
+          }
+        );
+      }
+    }
+  }, [vendorProfile]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLocalUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    // console.log('File:', file);
     if (!file) return console.log('No file selected');
+
     setFirmLogo({
       url: URL.createObjectURL(file),
       file: file,
@@ -49,37 +63,53 @@ const VendorProfileForm = () => {
   };
 
   const onSubmit = async (data: VendorProfileType) => {
-    console.log('Submitting form with data:', data);
-    // const changedFields = getChangedFields(
-    //   { ...data, firmLogo: firmLogo?.url || null },
-    //   vendorProfile
-    // );
-    // // console.log('Changed Fields:', changedFields); // Added logging for changed fields
-    // if (firmLogo?.file && firmLogo?.url !== vendorProfile?.firmLogo) {
-    //   const url = await uploadToCloudinary(firmLogo.file);
-    //   changedFields.firmLogo = url;
-    // } else if (firmLogo === null && vendorProfile?.firmLogo) {
-    //   changedFields.firmLogo = null; // If firmLogo is removed
-    // }
+    // console.log('Submitting form with data:', data);
+    let changedFields = getChangedFields<VendorProfileType>(data, {
+      ...vendorProfile,
+    });
 
-    // if (Object.keys(changedFields).length === 0) {
-    //   toast.info('No changes made to the profile');
-    //   return;
-    // }
+    //user uploaded a new image
+    if (firmLogo?.file && firmLogo?.url !== vendorProfile.firmLogo) {
+      const path = await uploadImage(
+        firmLogo.file,
+        vendorProfile.id,
+        VENDOR_PROFILE_IMAGE_BUCKET
+      );
 
-    // update(changedFields, {
-    //   onSuccess: (data) => {
-    //     const { updatedProfile } = data.data;
-    //     reset(updatedProfile);
-    //     toast.success('Profile updated successfully');
-    //   },
-    // });
+      changedFields.firmLogo = path;
+    }
+    //user removed the existing image
+    if (firmLogo === null && vendorProfile?.firmLogo) {
+      await deleteImage(vendorProfile.firmLogo, VENDOR_PROFILE_IMAGE_BUCKET);
+      changedFields.firmLogo = null; // If firmLogo is removed
+    }
+
+    if (Object.keys(changedFields).length === 0) {
+      toast.info('No changes made to the profile');
+      return;
+    }
+
+    changedFields = toSnakeCase(changedFields);
+
+    try {
+      await updateVendorProfile(vendorProfile.id, changedFields);
+      toast.success('Profile updated successfully');
+    } catch (e) {
+      toast.error('Error updating profile: ' + (e as Error).message);
+    }
+  };
+
+  const onError = (errors: FieldErrors<VendorProfileType>) => {
+    const firstErrorField = Object.values(errors)[0];
+    if (firstErrorField && firstErrorField.message) {
+      toast.error(firstErrorField.message.toString());
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className='flex flex-col gap-8'>
-        <div className='flex flex-col gap-2 px-4 border-l-3 border-primary-500'>
+        <div className='flex flex-col gap-2 px-4 border-l-3 border-secondary'>
           <p className='text-lg font-semibold'>Firm Logo</p>
           <div
             className='w-32 h-32 bg-base-300 flex items-center justify-center text-sm text-gray-500 cursor-pointer border-[0.5px] border-gray-300 relative'
@@ -127,23 +157,24 @@ const VendorProfileForm = () => {
               accept='image/*'
               multiple={false}
               className='hidden'
-              onChange={handleImageChange}
+              onChange={handleLocalUpload}
               ref={inputRef}
             />
           </div>
         </div>
 
-        <div className='flex flex-col gap-4 px-4 border-l-3 border-primary-500'>
+        <div className='flex flex-col gap-4 px-4 border-l-3 border-secondary'>
           <div>
-            {/* <LabelText
+            <LabelText
               required={true}
               label={'Firm Name'}
               type='input'
+              name='name'
               extraProps={{
-                defaultValue: vendorProfile?.vendor.firmName,
-                readOnly: true,
+                defaultValue: vendorProfile.firmName,
+                disabled: true,
               }}
-            /> */}
+            />
           </div>
 
           <div>
@@ -157,7 +188,7 @@ const VendorProfileForm = () => {
           </div>
         </div>
 
-        <div className='flex flex-col gap-4 px-4 border-l-3 border-primary-500'>
+        <div className='flex flex-col gap-4 px-4 border-l-3 border-secondary'>
           <p className='font-semibold text-lg'>Contact info</p>
           <LabelText
             required={true}
@@ -168,7 +199,7 @@ const VendorProfileForm = () => {
           />
         </div>
 
-        <div className='flex flex-col gap-4 px-4 border-l-3 border-primary-500'>
+        <div className='flex flex-col gap-4 px-4 border-l-3 border-secondary'>
           <p className='font-semibold text-lg'>Website and socials</p>
           <LabelText
             required={true}
@@ -177,16 +208,13 @@ const VendorProfileForm = () => {
             register={register}
             name='websiteUrl'
           />
-          <LabelText
-            required={false}
-            label={'Linkedin URL'}
-            type='input'
-            register={register}
-            name='linkedInUrl'
-          />
         </div>
 
-        <button className='btn bg-primary-400 hover:bg-primary-300 text-white mb-4'>
+        <button
+          className='btn btn-secondary mb-4'
+          disabled={isSubmitting}
+          type='submit'
+        >
           {isSubmitting ? 'Submitting...' : 'Save'}
         </button>
       </div>

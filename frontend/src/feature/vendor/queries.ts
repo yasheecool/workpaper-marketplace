@@ -23,16 +23,13 @@ export const getVendorProfile = async (vendorId: string) => {
 
   if (error) {
     console.log('Error fetching vendor profile:', error);
-    return {
-      data: null,
-      error: error.message,
-    };
+    throw new Error(error.message);
   }
 
   const mappedData = mapVendorProfileFromDb(data as VendorProfileRow);
-  console.log('Vendor profile data:', mappedData);
+  // console.log('Vendor profile data:', mappedData);
 
-  return { data: mappedData, error: null };
+  return mappedData;
 };
 
 export const getVendorListings = async (filters: {

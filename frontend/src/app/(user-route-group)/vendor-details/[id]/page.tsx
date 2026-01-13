@@ -2,17 +2,14 @@ import Image from 'next/image';
 import { formatDate } from '@/utils/formatDate';
 import { getVendorProfile } from '@/feature/vendor';
 import Container from '@/components/layout/Container';
+import { notFound } from 'next/navigation';
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
-  const { data, error } = await getVendorProfile(id);
+  const data = await getVendorProfile(id);
 
-  if (!data || error) {
-    return (
-      <section className='text-base-content bg-base-200 py-8 flex flex-col gap-8 h-[calc(100vh-140px)]'>
-        <p className='text-red-500'>Error loading vendor profile: {error}</p>
-      </section>
-    );
+  if (!data) {
+    notFound();
   }
 
   const { firmLogo, vendorSince, firmEmail, description, firmName } = data;

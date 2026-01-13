@@ -8,3 +8,5 @@ export const userProfileFormSchema = z.object({
 });
 
 export type UserProfileType = z.infer<typeof userProfileFormSchema>;
+
+export * from '@/types/domain/user';

@@ -7,21 +7,20 @@ import {
   userProfileFormSchema,
   UserProfileType,
   updateUserProfile,
+  type User,
 } from '@/feature/user';
 import { getChangedFields } from '@/utils/getChangedFields';
 import { toast } from 'react-toastify';
-import { type User } from '@/types/domain/user';
-import {
-  deleteProfileImage,
-  uploadProfileImage,
-  getProfileImageUrl,
-} from '@/lib/supabase/storage';
+
+import { deleteImage, uploadImage, getImageUrl } from '@/lib/supabase/storage';
 import Image from 'next/image';
 
 type ImageObject = {
   url: string;
   file: File | null; //null for the cases if image is from the server
 };
+
+const USER_PROFILE_IMAGE_BUCKET = 'user_profile_image';
 
 const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
   const {
@@ -70,16 +69,17 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
     //case 1: user had no image, and uploaded one
     if (userProfile.profileImage === null && userProfileImage) {
       //upload image and get url
-      const url = await uploadProfileImage(
+      const url = await uploadImage(
         userProfileImage.file as File,
-        userProfile.id
+        userProfile.id,
+        USER_PROFILE_IMAGE_BUCKET
       );
       changedFields.profileImage = url;
     }
 
     //case 2: user had an image, and removed it
     if (userProfile.profileImage && userProfileImage === null) {
-      await deleteProfileImage(userProfile.profileImage);
+      await deleteImage(userProfile.profileImage, USER_PROFILE_IMAGE_BUCKET);
       changedFields.profileImage = null;
     }
 
@@ -88,9 +88,10 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
       userProfileImage?.url &&
       userProfileImage.url !== userProfile.profileImage
     ) {
-      const url = await uploadProfileImage(
+      const url = await uploadImage(
         userProfileImage.file as File,
-        userProfile.id
+        userProfile.id,
+        USER_PROFILE_IMAGE_BUCKET
       );
       changedFields.profileImage = url;
     }
@@ -103,8 +104,6 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
     try {
       changedFields = await handleServerImageUpload(changedFields);
     } catch (e) {
-      console.log('Error in image upload handling');
-      console.error('Error uploading profile image:', e);
       toast.error(
         e instanceof Error
           ? e.message
@@ -133,7 +132,6 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
 
     try {
       const data = await updateUserProfile(snakeCaseChangedFields);
-      console.log(data);
       toast.success('Profile updated successfully!');
     } catch (e) {
       console.error('Error updating profile:', e);
@@ -148,10 +146,12 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
 
   useEffect(() => {
     if (userProfile.profileImage) {
-      getProfileImageUrl(userProfile.profileImage).then((url) => {
-        console.log('Fetched profile image URL:', url);
-        setUserProfileImage({ url, file: null });
-      });
+      getImageUrl(userProfile.profileImage, USER_PROFILE_IMAGE_BUCKET).then(
+        (url) => {
+          console.log('Fetched profile image URL:', url);
+          setUserProfileImage({ url, file: null });
+        }
+      );
     }
   }, [userProfile.profileImage]);
 

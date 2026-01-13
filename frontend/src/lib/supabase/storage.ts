@@ -1,6 +1,10 @@
 import { createClient } from './browserClient'; // lib/supabase/storage.ts - Client-side upload
 
-export const uploadProfileImage = async (file: File, userId: string) => {
+export const uploadImage = async (
+  file: File,
+  id: string,
+  bucketName: string
+) => {
   // Validate file size/type on client
   if (file.size > 5 * 1024 * 1024) throw new Error('File too large');
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
@@ -11,8 +15,8 @@ export const uploadProfileImage = async (file: File, userId: string) => {
   const filename = `profile-image`;
 
   const { data, error } = await supabase.storage
-    .from('user_profile_image')
-    .upload(`${userId}/${filename}`, file, { upsert: true });
+    .from(bucketName)
+    .upload(`${id}/${filename}`, file, { upsert: true });
 
   if (error) {
     console.log(error);
@@ -22,11 +26,11 @@ export const uploadProfileImage = async (file: File, userId: string) => {
   return data.path;
 };
 
-export const deleteProfileImage = async (path: string) => {
+export const deleteImage = async (path: string, bucketName: string) => {
   const supabase = createClient();
 
   const { error, data } = await supabase.storage
-    .from('user_profile_image')
+    .from(bucketName)
     .remove([path]);
 
   console.log(data);
@@ -36,12 +40,10 @@ export const deleteProfileImage = async (path: string) => {
   }
 };
 
-export const getProfileImageUrl = async (path: string) => {
+export const getImageUrl = async (path: string, bucketName: string) => {
   const supabase = createClient();
 
-  const { data } = await supabase.storage
-    .from('user_profile_image')
-    .getPublicUrl(path);
+  const { data } = await supabase.storage.from(bucketName).getPublicUrl(path);
 
   return data.publicUrl;
 };
