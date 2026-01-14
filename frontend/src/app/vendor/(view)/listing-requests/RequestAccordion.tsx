@@ -1,97 +1,84 @@
+'use client';
+
 import { useState } from 'react';
 import { TableHeaderRow } from '@/components/ui';
-import { capitalize } from 'lodash';
+import { capitalize, update } from 'lodash';
 import { formatDate } from '@/utils/formatDate';
-
+import { type ListingRequest } from '@/feature/vendor';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import Link from 'next/link';
 
-const RequestAccordion = ({ requests }: { requests: any[] }) => {
+import CaretUp from './_components/CaretUp';
+import CaretDown from './_components/CaretDown';
+import { updateListingRequest } from '@/feature/vendor';
+import { getQueryClient } from '@/lib/queryClient';
+const RequestAccordion = ({ requests }: { requests: ListingRequest[] }) => {
   const [isOpen, setIsOpen] = useState(false);
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
   const {
     listing: { contentType, name },
-    listingId,
   } = requests[0];
-  // console.log(requests[0]);
-  // const { mutate: updateRequest } = useUpdateListingRequest();
 
-  // const handleRequestUpdate = (
-  //   requestId: string,
-  //   action: 'approve' | 'reject'
-  // ) => {
-  //   updateRequest(
-  //     { action, requestId },
-  //     {
-  //       onSuccess: (data) => {
-  //         toast.success(`Request ${data.data.requestStatus} successfully`);
-  //       },
-  //     }
-  //   );
-  // };
+  const { mutate: updateRequest } = useMutation({
+    mutationFn: ({
+      requestId,
+      action,
+    }: {
+      requestId: string;
+      action: 'approved' | 'rejected';
+    }) => updateListingRequest(requestId, action),
+    onSuccess: (_, { action }) => {
+      toast.success(`Request ${action} successfully`);
+      getQueryClient().invalidateQueries({
+        queryKey: ['listing-requests', 'pending'],
+      });
+    },
+    onError: (error: any) => {
+      console.log(error);
+      toast.error(`Error updating request: ${error.message}`);
+    },
+  });
+
+  const handleRequestUpdate = (
+    requestId: string,
+    action: 'approved' | 'rejected'
+  ) => {
+    updateRequest({ requestId, action });
+  };
 
   return (
     <div className=' border-gray-300 bg-base-100 overflow-hidden'>
-      <div className='flex items-center gap-4 px-4 py-4 text-sm border-b-[0.5px] border-gray-300'>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-4 text-sm border-b-[0.5px] border-gray-300 items-center'>
         <div>
           <p className='text-gray-500 text-xs'>Name</p>
-          <Link href={`/vendor/listing/edit/${listingId}`}>
-            <h3 className='text-blk truncate link link-hover'>{name}</h3>
-          </Link>
+          <h3 className='font-semibold text-gray-700 truncate'>{name}</h3>
         </div>
 
-        <div className='ml-auto w-24'>
+        <div>
           <p className='text-gray-500 text-xs'>Type</p>
           <h3>{capitalize(contentType)}</h3>
         </div>
 
-        <div className='flex gap-1 items-center justify-self-end'>
-          <h3 className='text-gray-500'>
+        <div className='flex gap-2 items-center justify-between md:justify-end'>
+          <h3 className='text-gray-500 whitespace-nowrap'>
             Pending Requests:{' '}
-            <span className='text-gray-800'>{requests.length}</span>
+            <span className='text-gray-800 font-semibold'>
+              {requests.length}
+            </span>
           </h3>
-          <span className='cursor-pointer' onClick={toggleDropdown}>
-            {isOpen ? (
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1}
-                stroke='currentColor'
-                className='size-6'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='m4.5 15.75 7.5-7.5 7.5 7.5'
-                />
-              </svg>
-            ) : (
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1}
-                stroke='currentColor'
-                className='size-6'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='m19.5 8.25-7.5 7.5-7.5-7.5'
-                />
-              </svg>
-            )}
+          <span className='cursor-pointer shrink-0' onClick={toggleDropdown}>
+            {isOpen ? <CaretUp /> : <CaretDown />}
           </span>
         </div>
       </div>
 
       <div
-        className={`inset-shadow-sm border-b-1 border-gray-300 overflow-auto max-h-0 origin-top transition-all duration-300 ease-linear ${
-          isOpen ? ' max-h-[300px]' : ''
+        className={`inset-shadow-sm border-b border-gray-300 overflow-auto max-h-0 origin-top transition-all duration-300 ease-linear ${
+          isOpen ? ' max-h-75' : ''
         }`}
       >
         <table className='table w-full overflow-x-auto'>
@@ -110,28 +97,28 @@ const RequestAccordion = ({ requests }: { requests: any[] }) => {
             {requests.map((request) => {
               return (
                 <tr key={request.id} className='hover:bg-base-300'>
-                  <td>{request.requestingFirm.firmName}</td>
+                  <td>{request.requestingFirm.name}</td>
                   <td>
                     {request.requestingUser.firstName}{' '}
                     {request.requestingUser.lastName}
                   </td>
-                  <td>{formatDate(request.requestTime)}</td>
+                  <td>{formatDate(request.createdAt)}</td>
                   <td>{capitalize(request.requestStatus)}</td>
                   <td>
                     <div className='flex gap-2'>
                       <button
-                        className='btn btn-sm btn-outline border-1  border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
-                        // onClick={() =>
-                        //   handleRequestUpdate(request.id, 'reject')
-                        // }
+                        className='btn btn-sm btn-outline border  border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
+                        onClick={() =>
+                          handleRequestUpdate(request.id, 'rejected')
+                        }
                       >
                         Reject
                       </button>
                       <button
-                        className='btn btn-sm btn-outline border-1 border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
-                        // onClick={() =>
-                        //   handleRequestUpdate(request.id, 'approve')
-                        // }
+                        className='btn btn-sm btn-outline border border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
+                        onClick={() =>
+                          handleRequestUpdate(request.id, 'approved')
+                        }
                       >
                         Approve
                       </button>
@@ -146,4 +133,5 @@ const RequestAccordion = ({ requests }: { requests: any[] }) => {
     </div>
   );
 };
+
 export default RequestAccordion;

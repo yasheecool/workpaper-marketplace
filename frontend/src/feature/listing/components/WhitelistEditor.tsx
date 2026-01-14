@@ -1,3 +1,5 @@
+'use client';
+
 import FormSelect from '@/components/input/FormSelect';
 import { TableHeaderRow } from '@/components/ui';
 import { capitalize } from 'lodash';

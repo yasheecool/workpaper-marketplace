@@ -1,9 +1,6 @@
-'use client';
-import { useState } from 'react';
-import ListingEditor from '@/app/vendor/components/ListingEditor';
-import WhitelistEditor from '@/app/vendor/components/WhitelistEditor';
-import Tabs from '@/components/ui/Tabs';
-import Loading from '@/components/ui/Loading';
+import ListingEditor from '@/feature/listing/components/ListingEditor';
+import WhitelistEditor from '@/feature/listing/components/WhitelistEditor';
+import { Loading } from '@/components/ui';
 import { type ListingWithStatuses, useListingById } from '@/feature/listing';
 
 type Props = {
@@ -12,10 +9,6 @@ type Props = {
 };
 
 const EditorPage = ({ listingId, listing: initialData }: Props) => {
-  const [currentView, setCurrentView] = useState<'editor' | 'whitelist'>(
-    'editor'
-  );
-
   const {
     data: listing,
     isLoading,
@@ -32,28 +25,28 @@ const EditorPage = ({ listingId, listing: initialData }: Props) => {
     );
   }
 
-  const tabs = [
-    {
-      label: 'Editor',
-      isActive: currentView === 'editor',
-      onClick: () => setCurrentView('editor'),
-    },
-    listing.visibility !== 'public' && {
-      label: 'Whitelist',
-      isActive: currentView === 'whitelist',
-      onClick: () => setCurrentView('whitelist'),
-    },
-  ].filter(
-    (tab): tab is { label: string; isActive: boolean; onClick: () => void } =>
-      Boolean(tab)
-  );
+  // const tabs = [
+  //   {
+  //     label: 'Editor',
+  //     isActive: currentView === 'editor',
+  //     href: '?view=editor',
+  //   },
+  //   listing.visibility !== 'public' && {
+  //     label: 'Whitelist',
+  //     isActive: currentView === 'whitelist',
+  //     href: '?view=whitelist',
+  //   },
+  // ].filter(
+  //   (tab): tab is { label: string; isActive: boolean; onClick: () => void } =>
+  //     Boolean(tab)
+  // );
 
   return (
     <>
-      <Tabs tabs={tabs} />
+      {/* <Tabs tabs={tabs} /> */}
 
       <div className='px-6 py-8 overflow-auto'>
-        {currentView === 'editor' && (
+        {/* {currentView === 'editor' && (
           <ListingEditor
             listingData={{
               ...listing,
@@ -61,10 +54,10 @@ const EditorPage = ({ listingId, listing: initialData }: Props) => {
             }}
             mode='edit'
           />
-        )}
+        )} */}
 
         {/* TODO: Enable whitelist editor */}
-        {currentView === 'whitelist' && <WhitelistEditor listing={listing} />}
+        {/* {currentView === 'whitelist' && <WhitelistEditor listing={listing} />} */}
       </div>
     </>
   );

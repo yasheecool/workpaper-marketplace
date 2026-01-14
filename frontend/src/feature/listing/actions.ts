@@ -60,9 +60,10 @@ export const saveListing = async (
 
   const { sub: userId } = await getUserClaims();
   const { currentFirm } = await getFirmsContext();
-  console.log('invoked saveListing with', { listingId, type });
+
   const firmId = currentFirm!!.id;
   let response;
+
   if (type === 'save') {
     response = await supabase
       .from('saved_listing')
@@ -79,7 +80,11 @@ export const saveListing = async (
       .eq('listing', listingId)
       .eq('saved_by_firm', firmId);
   }
-  refresh();
+
+  if (response.error) {
+    throw new Error(response.error.message);
+  }
+
   return response;
 };
 
@@ -95,7 +100,7 @@ export const requestListing = async (listingId: string) => {
   const { data, error } = await supabase.from('listing_access_control').insert({
     requested_by_user: userId,
     requested_by_firm: firmId,
-    listing_id: listingId,
+    listing: listingId,
   });
 
   if (error) {

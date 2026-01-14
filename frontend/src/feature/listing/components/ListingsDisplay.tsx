@@ -1,5 +1,4 @@
 'use client';
-
 import { getMarketplaceListings } from '../dbQueries';
 import FilteringMetadataOverlay from './FilteringMetadataOverlay';
 import Listings from './Listings';
@@ -13,7 +12,7 @@ const ListingsDisplay = ({
   initialData?: Awaited<ReturnType<typeof getMarketplaceListings>>;
 }) => {
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['marketplace-listings', params],
+    queryKey: ['marketplace-listings', { ...params, page: params.page || '1' }],
     queryFn: () => getMarketplaceListings(params),
   });
 
@@ -32,6 +31,7 @@ const ListingsDisplay = ({
       </div>
     );
   }
+
   const { data: listings, count, totalPages, currentPage } = data;
 
   return (
@@ -42,6 +42,7 @@ const ListingsDisplay = ({
         totalPages={totalPages || 0}
         itemsOnPage={count || 0}
       />
+
       {/* LISTING DISPLAY + PAGINATION */}
       <div className='pt-5 grid grid-cols-1 gap-6 min-[992px]:col-start-2 min-[992px]:grid-rows-2'>
         <Listings listings={listings} />

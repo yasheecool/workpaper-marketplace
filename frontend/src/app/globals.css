@@ -39,31 +39,6 @@
   --noise: 1;
 }
 
-/* @theme {
-  --color-primary-100: #8675bf;
-  --color-primary-200: #725eb4;
-  --color-primary-300: #5e47a9;
-  --color-primary-400: #4a309f;
-  --color-primary-500: #361994;
-  --color-primary-600: #311785;
-  --color-primary-700: #2b1476;
-  --color-primary-800: #261268;
-  --color-primary-900: #200f59;
-
-  --color-secondary-100: #b0a9ff;
-  --color-secondary-200: #a39bff;
-  --color-secondary-300: #958dff;
-  --color-secondary-400: #887eff;
-  --color-secondary-500: #7b70ff;
-  --color-secondary-600: #6f65e6;
-  --color-secondary-700: #625acc;
-  --color-secondary-800: #564eb3;
-  --color-secondary-900: #4a4399;
-
-  --color-lavender: #c9ccff;
-  --color-blk: #1d1d1d;
-} */
-
 @layer components {
   .section-container {
     max-width: 1280px;

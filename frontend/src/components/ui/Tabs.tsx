@@ -1,10 +1,12 @@
+import Link from 'next/link';
+
 const Tabs = ({
   tabs,
 }: {
   tabs: {
     label: string;
     isActive: boolean;
-    onClick: () => void;
+    href: string;
   }[];
 }) => {
   return (
@@ -14,14 +16,14 @@ const Tabs = ({
     >
       {tabs.map((tab, index) => {
         return (
-          <a
+          <Link
             key={index}
             role='tab'
             className={`tab ${tab.isActive ? 'tab-active' : ''} hover:text-secondary`}
-            onClick={tab.onClick}
+            href={tab.href}
           >
             {tab.label}
-          </a>
+          </Link>
         );
       })}
     </div>

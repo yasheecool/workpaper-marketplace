@@ -1,18 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import ListingEditor from '@/app/vendor/components/ListingEditor';
+import ListingEditor from '@/feature/listing/components/ListingEditor';
 import useListingContent from '@/feature/listing/hooks/useListingContent';
-import Tabs from '@/components/ui/Tabs';
-import Breadcrumbs from '@/components/ui/Breadcrumbs';
-import Loading from '@/components/ui/Loading';
+import { Tabs, Loading, Breadcrumbs } from '@/components/ui';
 
 //Client component because data already available in query cache, no need to fetch again
 const CreatePage = () => {
-  const [currentView, setCurrentView] = useState<'editor' | 'whitelist'>(
-    'editor'
-  );
-
   const { id } = useParams();
 
   const { data, isLoading, error } = useListingContent(); //fetch the content details from the listing content hook using the id from params
@@ -44,17 +38,13 @@ const CreatePage = () => {
           {
             label: 'Editor',
             isActive: true,
-            onClick: () => {
-              setCurrentView('editor');
-            },
+            href: '',
           },
         ]}
       />
 
       <div className='px-6 py-8 overflow-auto'>
-        {currentView === 'editor' && (
-          <ListingEditor listingData={currentContent} mode='create' />
-        )}
+        <ListingEditor listingData={currentContent} mode='create' />
       </div>
     </div>
   );

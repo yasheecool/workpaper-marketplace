@@ -89,3 +89,6 @@ export type ListingContent = {
   createdAt: string;
   ownedByFirm: string;
 };
+
+export type ListingRequestRow =
+  Database['public']['Tables']['listing_access_control']['Row'];

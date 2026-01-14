@@ -122,10 +122,10 @@ const ListingEditor = ({ listingData, mode }: props) => {
       });
       await updateListing(changedFields, {
         onSuccess: () => {
-          getQueryClient().invalidateQueries({
-            queryKey: ['listing', listingData.id],
-          });
-          getQueryClient().invalidateQueries({ queryKey: ['vendor-listings'] });
+          // getQueryClient().invalidateQueries({
+          //   queryKey: ['listing', listingData.id],
+          // });
+          // getQueryClient().invalidateQueries({ queryKey: ['vendor-listings'] });
         },
       });
     }

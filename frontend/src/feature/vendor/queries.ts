@@ -6,7 +6,11 @@ import {
   mapVendorProfileFromDb,
 } from '@/types/domain/vendor';
 import { getFirmsContext } from '../firm';
-import { mapVendorListingsFromDb, type VendorListingFromDb } from './types';
+import {
+  mapVendorListingsFromDb,
+  type VendorListingFromDb,
+  mapListingRequestFromDb,
+} from './types';
 
 export const getVendorProfile = async (vendorId: string) => {
   const supabase = await createClient();
@@ -27,7 +31,6 @@ export const getVendorProfile = async (vendorId: string) => {
   }
 
   const mappedData = mapVendorProfileFromDb(data as VendorProfileRow);
-  // console.log('Vendor profile data:', mappedData);
 
   return mappedData;
 };
@@ -77,6 +80,42 @@ export const getVendorListings = async (filters: {
   const mappedData = mapVendorListingsFromDb(
     data as unknown as VendorListingFromDb[]
   );
+
+  return mappedData;
+};
+
+export const getVendorListingRequests = async (
+  type: 'pending' | 'completed'
+) => {
+  const supabase = await createClient();
+  const { currentFirm } = await getFirmsContext();
+  const vendorId = currentFirm!!.id;
+
+  const query = supabase
+    .from('listing_access_control')
+    .select(
+      '*, listing!inner(owned_by_firm, name, id, content_type), requested_by_firm(name), requested_by_user(first_name, last_name), actioned_by_user(first_name, last_name)'
+    )
+    .eq('listing.owned_by_firm', vendorId);
+
+  if (type === 'pending') {
+    query
+      .eq('request_status', 'pending')
+      .order('listing(name)', { ascending: true });
+  } else {
+    query.neq('request_status', 'pending');
+  }
+
+  const { data, error } = await query;
+
+  if (error || !data) {
+    console.log(error);
+    throw new Error(
+      'Error fetching vendor listing requests: ' + error?.message
+    );
+  }
+
+  const mappedData = data.map((item) => mapListingRequestFromDb(item));
 
   return mappedData;
 };

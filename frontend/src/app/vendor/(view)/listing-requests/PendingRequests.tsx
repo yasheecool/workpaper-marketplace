@@ -1,36 +1,44 @@
+'use client';
+
 import RequestAccordion from './RequestAccordion';
 import SummaryCard from '@/components/ui/SummaryCard';
-// import { useFirmListingRequests } from '@/hooks/react-query/firm';
 import { useState, useEffect } from 'react';
+import { PendingListingRequest } from '@/feature/vendor';
 import { groupBy } from 'lodash';
 import Loading from '@/components/ui/Loading';
+import { useFirmListingRequests } from '@/feature/vendor';
 
-const PendingRequests = () => {
-  // const { data, isLoading } = useFirmListingRequests('pending');
-  //The data received from the API is just an object containing requests. So in order to display them in a an accordion, we need to group them by listingId and then display under the accordion of that listingId
-  const [groupedRequests, setGroupedRequests] = useState<Record<
-    string,
-    any
-  > | null>(null);
+type GroupedRequests = {
+  [listingName: string]: PendingListingRequest[];
+};
 
-  // useEffect(() => {
-  //   if (data) {
-  //     const grouped = groupBy(data.listingRequests, (r) => r.listingId);
-  //     setGroupedRequests(grouped);
-  //     console.log(data);
-  //   }
-  // }, [data]);
+const PendingRequests = ({
+  requests,
+}: {
+  requests: PendingListingRequest[];
+}) => {
+  const [groupedRequests, setGroupedRequests] =
+    useState<GroupedRequests | null>(null);
 
-  // if (isLoading) {
-  //   return <Loading />;
-  // }
+  const { data, isLoading, error } = useFirmListingRequests(
+    'pending',
+    requests
+  );
 
-  return <p>Being Refactored</p>;
+  useEffect(() => {
+    if (data) {
+      const grouped = groupBy(
+        data as PendingListingRequest[],
+        (r) => r.listing.name
+      );
+      setGroupedRequests(grouped);
+    }
+  }, [data]);
 
   return (
     <>
-      {/* OVERVIEW - Summary Cards */}
-      <div className='grid grid-cols-2 gap-4 p-4 py-6 rounded-md border-1 border-base-300 bg-base-100 shadow-sm '>
+      {/* OVERVIEW - Summary Cardss */}
+      <div className='grid grid-cols-2 gap-4 p-4 py-6 rounded-md border border-base-300 bg-base-100 shadow-sm '>
         <h1 className='text-xl font-semibold col-span-2'>Overview</h1>
 
         <SummaryCard
@@ -53,7 +61,7 @@ const PendingRequests = () => {
             );
           }}
           label='Listings Requested'
-          value={data?.listingsRequestedCount}
+          value={groupedRequests ? Object.keys(groupedRequests).length : 0}
         />
 
         <SummaryCard
@@ -76,29 +84,33 @@ const PendingRequests = () => {
             );
           }}
           label='Total Requests'
-          value={data?.totalRequests}
+          value={requests.length}
         />
       </div>
 
+      {isLoading && (
+        <div className='flex justify-center items-center h-75'>
+          <Loading />
+        </div>
+      )}
+
+      {error && <div className='text-red-500'>Error loading requests</div>}
+
       {/* LISTING REQUESTS */}
-      {!!data.totalRequests && (
-        <div className='bg-base-200 rounded-md shadow-sm border-1 border-base-300 flex flex-col'>
+      {groupedRequests && Object.keys(groupedRequests).length > 0 && (
+        <div className='bg-base-200 rounded-md shadow-sm border border-base-300 flex flex-col'>
           <h2 className='font-semibold text px-4 py-2 border-b border-gray-300'>
             Listing Requests
           </h2>
-          {!groupedRequests && (
-            <div className='flex justify-center items-center h-[300px]'>
-              <span className='loading loading-spinner loading-md'></span>
-            </div>
-          )}
 
           {groupedRequests &&
-            Object.entries(groupedRequests).map(([listingId, requests]) => (
-              <RequestAccordion key={listingId} requests={requests} />
+            Object.entries(groupedRequests).map(([listingName, requests]) => (
+              <RequestAccordion key={listingName} requests={requests} />
             ))}
         </div>
       )}
     </>
   );
 };
+
 export default PendingRequests;

@@ -233,7 +233,7 @@ export type Database = {
       listing_access_control: {
         Row: {
           actioned_at: string | null
-          actioned_by_user_id: string | null
+          actioned_by_user: string | null
           created_at: string
           id: string
           listing: string
@@ -243,7 +243,7 @@ export type Database = {
         }
         Insert: {
           actioned_at?: string | null
-          actioned_by_user_id?: string | null
+          actioned_by_user?: string | null
           created_at?: string
           id?: string
           listing: string
@@ -253,7 +253,7 @@ export type Database = {
         }
         Update: {
           actioned_at?: string | null
-          actioned_by_user_id?: string | null
+          actioned_by_user?: string | null
           created_at?: string
           id?: string
           listing?: string
