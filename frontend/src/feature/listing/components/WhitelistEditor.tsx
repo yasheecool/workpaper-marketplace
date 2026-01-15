@@ -6,7 +6,7 @@ import { capitalize } from 'lodash';
 import { useEffect, useState } from 'react';
 import Loading from '@/components/ui/Loading';
 import { formatDate } from '@/utils/formatDate';
-import { toast } from 'react-toastify';
+import { toast } from 'react-toahttps://www.loom.com/share/ece6d59b7bcd4387bbe5204d6b9441d4stify';
 import { getStatusClass } from '@/utils/ui-utils';
 
 const options = {
@@ -29,48 +29,49 @@ const WhitelistEditor = ({ listing }: { listing: Record<string, any> }) => {
 
   return <p>Under refactor</p>;
 
-  const {
-    data: requests,
-    error,
-    isLoading,
-    refetch,
-  } = useListingRequests(listing.id, status);
+  // const {
+  //   data: requests,
+  //   error,
+  //   isLoading,
+  //   refetch,
+  // } = useListingRequests(listing.id, status);
 
-  const { mutate: updateRequest } = useUpdateListingRequest();
+  // const { mutate: updateRequest } = useUpdateListingRequest();
 
-  useEffect(() => {
-    refetch();
-  }, [status]);
+  // useEffect(() => {
+  //   refetch();
+  // }, [status]);
 
   const handleRequestUpdate = (
     requestId: string,
     action: 'approve' | 'reject'
   ) => {
-    updateRequest(
-      { action, requestId },
-      {
-        onSuccess: (data) => {
-          refetch();
-          toast.success(`Request ${data.data.requestStatus} successfully`);
-        },
-      }
-    );
+    // updateRequest(
+    //   { action, requestId },
+    //   {
+    //     onSuccess: (data) => {
+    //       refetch();
+    //       toast.success(`Request ${data.data.requestStatus} successfully`);
+    //     },
+    //   }
+    // );
   };
 
-  if (isLoading) return <Loading />;
-  if (error) return <div>Error loading requests</div>;
+  // if (isLoading) return <Loading />;
+  // if (error) return <div>Error loading requests</div>;
 
   return (
     <div className='flex flex-col gap-6 '>
       <FormSelect
         optionsObj={options}
         label='Status'
-        value={status}
-        setStateValue={setStatus}
+        value={'completed'}
+        // value={status}
+        // setStateValue={setStatus}
       />
 
       {/* TODO: Wrap this table by a TableWrapper */}
-      {requests.length ? (
+      {/* {requests.length ? (
         <table className='table w-full rounded-md b-[0.5px] border-gray-400 shadow-sm overflow-auto'>
           <thead className='bg-base-300 rounded-md'>
             <TableHeaderRow headings={headers} />
@@ -110,7 +111,7 @@ const WhitelistEditor = ({ listing }: { listing: Record<string, any> }) => {
                   <td>
                     <div className='flex gap-2'>
                       <button
-                        className='btn btn-sm btn-outline border-1  border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
+                        className='btn btn-sm btn-outline border  border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
                         onClick={() =>
                           handleRequestUpdate(request.id, 'reject')
                         }
@@ -118,7 +119,7 @@ const WhitelistEditor = ({ listing }: { listing: Record<string, any> }) => {
                         Reject
                       </button>
                       <button
-                        className='btn btn-sm btn-outline border-1 border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
+                        className='btn btn-sm btn-outline border border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
                         onClick={() =>
                           handleRequestUpdate(request.id, 'approve')
                         }
@@ -138,7 +139,7 @@ const WhitelistEditor = ({ listing }: { listing: Record<string, any> }) => {
             No {status} requests found for this listing
           </p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

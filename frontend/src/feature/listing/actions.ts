@@ -4,7 +4,7 @@ import { refresh } from 'next/cache';
 import { getUserClaims } from '../auth';
 import { getFirmsContext } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
-import { ListingWithStatuses } from './types';
+import { ListingWithStatuses, mapListingFromDb } from './types';
 
 export const installListing = async (listingId: string) => {
   const userClaims = await getUserClaims();
@@ -117,16 +117,18 @@ export const updateListing = async (
 ) => {
   const supabase = await createClient();
 
-  const response = await supabase
+  const { data, error } = await supabase
     .from('listing')
     .update({ ...fields, updated_at: new Date().toISOString() })
-    .eq('id', id);
+    .eq('id', id)
+    .select();
 
-  if (response.error) {
-    throw new Error(response.error.message);
+  if (error) {
+    throw new Error(error.message);
   }
 
-  return response;
+  const mappedData = mapListingFromDb(data[0]);
+  return mappedData;
 };
 
 export const createListing = async (

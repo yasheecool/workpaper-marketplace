@@ -24,13 +24,13 @@ export const listingInputSchema = z.object({
   longDescription: z
     .string()
     .max(2000, 'Long description must be under 2000 characters')
-    .optional()
+    // .optional()
     .nullable(),
 
   gettingStartedSteps: z
     .string()
     .max(1500, 'Getting started steps must be under 1500 characters')
-    .optional()
+    // .optional()
     .nullable(),
 
   region: z.enum(Object.keys(regionOptions) as [keyof typeof regionOptions]),
@@ -68,19 +68,6 @@ export const listingInputSchema = z.object({
 });
 
 export type ListingInputType = z.infer<typeof listingInputSchema>;
-
-export type ListingType = ListingInputType & {
-  createdAt: string;
-  updatedAt: string;
-  ownerFirmId: string;
-  createdBy: string;
-  status: 'active' | 'deleted';
-  updatedBy: Record<string, any>;
-  ownedByFirm: {
-    firmName: string;
-    firmId: string;
-  };
-};
 
 export const vendorProfileFormSchema = z.object({
   firmEmail: z.string().email(),

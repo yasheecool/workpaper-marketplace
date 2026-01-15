@@ -16,7 +16,7 @@ const LoginForm = () => {
       setIsLoading(true);
       const supabase = await createClient();
 
-      const { data, error: err } = await supabase.auth.signInWithOtp({
+      const { error: err } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
           shouldCreateUser: false,

@@ -1,9 +1,15 @@
 import { createClient } from './browserClient'; // lib/supabase/storage.ts - Client-side upload
 
+const buckets = {
+  LISTING_IMAGES_BUCKET: 'listing_image',
+  USER_PROFILE_IMAGE_BUCKET: 'user_profile_image',
+  VENDOR_PROFILE_IMAGE_BUCKET: 'vendor_profile_image',
+};
+
 export const uploadImage = async (
   file: File,
-  id: string,
-  bucketName: string
+  resourceId: string,
+  bucketName: keyof typeof buckets
 ) => {
   // Validate file size/type on client
   if (file.size > 5 * 1024 * 1024) throw new Error('File too large');
@@ -12,38 +18,66 @@ export const uploadImage = async (
   }
 
   const supabase = createClient();
-  const filename = `profile-image`;
+  const filename = safeName(`${file.name}`);
 
   const { data, error } = await supabase.storage
-    .from(bucketName)
-    .upload(`${id}/${filename}`, file, { upsert: true });
+    .from(buckets[bucketName])
+    .upload(`${resourceId}/${filename}`, file, { upsert: true });
 
   if (error) {
-    console.log(error);
-    throw new Error(error.message);
+    throw error;
   }
 
   return data.path;
 };
 
-export const deleteImage = async (path: string, bucketName: string) => {
+export const deleteImage = async (
+  path: string,
+  bucketName: keyof typeof buckets
+) => {
   const supabase = createClient();
 
   const { error, data } = await supabase.storage
-    .from(bucketName)
+    .from(buckets[bucketName])
     .remove([path]);
 
-  console.log(data);
   if (error) {
     console.log(error);
     throw new Error(error.message);
   }
 };
 
-export const getImageUrl = async (path: string, bucketName: string) => {
+export const getImageUrl = async (
+  path: string,
+  bucketName: keyof typeof buckets
+) => {
   const supabase = createClient();
 
-  const { data } = await supabase.storage.from(bucketName).getPublicUrl(path);
+  const { data } = await supabase.storage
+    .from(buckets[bucketName])
+    .getPublicUrl(path);
 
   return data.publicUrl;
 };
+
+/**
+ * Generates a safe filename by removing unsafe characters and normalizing whitespace.
+ * Keeps file extension intact.
+ */
+export function safeName(filename: string): string {
+  const parts = filename.split('.');
+  if (parts.length < 2) {
+    // No extension, just sanitize the whole string
+    return filename
+      .replace(/[^a-zA-Z0-9-_]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '');
+  }
+  const ext = parts.pop();
+  const base = parts.join('.');
+  const safeBase = base
+    .replace(/[^a-zA-Z0-9-_]/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
+  return `${safeBase}.${ext}`;
+}

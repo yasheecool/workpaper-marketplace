@@ -17,7 +17,6 @@ const ListingRequests = async ({
     view === 'pending' ? 'pending' : 'completed'
   );
 
-  console.log('ListingRequests view:', view, requests);
   const tabs = [
     {
       label: 'Pending',

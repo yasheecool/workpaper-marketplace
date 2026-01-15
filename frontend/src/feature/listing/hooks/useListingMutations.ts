@@ -74,7 +74,7 @@ export const useUpdateListingMutation = (id: string) => {
 
     onSuccess: () => {
       toast.success(`Listing updated successfully!`);
-      invalidateListingQueries(id);
+      getQueryClient().invalidateQueries({ queryKey: ['vendor-listings'] });
     },
     onError: (error: unknown) => {
       const errorMessage =

@@ -2,8 +2,9 @@ import Dropdown from '@/components/ui/Dropdown';
 import { HeaderFirmSelectorLink } from '@/components/ui';
 import { getFirmsContext } from '@/feature/firm';
 import { getUserFromDB } from '@/feature/user';
+import { signOut } from '@/feature/auth';
 
-const dropdownListObject = [
+const navList = [
   {
     label: 'Profile',
     href: '/vendor/profile',
@@ -14,7 +15,8 @@ const dropdownListObject = [
   },
   {
     label: 'Logout',
-    href: '/',
+    href: '',
+    onClick: signOut,
   },
 ];
 
@@ -24,7 +26,7 @@ const VendorHeaderNav = async () => {
 
   return (
     <div className='flex items-center gap-4'>
-      <HeaderFirmSelectorLink firmName={currentFirm!!.name} />
+      <HeaderFirmSelectorLink firmName={currentFirm!.name} />
 
       <Dropdown
         displayChild={
@@ -48,7 +50,7 @@ const VendorHeaderNav = async () => {
             </span>
           </>
         }
-        listObject={dropdownListObject}
+        listObject={navList}
       />
     </div>
   );

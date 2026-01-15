@@ -116,15 +116,12 @@ export type CompletedListingRequest = ListingRequestBase & {
 };
 
 // Union type for all listing requests
-export type ListingRequest = PendingListingRequest | CompletedListingRequest;
 
 // ============================================================================
 // Mappers
 // ============================================================================
 
-export const mapListingRequestFromDb = (
-  request: ListingRequestFromDb
-): ListingRequest => {
+export const mapListingRequestFromDb = (request: ListingRequestFromDb) => {
   const base = {
     id: request.id,
     listing: {

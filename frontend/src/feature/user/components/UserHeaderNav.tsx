@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getUserFromDB } from '../queries';
 import { getFirmsContext } from '@/feature/firm';
 import { HeaderFirmSelectorLink } from '@/components/ui';
+import { signOut } from '@/feature/auth';
 
 const UserHeaderNav = async () => {
   const user = await getUserFromDB();
@@ -29,7 +30,7 @@ const UserHeaderNav = async () => {
           },
         ]
       : []),
-    { label: 'Logout', href: '/' },
+    { label: 'Logout', href: '', onClick: signOut },
   ];
 
   return (
@@ -41,7 +42,7 @@ const UserHeaderNav = async () => {
       )}
 
       {allUserFirms.length > 1 && (
-        <HeaderFirmSelectorLink firmName={currentFirm!!.name} />
+        <HeaderFirmSelectorLink firmName={currentFirm!.name} />
       )}
 
       <Dropdown

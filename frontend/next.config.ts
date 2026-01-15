@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: `${process.env.NEXT_PUBLIC_SUPABASE_HOSTNAME}`,
         port: '',
-        pathname: '/storage/v1/object/public/user_profile_image/**',
+        pathname: '/storage/v1/object/public/**',
       },
     ],
   },

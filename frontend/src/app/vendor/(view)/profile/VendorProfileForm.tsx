@@ -15,8 +15,6 @@ type ImageObject = {
   file: File | null; //null for the cases if image is from the server
 };
 
-const VENDOR_PROFILE_IMAGE_BUCKET = 'vendor_profile_image';
-
 const VendorProfileForm = ({
   vendorProfile,
 }: {
@@ -42,7 +40,7 @@ const VendorProfileForm = ({
   useEffect(() => {
     if (vendorProfile) {
       if (vendorProfile.firmLogo) {
-        getImageUrl(vendorProfile.firmLogo, VENDOR_PROFILE_IMAGE_BUCKET).then(
+        getImageUrl(vendorProfile.firmLogo, 'VENDOR_PROFILE_IMAGE_BUCKET').then(
           (url) => {
             setFirmLogo({ url, file: null });
           }
@@ -73,14 +71,14 @@ const VendorProfileForm = ({
       const path = await uploadImage(
         firmLogo.file,
         vendorProfile.id,
-        VENDOR_PROFILE_IMAGE_BUCKET
+        'VENDOR_PROFILE_IMAGE_BUCKET'
       );
 
       changedFields.firmLogo = path;
     }
     //user removed the existing image
     if (firmLogo === null && vendorProfile?.firmLogo) {
-      await deleteImage(vendorProfile.firmLogo, VENDOR_PROFILE_IMAGE_BUCKET);
+      await deleteImage(vendorProfile.firmLogo, 'VENDOR_PROFILE_IMAGE_BUCKET');
       changedFields.firmLogo = null; // If firmLogo is removed
     }
 

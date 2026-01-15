@@ -27,17 +27,22 @@ const PendingRequests = ({
 
   useEffect(() => {
     if (data) {
-      const grouped = groupBy(
-        data as PendingListingRequest[],
-        (r) => r.listing.name
-      );
-      setGroupedRequests(grouped);
+      const grouped = groupBy(data, (r) => r.listing.name);
+      setGroupedRequests(grouped as GroupedRequests);
     }
   }, [data]);
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <div className='text-red-500'>Error loading requests</div>;
+  }
+
   return (
     <>
-      {/* OVERVIEW - Summary Cardss */}
+      {/* OVERVIEW - Summary Cards */}
       <div className='grid grid-cols-2 gap-4 p-4 py-6 rounded-md border border-base-300 bg-base-100 shadow-sm '>
         <h1 className='text-xl font-semibold col-span-2'>Overview</h1>
 
@@ -61,7 +66,7 @@ const PendingRequests = ({
             );
           }}
           label='Listings Requested'
-          value={groupedRequests ? Object.keys(groupedRequests).length : 0}
+          value={Object.keys(groupedRequests || {}).length}
         />
 
         <SummaryCard
@@ -84,7 +89,7 @@ const PendingRequests = ({
             );
           }}
           label='Total Requests'
-          value={requests.length}
+          value={data.length}
         />
       </div>
 

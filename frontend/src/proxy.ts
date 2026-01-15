@@ -2,16 +2,17 @@ import { type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/proxy';
 import { NextResponse } from 'next/server';
 
+const openUrls = ['/login', '/auth', '/'];
+
 export async function proxy(request: NextRequest) {
   const { supabaseResponse, userClaims } = await updateSession(request);
   const selectedFirm = request.cookies.get('selected_firm_id')?.value;
 
   if (
     !userClaims &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
+    !openUrls.some((url) => request.nextUrl.pathname.startsWith(url))
   ) {
-    console.log('No user session found');
+    console.log('No user session found, will redirect to login');
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = '/login';
@@ -26,7 +27,7 @@ export async function proxy(request: NextRequest) {
     // no firm selected, redirect to firm selection page
     const url = request.nextUrl.clone();
     url.pathname = '/firm-selection';
-    return NextResponse.redirect(url);
+    // return NextResponse.redirect(url);
   }
 
   return supabaseResponse;

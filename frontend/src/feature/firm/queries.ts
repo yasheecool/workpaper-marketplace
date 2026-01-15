@@ -3,19 +3,29 @@ import { createClient } from '@/lib/supabase/serverClient';
 import { FirmRow, mapFirmsFromDb, FirmFromPayload } from '@/types/domain/firm';
 import { cookies } from 'next/headers';
 
+export async function getCurrentFirmIdFromCookies() {
+  const currentFirmIdFromCookies = (await cookies()).get(
+    'selected_firm_id'
+  )?.value;
+
+  if (!currentFirmIdFromCookies) {
+    throw new Error('No firm selected');
+  }
+
+  return currentFirmIdFromCookies;
+}
+
 export async function getFirmsContext() {
   const supabase = await createClient();
 
   const { data } = await supabase.auth.getClaims();
 
   //data and app_metadata are guaranteed to be non-null - proxy checks user claims, app metadata is always added by supabase when logging in!
+
   const firmsFromClaims: FirmFromPayload[] =
-    data!!.claims.app_metadata!!.workpapers.firms;
+    data!.claims.app_metadata!.workpapers.firms;
 
-  const currentFirmIdFromCookies = (await cookies()).get(
-    'selected_firm_id'
-  )?.value;
-
+  const currentFirmIdFromCookies = await getCurrentFirmIdFromCookies();
   const mappedFirmIds = firmsFromClaims.map((firm) => firm.id);
 
   // Fetch firms and related vendor_profile rows (left join)

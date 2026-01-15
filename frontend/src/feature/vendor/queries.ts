@@ -43,7 +43,7 @@ export const getVendorListings = async (filters: {
 }) => {
   const supabase = await createClient();
   const { currentFirm } = await getFirmsContext();
-  const vendorId = currentFirm!!.id;
+  const vendorId = currentFirm!.id;
 
   const query = supabase
     .from('listing')
@@ -89,7 +89,7 @@ export const getVendorListingRequests = async (
 ) => {
   const supabase = await createClient();
   const { currentFirm } = await getFirmsContext();
-  const vendorId = currentFirm!!.id;
+  const vendorId = currentFirm!.id;
 
   const query = supabase
     .from('listing_access_control')

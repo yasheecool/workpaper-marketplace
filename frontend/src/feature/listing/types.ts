@@ -112,7 +112,7 @@ export type ListingWithStatuses = Omit<Listing, 'ownedByFirm'> &
 
 export function mapListingFromDb(
   listing: ListingFromDb,
-  currentFirmId: string
+  currentFirmId?: string
 ): ListingWithStatuses {
   const isSaved =
     Array.isArray(listing.saved_listing) &&

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { TableHeaderRow } from '@/components/ui';
 import { capitalize, update } from 'lodash';
 import { formatDate } from '@/utils/formatDate';
-import { type ListingRequest } from '@/feature/vendor';
+import { type PendingListingRequest } from '@/feature/vendor';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
@@ -12,7 +12,11 @@ import CaretUp from './_components/CaretUp';
 import CaretDown from './_components/CaretDown';
 import { updateListingRequest } from '@/feature/vendor';
 import { getQueryClient } from '@/lib/queryClient';
-const RequestAccordion = ({ requests }: { requests: ListingRequest[] }) => {
+const RequestAccordion = ({
+  requests,
+}: {
+  requests: PendingListingRequest[];
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {

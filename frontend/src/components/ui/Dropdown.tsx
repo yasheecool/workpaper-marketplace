@@ -1,12 +1,17 @@
 import Link from 'next/link';
 
-//for more broad use cases, this component an onClick property can also be included in the listObject, then this component can be used for dropdowns with actions
+type DropdownItem = {
+  label: string;
+  href: string;
+  onClick?: () => void;
+};
+
 const Dropdown = ({
   displayChild,
   listObject,
 }: {
   displayChild: React.ReactNode;
-  listObject: Record<string, any>[];
+  listObject: DropdownItem[];
 }) => {
   return (
     <div className='dropdown dropdown-hover dropdown-center'>
@@ -22,7 +27,7 @@ const Dropdown = ({
         className='dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm text-sm'
       >
         {listObject.map((item, index) => (
-          <li key={index}>
+          <li key={index} onClick={item.onClick}>
             <Link href={item.href}>{item.label}</Link>
           </li>
         ))}

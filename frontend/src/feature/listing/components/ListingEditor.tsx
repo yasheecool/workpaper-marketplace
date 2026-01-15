@@ -16,10 +16,10 @@ import { ListingInputType, listingInputSchema } from '@/types/schema';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getChangedFields } from '@/utils/getChangedFields';
-import { toSnakeCase } from '@/utils/convertToSnakeCase';
-import { getQueryClient } from '@/lib/queryClient';
+import { toSnakeCase, getChangedFields } from '@/utils';
 import { useRouter } from 'next/navigation';
+import { getQueryClient } from '@/lib/queryClient';
+import { getImageUrl, uploadImage } from '@/lib/supabase/storage';
 
 type props = {
   listingData: ListingInputType | ListingContent;
@@ -30,14 +30,19 @@ type ImageObject = {
   url: string;
   file: File | null; //file will be null if the image is already uploaded
 };
+
 function isListingInputType(
   data: ListingInputType | ListingContent
 ): data is ListingInputType {
-  return Array.isArray((data as any).imagesLink);
+  return Array.isArray((data as ListingInputType).imagesLink);
 }
-//flow: fetch listing in editorPage/createPage -> receive here as prop (this component/page is used for both creating and editing a listing)-> prefill form with the received listing data -> check logic in useEffect hook which resets/prefills the form with the received listing data
+//flow: fetch listing in editorPage/createPage -> here as prop (this component/page is used for both creating and editing a listing)-> prefill form with the received listing data through useEffect
 
 const ListingEditor = ({ listingData, mode }: props) => {
+  const [localListingFormData, setLocalListingFormData] = useState<
+    ListingInputType | ListingContent
+  >(listingData);
+
   const {
     handleSubmit,
     register,
@@ -54,22 +59,37 @@ const ListingEditor = ({ listingData, mode }: props) => {
   const { mutate: updateListing } = useUpdateListingMutation(listingData.id);
   const { mutate: createListing } = useCreateListingMutation();
 
+  // Effect 1: Reset form and prepare initial state
   useEffect(() => {
-    if (listingData) {
-      reset(listingData); // Reset the form with the listing data if user mutates listing
+    if (localListingFormData) {
+      reset(localListingFormData);
 
-      if (mode === 'create') setValue('imagesLink', []); //set imagesLink to empty array if mode is create
-
-      //set image objects if listing already has some images
-      if (isListingInputType(listingData) && listingData.imagesLink?.length) {
-        const imageObjects = listingData.imagesLink.map((url) => ({
-          url,
-          file: null,
-        }));
-        setImages(imageObjects);
+      if (mode === 'create') {
+        setValue('imagesLink', []);
+        setImages([]); // Clear images in create mode
       }
     }
-  }, [listingData]);
+  }, [localListingFormData, mode, reset, setValue]);
+
+  // Effect 2: Load and resolve image URLs asynchronously
+  useEffect(() => {
+    if (
+      isListingInputType(localListingFormData)
+      // localListingFormData.imagesLink?.length
+    ) {
+      const loadImages = async () => {
+        const resolvedImages = await Promise.all(
+          localListingFormData.imagesLink.map(async (url) => ({
+            url: await getImageUrl(url, 'LISTING_IMAGES_BUCKET'),
+            file: null,
+          }))
+        );
+        setImages(resolvedImages);
+      };
+
+      loadImages();
+    }
+  }, [localListingFormData]);
 
   const removeUrl = (url: string) => {
     const updatedImages = images.filter((img) => {
@@ -81,53 +101,76 @@ const ListingEditor = ({ listingData, mode }: props) => {
     setImages(updatedImages);
   };
 
-  const handleImageUpload = (imageObjs: ImageObject[]) => {
+  const handleLocalImageUpload = (imageObjs: ImageObject[]) => {
     setImages((prev) => [...prev, ...imageObjs]);
   };
 
-  const onSubmit = async (data: FieldValues) => {
-    //Separate Existing image urls
-    const existingImgUrls = images
+  const filterUploadImages = async (imageObjs: ImageObject[]) => {
+    //all remote image paths
+    const existingImagePaths = images
       .filter((img) => img.file === null)
       .map((img) => img.url);
 
-    const newBlobUrls = images.filter((img) => img.file !== null);
-
-    let uploadedUrls: string[] = [];
-
-    //Upload new images to cloudinary
-    if (newBlobUrls.length) {
-      // uploadedUrls = await Promise.all(
-      //   newBlobUrls.map((img) => uploadToCloudinary(img.file!))
-      // );
+    if (
+      isListingInputType(localListingFormData) &&
+      localListingFormData.imagesLink !== undefined &&
+      existingImagePaths.length < localListingFormData.imagesLink.length
+    ) {
+      const removedImages = localListingFormData.imagesLink.filter(
+        (imgPath) => !existingImagePaths.includes(imgPath)
+      );
+      //delete removed images from storage
     }
 
-    //construct the final images array
-    const finalImagesLink = [...existingImgUrls, ...uploadedUrls];
+    //all local images
+    const newBlobUrls = images.filter((img) => img.file !== null);
+
+    let uploadedImagesPath: string[] = [];
+
+    if (newBlobUrls.length) {
+      uploadedImagesPath = await Promise.all(
+        newBlobUrls.map((img) =>
+          uploadImage(
+            img.file!,
+            localListingFormData.id,
+            'LISTING_IMAGES_BUCKET'
+          )
+        )
+      );
+    }
+    const finalImagePaths = [...existingImagePaths, ...uploadedImagesPath];
+    return finalImagePaths;
+  };
+
+  const onSubmit = async (data: FieldValues) => {
+    const finalImagePaths = await filterUploadImages(images);
 
     if (mode === 'edit') {
       let changedFields = getChangedFields(
-        { ...data, imagesLink: [...finalImagesLink] } as FieldValues,
-        listingData
+        { ...data, imagesLink: [...finalImagePaths] } as FieldValues,
+        localListingFormData
       );
 
       const isEmpty = Object.keys(changedFields).length === 0;
 
       if (!isEmpty) {
-      } else toast.info('No changes made to the listing');
+        changedFields = toSnakeCase({
+          ...changedFields,
+          imagesLink: finalImagePaths,
+        });
 
-      changedFields = toSnakeCase({
-        ...changedFields,
-        imagesLink: finalImagesLink,
-      });
-      await updateListing(changedFields, {
-        onSuccess: () => {
-          // getQueryClient().invalidateQueries({
-          //   queryKey: ['listing', listingData.id],
-          // });
-          // getQueryClient().invalidateQueries({ queryKey: ['vendor-listings'] });
-        },
-      });
+        await updateListing(changedFields, {
+          onSuccess: (updatedListing) => {
+            // immediately sync the form with the fresh server result
+            setLocalListingFormData(updatedListing as ListingInputType);
+
+            // keep caches up to date
+            const client = getQueryClient();
+            client.setQueryData(['listing', updatedListing.id], updatedListing);
+            client.invalidateQueries({ queryKey: ['vendor-listings'] });
+          },
+        });
+      } else toast.info('No changes made to the listing');
     }
 
     if (mode === 'create' && !isListingInputType(listingData)) {
@@ -136,7 +179,6 @@ const ListingEditor = ({ listingData, mode }: props) => {
         ownedByFirm: listingData.ownedByFirm,
         imagesLink: finalImagesLink,
       });
-      console.log(listing);
 
       createListing(listing, {
         onSuccess: () => {
@@ -317,7 +359,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
 
       {/* Image */}
       <div className='px-4 border-l-3 border-secondary py-2 flex flex-col gap-4'>
-        <ImageUpload setImages={handleImageUpload} />
+        <ImageUpload setImages={handleLocalImageUpload} />
 
         {!!images.map((img) => img.url).length && (
           <div className=' w-75 md:w-125 rounded overflow-hidden'>
@@ -335,7 +377,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
         className='btn bg-secondary text-white hover:bg-primary-400   min-w-100'
       >
         {!isSubmitting && (
-          <span>{mode === 'create' ? 'Create' : 'Update'} Listing </span>
+          <p>{mode === 'create' ? 'Create' : 'Update'} Listing </p>
         )}
         {isSubmitting && (
           <>

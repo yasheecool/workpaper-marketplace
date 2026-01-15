@@ -31,15 +31,14 @@ export const updateListingRequest = async (
   requestId: string,
   action: 'approved' | 'rejected'
 ) => {
-  console.log('Updating request:', requestId, 'with action:', action);
   const supabase = await createClient();
   const claims = await getUserClaims();
-  console.log('User claims:', claims);
   const { data, error } = await supabase
     .from('listing_access_control')
     .update({
       request_status: action,
       actioned_by_user: claims?.sub,
+      actioned_at: new Date().toISOString(),
     })
     .eq('id', requestId);
 

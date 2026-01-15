@@ -4,7 +4,7 @@ import { getVendorProfile } from '@/feature/vendor';
 
 const page = async () => {
   const { currentFirm } = await getFirmsContext();
-  const vendorProfile = await getVendorProfile(currentFirm!!.id);
+  const vendorProfile = await getVendorProfile(currentFirm!.id);
 
   return (
     <div className='px-6 py-4 h-full flex flex-col gap-8'>

@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { getVendorListingRequests } from './queries';
-import { ListingRequest } from './types';
+import { PendingListingRequest, CompletedListingRequest } from './types';
 
 const useFirmListingRequests = (
   status: 'pending' | 'completed',
-  requests: ListingRequest[]
+  requests: PendingListingRequest[] | CompletedListingRequest[]
 ) => {
   return useQuery({
     queryKey: ['listing-requests', status],

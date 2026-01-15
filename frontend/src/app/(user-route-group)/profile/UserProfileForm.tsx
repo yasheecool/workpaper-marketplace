@@ -20,8 +20,6 @@ type ImageObject = {
   file: File | null; //null for the cases if image is from the server
 };
 
-const USER_PROFILE_IMAGE_BUCKET = 'user_profile_image';
-
 const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
   const {
     handleSubmit,
@@ -68,18 +66,18 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
   ) => {
     //case 1: user had no image, and uploaded one
     if (userProfile.profileImage === null && userProfileImage) {
-      //upload image and get url
+      //upload image and get path
       const url = await uploadImage(
         userProfileImage.file as File,
         userProfile.id,
-        USER_PROFILE_IMAGE_BUCKET
+        'USER_PROFILE_IMAGE_BUCKET'
       );
       changedFields.profileImage = url;
     }
 
     //case 2: user had an image, and removed it
     if (userProfile.profileImage && userProfileImage === null) {
-      await deleteImage(userProfile.profileImage, USER_PROFILE_IMAGE_BUCKET);
+      await deleteImage(userProfile.profileImage, 'USER_PROFILE_IMAGE_BUCKET');
       changedFields.profileImage = null;
     }
 
@@ -91,7 +89,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
       const url = await uploadImage(
         userProfileImage.file as File,
         userProfile.id,
-        USER_PROFILE_IMAGE_BUCKET
+        'USER_PROFILE_IMAGE_BUCKET'
       );
       changedFields.profileImage = url;
     }
@@ -146,7 +144,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
 
   useEffect(() => {
     if (userProfile.profileImage) {
-      getImageUrl(userProfile.profileImage, USER_PROFILE_IMAGE_BUCKET).then(
+      getImageUrl(userProfile.profileImage, 'USER_PROFILE_IMAGE_BUCKET').then(
         (url) => {
           console.log('Fetched profile image URL:', url);
           setUserProfileImage({ url, file: null });
