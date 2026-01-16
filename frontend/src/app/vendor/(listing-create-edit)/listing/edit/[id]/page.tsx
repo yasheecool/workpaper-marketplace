@@ -19,6 +19,7 @@ const page = async ({
   if (!listing) {
     return <div className='error-message'>Listing not found</div>;
   }
+  // console.log(typeof listing.longDescription);
 
   const tabs = [
     {
@@ -47,14 +48,10 @@ const page = async ({
 
       <div className='px-6 py-8 overflow-auto'>
         {view === 'editor' && (
-          <ListingEditor
-            listingData={{ ...listing, imagesLink: listing.imagesLink ?? [] }}
-            mode='edit'
-          />
+          <ListingEditor listingData={listing} mode='edit' />
         )}
 
-        {/* TODO: Enable whitelist editor */}
-        {view === 'whitelist' && <WhitelistEditor listing={listing} />}
+        {view === 'whitelist' && <WhitelistEditor listingId={listing.id} />}
       </div>
     </div>
   );

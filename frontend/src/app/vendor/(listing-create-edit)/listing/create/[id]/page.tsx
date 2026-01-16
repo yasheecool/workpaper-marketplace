@@ -1,5 +1,4 @@
 'use client';
-import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import ListingEditor from '@/feature/listing/components/ListingEditor';
 import useListingContent from '@/feature/listing/hooks/useListingContent';
@@ -33,6 +32,7 @@ const CreatePage = () => {
           { target: '', label: currentContent.name || '' },
         ]}
       />
+
       <Tabs
         tabs={[
           {

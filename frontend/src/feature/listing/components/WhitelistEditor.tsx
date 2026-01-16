@@ -1,92 +1,95 @@
 'use client';
 
 import FormSelect from '@/components/input/FormSelect';
-import { TableHeaderRow } from '@/components/ui';
+import { TableHeaderRow, Loading } from '@/components/ui';
 import { capitalize } from 'lodash';
-import { useEffect, useState } from 'react';
-import Loading from '@/components/ui/Loading';
 import { formatDate } from '@/utils/formatDate';
-import { toast } from 'react-toahttps://www.loom.com/share/ece6d59b7bcd4387bbe5204d6b9441d4stify';
 import { getStatusClass } from '@/utils/ui-utils';
+import { useQuery } from '@tanstack/react-query';
+import { getListingRequests } from '../dbQueries';
+import { useEffect, useState } from 'react';
+import { useUpdateListingRequest } from '../hooks/useListingMutations';
+import { toast } from 'react-toastify';
 
-const options = {
+const optionsObj = {
   pending: 'Pending',
   completed: 'Completed',
 };
 
-const WhitelistEditor = ({ listing }: { listing: Record<string, any> }) => {
-  const [status, setStatus] = useState<'pending' | 'completed'>('pending');
+const WhitelistEditor = ({ listingId }: { listingId: string }) => {
+  const [view, setView] = useState<'pending' | 'completed'>('pending');
+  const { mutate: updateRequest } = useUpdateListingRequest();
+
+  const {
+    data: requests,
+    error,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['listing-request', listingId, view],
+    queryFn: () => getListingRequests(listingId, view),
+  });
+
+  // useEffect(() => {
+  //   refetch();
+  // }, [view]);
+
+  if (isLoading) return <Loading />;
+  if (error || !requests) return <div>Error loading requests</div>;
 
   const headers = [
     'No.',
     'Requesting Firm',
     'Requesting User',
     'Request Date',
-    ...(status === 'pending'
+    ...(view === 'pending'
       ? ['Status', 'Action']
       : ['Actioned Date', 'Actioned By', 'Status']),
   ];
 
-  return <p>Under refactor</p>;
-
-  // const {
-  //   data: requests,
-  //   error,
-  //   isLoading,
-  //   refetch,
-  // } = useListingRequests(listing.id, status);
-
-  // const { mutate: updateRequest } = useUpdateListingRequest();
-
-  // useEffect(() => {
-  //   refetch();
-  // }, [status]);
-
   const handleRequestUpdate = (
     requestId: string,
-    action: 'approve' | 'reject'
+    action: 'approved' | 'rejected'
   ) => {
-    // updateRequest(
-    //   { action, requestId },
-    //   {
-    //     onSuccess: (data) => {
-    //       refetch();
-    //       toast.success(`Request ${data.data.requestStatus} successfully`);
-    //     },
-    //   }
-    // );
+    updateRequest(
+      { action, requestId },
+      {
+        onSuccess: () => {
+          refetch();
+          toast.success(`Request ${action} successfully`);
+        },
+      }
+    );
   };
-
-  // if (isLoading) return <Loading />;
-  // if (error) return <div>Error loading requests</div>;
 
   return (
     <div className='flex flex-col gap-6 '>
       <FormSelect
-        optionsObj={options}
+        optionsObj={optionsObj}
         label='Status'
-        value={'completed'}
-        // value={status}
-        // setStateValue={setStatus}
+        displayAll={false}
+        name='status'
+        defaultValue={view}
+        onSelect={(e) => setView(e.target.value as 'pending' | 'completed')}
       />
 
-      {/* TODO: Wrap this table by a TableWrapper */}
-      {/* {requests.length ? (
+      {requests.length ? (
         <table className='table w-full rounded-md b-[0.5px] border-gray-400 shadow-sm overflow-auto'>
           <thead className='bg-base-300 rounded-md'>
             <TableHeaderRow headings={headers} />
           </thead>
           <tbody>
-            {requests.map((request: Record<string, any>, index: number) => (
+            {requests.map((request, index: number) => (
               <tr key={request.id} className='hover'>
                 <td>{index + 1}</td>
-                <td>{request.requestingFirm.firmName}</td>
+                <td>{request.requestingFirm.name}</td>
                 <td>
                   {request.requestingUser.firstName}{' '}
                   {request.requestingUser.lastName}
                 </td>
-                <td>{formatDate(request.requestTime)}</td>
-                {status !== 'pending' && (
+                <td>{formatDate(request.createdAt)}</td>
+
+                {request.requestStatus !== 'pending' && (
                   <>
                     <td>{formatDate(request.actionTime)}</td>
                     <td>
@@ -107,13 +110,14 @@ const WhitelistEditor = ({ listing }: { listing: Record<string, any> }) => {
                     {capitalize(request.requestStatus)}
                   </div>
                 </td>
+
                 {request.requestStatus === 'pending' && (
                   <td>
                     <div className='flex gap-2'>
                       <button
                         className='btn btn-sm btn-outline border  border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
                         onClick={() =>
-                          handleRequestUpdate(request.id, 'reject')
+                          handleRequestUpdate(request.id, 'rejected')
                         }
                       >
                         Reject
@@ -121,7 +125,7 @@ const WhitelistEditor = ({ listing }: { listing: Record<string, any> }) => {
                       <button
                         className='btn btn-sm btn-outline border border-gray-600 hover:border-primary-500 hover:text-primary-500 hover:bg-base-100'
                         onClick={() =>
-                          handleRequestUpdate(request.id, 'approve')
+                          handleRequestUpdate(request.id, 'approved')
                         }
                       >
                         Approve
@@ -136,10 +140,10 @@ const WhitelistEditor = ({ listing }: { listing: Record<string, any> }) => {
       ) : (
         <div>
           <p className='text-gray-600 text-center py-6'>
-            No {status} requests found for this listing
+            No {view} requests found for this listing
           </p>
         </div>
-      )} */}
+      )}
     </div>
   );
 };

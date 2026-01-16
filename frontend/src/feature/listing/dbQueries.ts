@@ -16,6 +16,7 @@ import {
 
 import { getFirmsContext } from '@/feature/firm';
 import { mapListingContentFromDb } from './types';
+import { mapListingRequestFromDb } from '../vendor';
 
 export const getMarketplaceListings = async (params: {
   [key: string]: string | string[] | undefined;
@@ -99,7 +100,7 @@ export const getMarketplaceListings = async (params: {
   const data = listingsFromDb.map((listing) =>
     mapMarketplaceListingFromDb(
       listing as unknown as MarketplaceListingFromDb,
-      currentFirm!!.id
+      currentFirm!.id
     )
   );
 
@@ -114,7 +115,7 @@ export const getMarketplaceListings = async (params: {
 export const getListingById = async (listingId: string) => {
   const supabase = await createClient();
   const { currentFirm } = await getFirmsContext();
-  const currentFirmId = currentFirm!!.id;
+  const currentFirmId = currentFirm!.id;
 
   const { data: listingFromDb, error } = await supabase
     .from('listing')
@@ -138,7 +139,6 @@ export const getListingById = async (listingId: string) => {
       error.message || 'An error occurred while fetching the listing.'
     );
   }
-
   const listing = mapListingFromDb(
     listingFromDb as ListingFromDb,
     currentFirmId
@@ -148,7 +148,7 @@ export const getListingById = async (listingId: string) => {
 
 export const getSavedListings = async () => {
   const firms = await getFirmsContext();
-  const currentFirmId = firms.currentFirm!!.id;
+  const currentFirmId = firms.currentFirm!.id;
 
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -186,7 +186,7 @@ export const getInstalledListings = async () => {
       listing(id,name,content_type, owned_by_firm(id, name))
       `
     )
-    .eq('installed_by_firm', currentFirm!!.id);
+    .eq('installed_by_firm', currentFirm!.id);
 
   if (error) {
     console.error('Error fetching installed listings:', error);
@@ -216,7 +216,7 @@ export const getRequestedListings = async () => {
       request_status
       `
     )
-    .eq('requested_by_firm', currentFirm!!.id);
+    .eq('requested_by_firm', currentFirm!.id);
 
   if (error || !data) {
     console.error('Error fetching requested listings:', error);
@@ -239,7 +239,7 @@ export const getAvailableContent = async () => {
   const { data, error } = await supabase
     .from('listing_content')
     .select(`*`)
-    .eq('owned_by_firm', currentFirm!!.id);
+    .eq('owned_by_firm', currentFirm!.id);
 
   if (error || !data) {
     console.error('Error fetching available content:', error);
@@ -251,4 +251,45 @@ export const getAvailableContent = async () => {
   const mappedData = data.map((content) => mapListingContentFromDb(content));
 
   return mappedData;
+};
+
+export const getListingRequests = async (
+  listingId: string,
+  status: 'pending' | 'completed'
+) => {
+  const supabase = await createClient();
+
+  const query = supabase
+    .from('listing_access_control')
+    .select(
+      `
+      *,
+      listing!inner(owned_by_firm, name, id, content_type),
+      requested_by_firm(id, name),
+      requested_by_user(id, first_name, last_name),
+      actioned_by_user(id, first_name, last_name)
+    `
+    )
+    .eq('listing', listingId);
+
+  if (status === 'pending') {
+    query.eq('request_status', 'pending');
+  } else if (status === 'completed') {
+    query.neq('request_status', 'pending');
+  }
+
+  const { data, error } = await query;
+
+  if (error || !data) {
+    console.error('Error fetching listing requests:', error);
+    throw new Error(
+      error?.message || 'An error occurred while fetching listing requests.'
+    );
+  }
+
+  const mappedRequests = data.map((request) =>
+    mapListingRequestFromDb(request)
+  );
+
+  return mappedRequests;
 };

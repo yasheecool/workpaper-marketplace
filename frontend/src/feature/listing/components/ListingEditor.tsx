@@ -9,6 +9,7 @@ import {
   useCreateListingMutation,
   useUpdateListingMutation,
   type ListingContent,
+  type ListingWithStatuses,
 } from '@/feature/listing';
 import { LabelText, FormSelect, CheckboxGroup } from '@/components/input';
 import { ImageUpload, ImagePreview } from '@/components/ui';
@@ -22,7 +23,7 @@ import { getQueryClient } from '@/lib/queryClient';
 import { getImageUrl, uploadImage } from '@/lib/supabase/storage';
 
 type props = {
-  listingData: ListingInputType | ListingContent;
+  listingData: ListingWithStatuses | ListingContent;
   mode: 'create' | 'edit';
 };
 
@@ -31,11 +32,6 @@ type ImageObject = {
   file: File | null; //file will be null if the image is already uploaded
 };
 
-function isListingInputType(
-  data: ListingInputType | ListingContent
-): data is ListingInputType {
-  return Array.isArray((data as ListingInputType).imagesLink);
-}
 //flow: fetch listing in editorPage/createPage -> here as prop (this component/page is used for both creating and editing a listing)-> prefill form with the received listing data through useEffect
 
 const ListingEditor = ({ listingData, mode }: props) => {
@@ -54,7 +50,6 @@ const ListingEditor = ({ listingData, mode }: props) => {
     resolver: zodResolver(listingInputSchema),
   });
 
-  const router = useRouter();
   const [images, setImages] = useState<ImageObject[]>([]);
   const { mutate: updateListing } = useUpdateListingMutation(listingData.id);
   const { mutate: createListing } = useCreateListingMutation();
@@ -72,24 +67,21 @@ const ListingEditor = ({ listingData, mode }: props) => {
   }, [localListingFormData, mode, reset, setValue]);
 
   // Effect 2: Load and resolve image URLs asynchronously
-  useEffect(() => {
-    if (
-      isListingInputType(localListingFormData)
-      // localListingFormData.imagesLink?.length
-    ) {
-      const loadImages = async () => {
-        const resolvedImages = await Promise.all(
-          localListingFormData.imagesLink.map(async (url) => ({
-            url: await getImageUrl(url, 'LISTING_IMAGES_BUCKET'),
-            file: null,
-          }))
-        );
-        setImages(resolvedImages);
-      };
+  // useEffect(() => {
+  //   if(localListingFormData.hasOwnProperty('imagesLink')){
+  //     const loadImages = async () => {
+  //       const resolvedImages = await Promise.all(
+  //         localListingFormData.imagesLink.map(async (url) => ({
+  //           url: await getImageUrl(url, 'LISTING_IMAGES_BUCKET'),
+  //           file: null,
+  //         }))
+  //       );
+  //       setImages(resolvedImages);
+  //     };
 
-      loadImages();
-    }
-  }, [localListingFormData]);
+  //     loadImages();
+  //   }
+  // }, [localListingFormData]);
 
   const removeUrl = (url: string) => {
     const updatedImages = images.filter((img) => {
@@ -111,16 +103,10 @@ const ListingEditor = ({ listingData, mode }: props) => {
       .filter((img) => img.file === null)
       .map((img) => img.url);
 
-    if (
-      isListingInputType(localListingFormData) &&
-      localListingFormData.imagesLink !== undefined &&
-      existingImagePaths.length < localListingFormData.imagesLink.length
-    ) {
-      const removedImages = localListingFormData.imagesLink.filter(
-        (imgPath) => !existingImagePaths.includes(imgPath)
-      );
-      //delete removed images from storage
-    }
+    // if((isListingInputType(localListingFormData))){
+    //   if(existingImagePaths.length < localListingFormData.imagesLink.length)
+
+    // }
 
     //all local images
     const newBlobUrls = images.filter((img) => img.file !== null);
@@ -173,24 +159,24 @@ const ListingEditor = ({ listingData, mode }: props) => {
       } else toast.info('No changes made to the listing');
     }
 
-    if (mode === 'create' && !isListingInputType(listingData)) {
-      const listing = toSnakeCase({
-        ...data,
-        ownedByFirm: listingData.ownedByFirm,
-        imagesLink: finalImagesLink,
-      });
+    // if (mode === 'create' && !isListingInputType(listingData)) {
+    //   const listing = toSnakeCase({
+    //     ...data,
+    //     ownedByFirm: listingData.ownedByFirm,
+    //     imagesLink: finalImagePaths,
+    //   });
 
-      createListing(listing, {
-        onSuccess: () => {
-          router.replace(`/vendor/listing/edit/${listingData.id}`);
-        },
-      });
-    }
+    //   createListing(listing, {
+    //     onSuccess: () => {
+    //       router.replace(`/vendor/listing/edit/${listingData.id}`);
+    //     },
+    //   });
+    // }
   };
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit, (err) => console.log(errors))}
+      onSubmit={handleSubmit(onSubmit, (err) => console.log(err))}
       className='flex flex-col gap-8 '
     >
       {/* NAME */}

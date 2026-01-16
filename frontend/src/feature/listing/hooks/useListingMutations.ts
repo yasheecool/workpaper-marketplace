@@ -7,6 +7,7 @@ import {
   updateListing,
   createListing,
 } from '../actions';
+import { updateListingRequest } from '@/feature/vendor';
 import { getQueryClient } from '@/lib/queryClient';
 import { ListingWithStatuses } from '../types';
 
@@ -103,6 +104,27 @@ export const useCreateListingMutation = () => {
           ? error.message
           : 'An error occurred while creating the listing.';
       toast.error(errorMessage);
+    },
+  });
+};
+
+export const useUpdateListingRequest = () => {
+  return useMutation({
+    mutationFn: ({
+      requestId,
+      action,
+    }: {
+      requestId: string;
+      action: 'approved' | 'rejected';
+    }) => updateListingRequest(requestId, action),
+    onSuccess: (_, { action }) => {
+      toast.success(`Request ${action} successfully`);
+      getQueryClient().invalidateQueries({
+        queryKey: ['listing-requests', 'pending'],
+      });
+    },
+    onError: (error) => {
+      toast.error(`Error updating request: ${error.message}`);
     },
   });
 };

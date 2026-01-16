@@ -109,7 +109,6 @@ export const getVendorListingRequests = async (
   const { data, error } = await query;
 
   if (error || !data) {
-    console.log(error);
     throw new Error(
       'Error fetching vendor listing requests: ' + error?.message
     );

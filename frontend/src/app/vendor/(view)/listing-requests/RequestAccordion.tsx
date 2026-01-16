@@ -2,16 +2,14 @@
 
 import { useState } from 'react';
 import { TableHeaderRow } from '@/components/ui';
-import { capitalize, update } from 'lodash';
+import { capitalize } from 'lodash';
 import { formatDate } from '@/utils/formatDate';
 import { type PendingListingRequest } from '@/feature/vendor';
-import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-
+import { useUpdateListingRequest } from '@/feature/listing';
 import CaretUp from './_components/CaretUp';
 import CaretDown from './_components/CaretDown';
-import { updateListingRequest } from '@/feature/vendor';
-import { getQueryClient } from '@/lib/queryClient';
+
 const RequestAccordion = ({
   requests,
 }: {
@@ -27,31 +25,20 @@ const RequestAccordion = ({
     listing: { contentType, name },
   } = requests[0];
 
-  const { mutate: updateRequest } = useMutation({
-    mutationFn: ({
-      requestId,
-      action,
-    }: {
-      requestId: string;
-      action: 'approved' | 'rejected';
-    }) => updateListingRequest(requestId, action),
-    onSuccess: (_, { action }) => {
-      toast.success(`Request ${action} successfully`);
-      getQueryClient().invalidateQueries({
-        queryKey: ['listing-requests', 'pending'],
-      });
-    },
-    onError: (error: any) => {
-      console.log(error);
-      toast.error(`Error updating request: ${error.message}`);
-    },
-  });
+  const { mutate: updateRequest } = useUpdateListingRequest();
 
   const handleRequestUpdate = (
     requestId: string,
     action: 'approved' | 'rejected'
   ) => {
-    updateRequest({ requestId, action });
+    updateRequest(
+      { requestId, action },
+      {
+        onSuccess: () => {
+          toast.success(`Request ${action} successfully`);
+        },
+      }
+    );
   };
 
   return (

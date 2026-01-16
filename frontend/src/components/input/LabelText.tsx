@@ -1,4 +1,4 @@
-import { UseFormRegister } from 'react-hook-form';
+import { UseFormRegister, UseFormRegisterReturn } from 'react-hook-form';
 
 //if this component is to be used with react-hook-form, the register prop is required
 const LabelText = ({
@@ -9,15 +9,15 @@ const LabelText = ({
   register,
   extraProps = {},
 }: {
-  label: String;
-  required: Boolean;
+  label: string;
+  required: boolean;
   type: 'input' | 'textarea';
   name: string;
   register?: UseFormRegister<any>;
-
   extraProps?: {};
 }) => {
-  const inputProps = register && name ? { ...register(name) } : {};
+  const inputProps = register ? { ...register(name) } : {};
+
   return (
     <div className='flex flex-col gap-2'>
       <label className='text-sm'>

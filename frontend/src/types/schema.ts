@@ -9,7 +9,7 @@ import {
 } from './domain/listing';
 
 export const listingInputSchema = z.object({
-  id: z.string(), //needed by the backend to uniquely identify the listing
+  id: z.string(), // needed by the backend to uniquely identify the listing
 
   name: z
     .string()
@@ -24,14 +24,14 @@ export const listingInputSchema = z.object({
   longDescription: z
     .string()
     .max(2000, 'Long description must be under 2000 characters')
-    // .optional()
-    .nullable(),
+    .nullable()
+    .transform((value) => (value === '' ? null : value)),
 
   gettingStartedSteps: z
     .string()
     .max(1500, 'Getting started steps must be under 1500 characters')
-    // .optional()
-    .nullable(),
+    .nullable()
+    .transform((value) => (value === '' ? null : value)),
 
   region: z.enum(Object.keys(regionOptions) as [keyof typeof regionOptions]),
 
@@ -53,18 +53,15 @@ export const listingInputSchema = z.object({
     Object.keys(listingTypeOptions) as [keyof typeof listingTypeOptions]
   ),
 
+  imagesLink: z.array(z.string()).nullable(),
+
   visibility: z
     .enum(
       Object.keys(listingVisibilityOptions) as [
         keyof typeof listingVisibilityOptions,
-      ],
-      {
-        errorMap: () => ({ message: 'Please select a visibility option' }),
-      }
+      ]
     )
-    .default('public')
-    .optional(),
-  imagesLink: z.array(z.string()).default([]).optional(),
+    .transform((val) => val || 'public'), // default to public if not provided
 });
 
 export type ListingInputType = z.infer<typeof listingInputSchema>;

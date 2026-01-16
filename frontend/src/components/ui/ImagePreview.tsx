@@ -45,7 +45,7 @@ const ImagePreview = ({
           style={{ transform: `translateX(-${currentIdx * 100}%)` }}
         >
           {imgUrls.map((imgUrl: string, idx: number) => (
-            <div key={idx} className='w-full flex-shrink-0 h-full'>
+            <div key={idx} className='w-full shrink-0 h-full'>
               <img src={imgUrl} className='h-full w-full object-contain' />
             </div>
           ))}

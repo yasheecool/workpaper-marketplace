@@ -115,8 +115,6 @@ export type CompletedListingRequest = ListingRequestBase & {
   actionTime: string;
 };
 
-// Union type for all listing requests
-
 // ============================================================================
 // Mappers
 // ============================================================================
@@ -153,10 +151,10 @@ export const mapListingRequestFromDb = (request: ListingRequestFromDb) => {
     ...base,
     requestStatus: request.request_status,
     actionedBy: {
-      firstName: request.actioned_by_user!!.first_name,
-      lastName: request.actioned_by_user!!.last_name,
+      firstName: request.actioned_by_user!.first_name,
+      lastName: request.actioned_by_user!.last_name,
     },
-    actionTime: request.actioned_at!!,
+    actionTime: request.actioned_at,
   } as CompletedListingRequest;
 };
 
