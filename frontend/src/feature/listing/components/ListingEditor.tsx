@@ -170,7 +170,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
       if (!isEmpty) {
         changedFields = toSnakeCase({
           ...changedFields,
-          imagesLink: finalImagePaths.length || null,
+          imagesLink: finalImagePaths.length ? finalImagePaths : null,
         });
 
         await updateListing(changedFields, {
