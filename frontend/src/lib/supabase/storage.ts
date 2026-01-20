@@ -1,4 +1,4 @@
-import { createClient } from './browserClient'; // lib/supabase/storage.ts - Client-side upload
+import { createClient } from './browserClient';
 
 export const buckets = {
   LISTING_IMAGES_BUCKET: 'listing_image',

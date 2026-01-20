@@ -1,6 +1,5 @@
 'use client';
 
-import ImagePreview from '@/components/ui/ImagePreview';
 import { ListingWithStatuses } from '@/feature/listing/types';
 import {
   ListingAlert,
@@ -8,7 +7,9 @@ import {
   ListingDescriptions,
 } from './_components';
 import { useListingById } from '@/feature/listing';
-import { Loading } from '@/components/ui';
+import { Loading, ImagePreview } from '@/components/ui';
+import { useEffect, useState } from 'react';
+import { getImageUrl } from '@/lib/supabase/storage';
 
 const ListingDetailsClient = ({
   listing: initialData,
@@ -17,17 +18,22 @@ const ListingDetailsClient = ({
   listing: ListingWithStatuses;
   id: string;
 }) => {
-  // const {
-  //   data: listing,
-  //   isLoading,
-  //   error,
-  // } = useQuery({
-  //   queryKey: ['listing', id],
-  //   queryFn: () => getListingById(id),
-  //   initialData,
-  // });
-
   const { data: listing, isLoading, error } = useListingById(id, initialData);
+  const [listingImages, setListingImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (listing?.imagesLink && listing.imagesLink.length > 0) {
+        const urls = await Promise.all(
+          listing.imagesLink.map((path) =>
+            getImageUrl(path, 'LISTING_IMAGES_BUCKET')
+          )
+        );
+        setListingImages(urls as string[]);
+      }
+    };
+    fetchImages();
+  }, [listing?.imagesLink]);
 
   if (isLoading) {
     return <Loading />;
@@ -53,8 +59,6 @@ const ListingDetailsClient = ({
     workpaperType,
     entityType,
     contentType,
-    region,
-    status,
     // isDeleted
   } = listing;
 
@@ -87,7 +91,7 @@ const ListingDetailsClient = ({
         className={`overflow-hidden w-full relative h-96 ${isRequested ? 'lg:row-start-2' : 'lg:row-start-1 '}`}
       >
         <ImagePreview
-          imgUrls={[]}
+          imgUrls={listingImages}
           // setUrls={}
           showCloseButton={false}
         />
@@ -115,4 +119,5 @@ const ListingDetailsClient = ({
     </>
   );
 };
+
 export default ListingDetailsClient;

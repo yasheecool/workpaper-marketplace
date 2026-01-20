@@ -1,18 +1,16 @@
-'use client';
-
 import Image from 'next/image';
 
 interface ListingCardImageProps {
-  imagesLink: string[] | null;
+  imagesPath: string[];
   name: string;
 }
 
-const ListingCardImage = ({ imagesLink, name }: ListingCardImageProps) => {
+const ListingCardImage = ({ imagesPath, name }: ListingCardImageProps) => {
   return (
     <div className='relative rounded-md flex justify-center items-center border-[0.5px] border-gray-300'>
-      {imagesLink && imagesLink.length > 0 ? (
+      {imagesPath.length > 0 ? (
         <Image
-          src={'/undraw_approve.svg'}
+          src={imagesPath[0]}
           alt={`${name} image`}
           fill
           className='object-contain border-[0.5px] border-gray-300'
