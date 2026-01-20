@@ -19,7 +19,6 @@ const page = async ({
   if (!listing) {
     return <div className='error-message'>Listing not found</div>;
   }
-  // console.log(typeof listing.longDescription);
 
   const tabs = [
     {
@@ -56,4 +55,5 @@ const page = async ({
     </div>
   );
 };
+
 export default page;

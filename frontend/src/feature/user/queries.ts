@@ -1,4 +1,5 @@
 'use server';
+
 import { createClient } from '@/lib/supabase/serverClient';
 import { mapUserFromDb, UserRow } from '@/types/domain/user';
 

@@ -1,17 +1,17 @@
 'use client';
-import LabelText from '@/components/input/LabelText';
+
+import { LabelText } from '@/components/input';
 import { useForm, FieldErrors } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   userProfileFormSchema,
   UserProfileType,
-  updateUserProfile,
   type User,
+  updateUserProfile,
 } from '@/feature/user';
 import { getChangedFields } from '@/utils/getChangedFields';
 import { toast } from 'react-toastify';
-
 import { deleteImage, uploadImage, getImageUrl } from '@/lib/supabase/storage';
 import Image from 'next/image';
 
@@ -62,7 +62,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
   };
 
   const handleServerImageUpload = async (
-    changedFields: Record<string, any>
+    changedFields: Record<string, string | null>
   ) => {
     //case 1: user had no image, and uploaded one
     if (userProfile.profileImage === null && userProfileImage) {
@@ -81,7 +81,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
       changedFields.profileImage = null;
     }
 
-    //case 3: user had an image, and changed it
+    // case 3: user had an image, and changed it
     if (
       userProfileImage?.url &&
       userProfileImage.url !== userProfile.profileImage
@@ -116,7 +116,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
     }
 
     // Type-safe snake_case conversion
-    const snakeCaseChangedFields: Record<string, any> = {};
+    const snakeCaseChangedFields: Record<string, string | null> = {};
 
     (Object.keys(changedFields) as Array<keyof typeof changedFields>).forEach(
       (key) => {
@@ -124,7 +124,9 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
           /[A-Z]/g,
           (letter) => `_${letter.toLowerCase()}`
         );
-        snakeCaseChangedFields[snakeCaseKey] = changedFields[key];
+        snakeCaseChangedFields[snakeCaseKey] = changedFields[key] as
+          | string
+          | null;
       }
     );
 

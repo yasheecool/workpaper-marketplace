@@ -20,7 +20,6 @@ type ResponseType = InstalledListing[] | RequestedListing[];
 type Props = {
   filters: {
     status: 'installed' | 'requested';
-    // contentType: ListingType | 'all';
   };
 };
 
@@ -42,7 +41,7 @@ const TableWrapper = ({ filters }: Props) => {
       toast.success(`Successfully uninstalled listing: ${name}`);
       getQueryClient().invalidateQueries({ queryKey: ['installed-listings'] });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast.error(
         `Error uninstalling listing: ${
           error?.message || 'Please try again later.'
@@ -52,6 +51,7 @@ const TableWrapper = ({ filters }: Props) => {
   });
 
   const handleUninstall = (listingId: string) => {
+    if (isPending) return;
     uninstallListing(listingId);
   };
 
@@ -86,6 +86,10 @@ const TableWrapper = ({ filters }: Props) => {
     return (
       <p className='p-4'>Error loading listings. Please try again later.</p>
     );
+  }
+
+  if (data.length === 0) {
+    return <p className='p-4'>No {status} listings found.</p>;
   }
 
   return (

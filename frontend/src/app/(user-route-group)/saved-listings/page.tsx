@@ -20,7 +20,7 @@ const SavedListings = async () => {
           </div>
         ) : (
           <div className='grid grid-cols-[repeat(2,350px)] justify-items-start gap-14 lg:grid-cols-[repeat(3,350px)]'>
-            {listings!!.map((savedListing) => (
+            {listings!.map((savedListing) => (
               <SavedListingCard
                 key={savedListing.id}
                 savedListing={savedListing}

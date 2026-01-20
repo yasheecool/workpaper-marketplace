@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { useUpdateListingRequest } from '@/feature/listing';
 import CaretUp from './_components/CaretUp';
 import CaretDown from './_components/CaretDown';
+import Link from 'next/link';
 
 const RequestAccordion = ({
   requests,
@@ -46,7 +47,9 @@ const RequestAccordion = ({
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-4 text-sm border-b-[0.5px] border-gray-300 items-center'>
         <div>
           <p className='text-gray-500 text-xs'>Name</p>
+          {/* <Link href={`/vendor/listing/`}> */}
           <h3 className='font-semibold text-gray-700 truncate'>{name}</h3>
+          {/* </Link> */}
         </div>
 
         <div>

@@ -5,6 +5,7 @@ import { setFirmInCookies } from '../actions';
 import Form from 'next/form';
 import { toast } from 'react-toastify';
 import { useActionState } from 'react';
+import { getQueryClient } from '@/lib/queryClient';
 
 const FirmSelector = ({ firms }: { firms: FirmWithVendorFlag[] }) => {
   const [selectedFirm, setSelectedFirm] = useState<FirmWithVendorFlag | null>(
@@ -21,8 +22,13 @@ const FirmSelector = ({ firms }: { firms: FirmWithVendorFlag[] }) => {
     }
   }, [state]);
 
+  const handleSubmit = (formData: FormData) => {
+    getQueryClient().clear(); // Clear query cache on firm change
+    setFirm(formData);
+  };
+
   return (
-    <Form action={setFirm}>
+    <Form action={handleSubmit}>
       <div className='grid grid-cols-[auto_1fr] gap-4'>
         {firms.map((firm, idx) => {
           return (

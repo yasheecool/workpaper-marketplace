@@ -20,7 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toSnakeCase, getChangedFields } from '@/utils';
 import { useRouter } from 'next/navigation';
 import { getQueryClient } from '@/lib/queryClient';
-import { getImageUrl, uploadImage } from '@/lib/supabase/storage';
+import { getImageUrl, uploadImage, deleteImage } from '@/lib/supabase/storage';
 
 type props = {
   listingData: ListingWithStatuses | ListingContent;
@@ -30,6 +30,12 @@ type props = {
 type ImageObject = {
   url: string;
   file: File | null; //file will be null if the image is already uploaded
+};
+
+const hasImages = (
+  listingData: ListingInputType | ListingContent
+): listingData is ListingInputType => {
+  return 'imagesLink' in listingData;
 };
 
 //flow: fetch listing in editorPage/createPage -> here as prop (this component/page is used for both creating and editing a listing)-> prefill form with the received listing data through useEffect
@@ -46,42 +52,44 @@ const ListingEditor = ({ listingData, mode }: props) => {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<ListingInputType>({
-    defaultValues: listingData,
+    defaultValues: localListingFormData,
     resolver: zodResolver(listingInputSchema),
   });
 
   const [images, setImages] = useState<ImageObject[]>([]);
-  const { mutate: updateListing } = useUpdateListingMutation(listingData.id);
+  const { mutate: updateListing } = useUpdateListingMutation(
+    localListingFormData.id
+  );
   const { mutate: createListing } = useCreateListingMutation();
+
+  const router = useRouter();
 
   // Effect 1: Reset form and prepare initial state
   useEffect(() => {
     if (localListingFormData) {
       reset(localListingFormData);
-
-      if (mode === 'create') {
-        setValue('imagesLink', []);
-        setImages([]); // Clear images in create mode
-      }
     }
   }, [localListingFormData, mode, reset, setValue]);
 
   // Effect 2: Load and resolve image URLs asynchronously
-  // useEffect(() => {
-  //   if(localListingFormData.hasOwnProperty('imagesLink')){
-  //     const loadImages = async () => {
-  //       const resolvedImages = await Promise.all(
-  //         localListingFormData.imagesLink.map(async (url) => ({
-  //           url: await getImageUrl(url, 'LISTING_IMAGES_BUCKET'),
-  //           file: null,
-  //         }))
-  //       );
-  //       setImages(resolvedImages);
-  //     };
+  useEffect(() => {
+    if (
+      hasImages(localListingFormData) &&
+      localListingFormData.imagesLink !== null
+    ) {
+      const loadImages = async () => {
+        const resolvedImages = await Promise.all(
+          localListingFormData.imagesLink!.map(async (url) => ({
+            url: await getImageUrl(url, 'LISTING_IMAGES_BUCKET'),
+            file: null,
+          }))
+        );
+        setImages(resolvedImages);
+      };
 
-  //     loadImages();
-  //   }
-  // }, [localListingFormData]);
+      loadImages();
+    }
+  }, [localListingFormData]);
 
   const removeUrl = (url: string) => {
     const updatedImages = images.filter((img) => {
@@ -99,20 +107,40 @@ const ListingEditor = ({ listingData, mode }: props) => {
 
   const filterUploadImages = async (imageObjs: ImageObject[]) => {
     //all remote image paths
-    const existingImagePaths = images
+    const existingImagePaths = imageObjs
       .filter((img) => img.file === null)
-      .map((img) => img.url);
+      .map((img) => {
+        //find the path from the url
+        const url = img.url;
+        const urlObj = new URL(url);
+        console.log('URL Object:', urlObj);
+        const path = urlObj.pathname.split('/').slice(6).join('/'); // Remove leading '/' and bucket name
+        return path;
+      });
 
-    // if((isListingInputType(localListingFormData))){
-    //   if(existingImagePaths.length < localListingFormData.imagesLink.length)
-
-    // }
+    if (
+      hasImages(localListingFormData) &&
+      Array.isArray(localListingFormData.imagesLink)
+    ) {
+      if (existingImagePaths.length < localListingFormData.imagesLink.length) {
+        //some images were removed
+        const removedImages = localListingFormData.imagesLink.filter(
+          (imgPath) => !existingImagePaths.includes(imgPath)
+        );
+        // delete removed images from storage
+        await Promise.all(
+          removedImages.map((imgPath) =>
+            deleteImage(imgPath, 'LISTING_IMAGES_BUCKET')
+          )
+        );
+      }
+    }
 
     //all local images
     const newBlobUrls = images.filter((img) => img.file !== null);
 
     let uploadedImagesPath: string[] = [];
-
+    //if any new images in local blob, upload them
     if (newBlobUrls.length) {
       uploadedImagesPath = await Promise.all(
         newBlobUrls.map((img) =>
@@ -129,20 +157,20 @@ const ListingEditor = ({ listingData, mode }: props) => {
   };
 
   const onSubmit = async (data: FieldValues) => {
+    // console.log(data);
     const finalImagePaths = await filterUploadImages(images);
 
     if (mode === 'edit') {
       let changedFields = getChangedFields(
-        { ...data, imagesLink: [...finalImagePaths] } as FieldValues,
+        { ...data, imagesLink: finalImagePaths.length || null } as FieldValues,
         localListingFormData
       );
-
       const isEmpty = Object.keys(changedFields).length === 0;
 
       if (!isEmpty) {
         changedFields = toSnakeCase({
           ...changedFields,
-          imagesLink: finalImagePaths,
+          imagesLink: finalImagePaths.length || null,
         });
 
         await updateListing(changedFields, {
@@ -159,19 +187,19 @@ const ListingEditor = ({ listingData, mode }: props) => {
       } else toast.info('No changes made to the listing');
     }
 
-    // if (mode === 'create' && !isListingInputType(listingData)) {
-    //   const listing = toSnakeCase({
-    //     ...data,
-    //     ownedByFirm: listingData.ownedByFirm,
-    //     imagesLink: finalImagePaths,
-    //   });
+    if (mode === 'create' && !hasImages(listingData)) {
+      const listing = toSnakeCase({
+        ...data,
+        ownedByFirm: listingData.ownedByFirm,
+        imagesLink: finalImagePaths,
+      });
 
-    //   createListing(listing, {
-    //     onSuccess: () => {
-    //       router.replace(`/vendor/listing/edit/${listingData.id}`);
-    //     },
-    //   });
-    // }
+      createListing(listing, {
+        onSuccess: () => {
+          router.replace(`/vendor/listing/edit/${listingData.id}`);
+        },
+      });
+    }
   };
 
   return (
@@ -348,7 +376,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
         <ImageUpload setImages={handleLocalImageUpload} />
 
         {!!images.map((img) => img.url).length && (
-          <div className=' w-75 md:w-125 rounded overflow-hidden'>
+          <div className='w-75 md:w-125 h-50 rounded'>
             <ImagePreview
               imgUrls={images.map((img) => img.url)}
               setUrls={removeUrl}

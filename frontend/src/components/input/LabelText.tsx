@@ -1,4 +1,5 @@
-import { UseFormRegister, UseFormRegisterReturn } from 'react-hook-form';
+'use client';
+import { UseFormRegister } from 'react-hook-form';
 
 //if this component is to be used with react-hook-form, the register prop is required
 const LabelText = ({

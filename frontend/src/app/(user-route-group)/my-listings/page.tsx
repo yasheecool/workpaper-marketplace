@@ -22,7 +22,6 @@ const InstalledListingsPage = async ({
           <TableWrapper
             filters={{
               status: status as 'installed' | 'requested',
-              // contentType: contentType as ListingType | 'all',
             }}
           />
         </div>

@@ -7,7 +7,7 @@ import { formatDate } from '@/utils/formatDate';
 import { getStatusClass } from '@/utils/ui-utils';
 import { useQuery } from '@tanstack/react-query';
 import { getListingRequests } from '../dbQueries';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useUpdateListingRequest } from '../hooks/useListingMutations';
 import { toast } from 'react-toastify';
 
@@ -29,10 +29,6 @@ const WhitelistEditor = ({ listingId }: { listingId: string }) => {
     queryKey: ['listing-request', listingId, view],
     queryFn: () => getListingRequests(listingId, view),
   });
-
-  // useEffect(() => {
-  //   refetch();
-  // }, [view]);
 
   if (isLoading) return <Loading />;
   if (error || !requests) return <div>Error loading requests</div>;

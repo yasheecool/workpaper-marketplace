@@ -1,6 +1,6 @@
 import UserProfileForm from './UserProfileForm';
 import Container from '@/components/layout/Container';
-import { getUserFromDB } from '@/feature/user';
+import { getUserFromDB } from '@/feature/user/queries';
 
 const page = async () => {
   const userProfile = await getUserFromDB();

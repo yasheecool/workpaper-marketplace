@@ -1,4 +1,5 @@
 'use server';
+
 import { type UserProfileType } from '@/feature/user';
 import { getUserClaims } from '../auth';
 import { createClient } from '@/lib/supabase/serverClient';

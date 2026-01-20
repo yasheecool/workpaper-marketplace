@@ -14,6 +14,7 @@ export const setFirmInCookies = async (
   }
 
   const cookieStore = await cookies();
+
   cookieStore.set('selected_firm_id', String(firmId), {
     path: '/',
     httpOnly: true,

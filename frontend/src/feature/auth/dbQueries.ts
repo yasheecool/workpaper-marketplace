@@ -1,3 +1,5 @@
+'use server';
+
 import { createClient } from '@/lib/supabase/serverClient';
 
 export const getUserClaims = async () => {

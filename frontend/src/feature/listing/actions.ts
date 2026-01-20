@@ -1,6 +1,5 @@
 'use server';
 
-import { refresh } from 'next/cache';
 import { getUserClaims } from '../auth';
 import { getFirmsContext } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
@@ -11,7 +10,7 @@ export const installListing = async (listingId: string) => {
   const { sub: userId } = userClaims;
   const { currentFirm } = await getFirmsContext();
 
-  const firmId = currentFirm!!.id;
+  const firmId = currentFirm!.id;
 
   const supabase = await createClient();
 
@@ -34,7 +33,7 @@ export const uninstallListing = async (listingId: string) => {
   const { currentFirm } = await getFirmsContext();
   const { sub: userId } = await getUserClaims();
 
-  const firmId = currentFirm!!.id;
+  const firmId = currentFirm!.id;
 
   const { data, error } = await supabase
     .from('installed_listing')
@@ -61,7 +60,7 @@ export const saveListing = async (
   const { sub: userId } = await getUserClaims();
   const { currentFirm } = await getFirmsContext();
 
-  const firmId = currentFirm!!.id;
+  const firmId = currentFirm!.id;
   let response;
 
   if (type === 'save') {
@@ -93,7 +92,7 @@ export const requestListing = async (listingId: string) => {
   const { sub: userId } = userClaims;
   const { currentFirm } = await getFirmsContext();
 
-  const firmId = currentFirm!!.id;
+  const firmId = currentFirm!.id;
 
   const supabase = await createClient();
 

@@ -12,7 +12,7 @@ export const getInstallButtonText = (
   if (isRequested) {
     if (requestStatus === 'pending') return 'Requested';
     if (requestStatus === 'rejected') return 'Rejected';
-    // if (requestStatus === 'approved') return 'Install';
+    if (requestStatus === 'approved') return 'Install';
   }
 
   if (visibility === 'request_access') return 'Request';

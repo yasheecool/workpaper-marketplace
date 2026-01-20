@@ -53,7 +53,10 @@ export const listingInputSchema = z.object({
     Object.keys(listingTypeOptions) as [keyof typeof listingTypeOptions]
   ),
 
-  imagesLink: z.array(z.string()).nullable(),
+  imagesLink: z
+    .array(z.string())
+    .nullable()
+    .transform((value) => (value === undefined ? null : value)),
 
   visibility: z
     .enum(

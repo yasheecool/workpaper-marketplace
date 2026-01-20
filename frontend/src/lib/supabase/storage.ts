@@ -1,10 +1,10 @@
 import { createClient } from './browserClient'; // lib/supabase/storage.ts - Client-side upload
 
-const buckets = {
+export const buckets = {
   LISTING_IMAGES_BUCKET: 'listing_image',
   USER_PROFILE_IMAGE_BUCKET: 'user_profile_image',
   VENDOR_PROFILE_IMAGE_BUCKET: 'vendor_profile_image',
-};
+} as const;
 
 export const uploadImage = async (
   file: File,
@@ -35,9 +35,10 @@ export const deleteImage = async (
   path: string,
   bucketName: keyof typeof buckets
 ) => {
+  console.log('Deleting image at path:', path);
   const supabase = createClient();
 
-  const { error, data } = await supabase.storage
+  const { error } = await supabase.storage
     .from(buckets[bucketName])
     .remove([path]);
 

@@ -19,6 +19,7 @@ const invalidateListingQueries = (listingId: string) => {
 
 export const useSaveListingMutation = (id: string) => {
   return useMutation({
+    mutationKey: ['save-listing', id],
     mutationFn: (type: 'save' | 'unsave') => saveListing(id, type),
     onSuccess: (_, variables) => {
       toast.success(`Listing ${variables}d successfully!`);
@@ -118,7 +119,6 @@ export const useUpdateListingRequest = () => {
       action: 'approved' | 'rejected';
     }) => updateListingRequest(requestId, action),
     onSuccess: (_, { action }) => {
-      toast.success(`Request ${action} successfully`);
       getQueryClient().invalidateQueries({
         queryKey: ['listing-requests', 'pending'],
       });

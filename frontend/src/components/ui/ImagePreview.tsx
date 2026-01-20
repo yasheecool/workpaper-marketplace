@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 
 const ImagePreview = ({
@@ -46,7 +47,13 @@ const ImagePreview = ({
         >
           {imgUrls.map((imgUrl: string, idx: number) => (
             <div key={idx} className='w-full shrink-0 h-full'>
-              <img src={imgUrl} className='h-full w-full object-contain' />
+              <Image
+                src={imgUrl}
+                className='object-contain'
+                alt={`Image ${idx + 1}`}
+                width={800}
+                height={600}
+              />
             </div>
           ))}
         </div>
