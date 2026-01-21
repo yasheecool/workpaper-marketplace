@@ -1,4 +1,3 @@
-import Loading from '../ui/Loading';
 import Unauthorized from '../ui/Unauthorized';
 
 import { getFirmsContext } from '@/feature/firm';
@@ -12,7 +11,6 @@ interface AuthGuardProps {
 
 const AuthGuard = async ({
   children,
-  checkAdminRole = false,
   checkIsFirmVendor = false,
 }: AuthGuardProps) => {
   const { currentFirm } = await getFirmsContext();

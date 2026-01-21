@@ -132,7 +132,6 @@ export const getListingById = async (listingId: string) => {
 
   if (error) {
     if (error.code === 'PGRST116') {
-      // No rows found
       return null;
     }
 

@@ -1,17 +1,14 @@
 import Container from '@/components/layout/Container';
 import { getListingById } from '@/feature/listing';
 import ListingDetailsClient from './ListingDetailsClient';
+import { notFound } from 'next/navigation';
 
 const ListingDetailsPage = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
   const listing = await getListingById(String(id));
 
   if (!listing) {
-    return (
-      <div className='min-h-[calc(100vh-70px)] flex items-center justify-center'>
-        <p className='text-red-500'>Error loading listing</p>
-      </div>
-    );
+    notFound();
   }
 
   return (
