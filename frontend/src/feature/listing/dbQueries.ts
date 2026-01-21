@@ -184,7 +184,7 @@ export const getInstalledListings = async () => {
       `id,
       created_at,
       installed_by_user(first_name, last_name),
-      listing(id,name,content_type, owned_by_firm(id, name))
+      listing(id,name,content_type, owned_by_firm(id, name), status)
       `
     )
     .eq('installed_by_firm', currentFirm!.id);
@@ -213,7 +213,7 @@ export const getRequestedListings = async () => {
       `
       created_at,
       requested_by_user(first_name, last_name),
-      listing(id, name, owned_by_firm(id, name), content_type),
+      listing(id, name, owned_by_firm(id, name), content_type, status),
       request_status
       `
     )

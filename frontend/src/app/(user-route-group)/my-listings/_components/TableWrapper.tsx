@@ -103,7 +103,13 @@ const TableWrapper = ({ filters }: Props) => {
           {data.map((record, idx: number) => {
             const {
               createdAt,
-              listing: { name, ownedByFirm, contentType, id: listingId },
+              listing: {
+                name,
+                ownedByFirm,
+                contentType,
+                id: listingId,
+                status,
+              },
             } = record;
 
             const isRequested = 'requestStatus' in record;
@@ -111,7 +117,7 @@ const TableWrapper = ({ filters }: Props) => {
             return (
               <tr
                 key={idx}
-                // className={`${status === 'deleted' ? 'opacity-75' : ''}`}
+                className={`${status === 'deleted' ? 'opacity-75' : ''}`}
               >
                 <td>{idx + 1}</td>
                 <td>
@@ -122,7 +128,7 @@ const TableWrapper = ({ filters }: Props) => {
                       </span>
                     </Link>
                     {/* if the listing is deleted, show a tooltip with info */}
-                    {/* {status === 'deleted' && (
+                    {status === 'deleted' && (
                       <div
                         className='tooltip tooltip-top z-10'
                         data-tip={dataTip.deleted}
@@ -132,7 +138,7 @@ const TableWrapper = ({ filters }: Props) => {
                           (unavailable)
                         </span>
                       </div>
-                    )} */}
+                    )}
                   </div>
                 </td>
                 <td>

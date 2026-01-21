@@ -5,6 +5,7 @@ import {
   type Listing,
   type ListingContentRow,
   type ListingContent,
+  ListingStatus,
 } from '@/types/domain/listing';
 
 export type FirmReference = {
@@ -176,6 +177,7 @@ export type InstalledListingFromDb = {
     name: string;
     content_type: string;
     owned_by_firm: FirmReference;
+    status: ListingStatus;
   };
 };
 
@@ -191,6 +193,7 @@ export type InstalledListing = {
     name: string;
     contentType: string;
     ownedByFirm: FirmReference;
+    status: ListingStatus;
   };
 };
 
@@ -209,6 +212,7 @@ export function mapInstalledListingsFromDb(
       name: item.listing.name,
       contentType: item.listing.content_type,
       ownedByFirm: item.listing.owned_by_firm,
+      status: item.listing.status,
     },
   }));
 }
@@ -249,6 +253,7 @@ export function mapRequestedListingsFromDb(
       name: listing.listing.name,
       contentType: listing.listing.content_type,
       ownedByFirm: listing.listing.owned_by_firm,
+      status: listing.listing.status,
     },
   }));
 }
