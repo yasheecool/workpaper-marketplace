@@ -1,4 +1,4 @@
-export default [
+const vendorProfiles = [
   {
     firmId: '6367742e-e1b0-48ec-af5d-da92778e4d13', //Faker & Co
     firmEmail: 'helloworld@gmail.com',
@@ -18,3 +18,5 @@ export default [
     status: 'active',
   },
 ];
+
+export default vendorProfiles;

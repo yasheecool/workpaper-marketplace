@@ -3,14 +3,10 @@ import { createClient } from '@/lib/supabase/serverClient';
 import { FirmRow, mapFirmsFromDb, FirmFromPayload } from '@/types/domain/firm';
 import { cookies } from 'next/headers';
 
-export async function getCurrentFirmIdFromCookies() {
+async function getCurrentFirmIdFromCookies() {
   const currentFirmIdFromCookies = (await cookies()).get(
     'selected_firm_id'
   )?.value;
-
-  if (!currentFirmIdFromCookies) {
-    throw new Error('No firm selected');
-  }
 
   return currentFirmIdFromCookies;
 }
@@ -44,4 +40,27 @@ export async function getFirmsContext() {
   const currentFirm = firms.find((f) => f.id === currentFirmIdFromCookies);
 
   return { allUserFirms: firms, currentFirm };
+}
+
+export async function getCurrentFirm() {
+  const currentFirmIdFromCookies = await getCurrentFirmIdFromCookies();
+
+  if (!currentFirmIdFromCookies) {
+    throw new Error('No firm selected');
+  }
+  const supabase = await createClient();
+
+  const { data: firmFromDb, error: dbFirmError } = await supabase
+    .from('firm')
+    .select('*, vendor_profile:vendor_profile!left(firm_id)')
+    .eq('id', currentFirmIdFromCookies)
+    .single();
+
+  if (dbFirmError) {
+    console.error('Error fetching current firm:', dbFirmError);
+    throw new Error('Failed to fetch current firm from database');
+  }
+
+  const mappedFirm = mapFirmsFromDb([firmFromDb as FirmRow])[0];
+  return mappedFirm;
 }

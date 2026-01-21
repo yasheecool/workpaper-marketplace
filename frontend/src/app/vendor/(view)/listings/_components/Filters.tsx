@@ -1,17 +1,19 @@
 'use client';
 
 import { FormSelect } from '@/components/input';
-import { ListingSearchInput } from '@/feature/listing';
 import {
+  ListingSearchInput,
   listingTypeOptions,
   listingVisibilityOptions,
-} from '@/types/domain/listing';
+  listingStatusOptions,
+} from '@/feature/listing';
 import { useRouter } from 'next/navigation';
 
 //sort a-z updatedAt
 //listingType Filter
 //visibility filter
 //search by title
+//status filter
 const Filters = () => {
   const router = useRouter();
 
@@ -31,7 +33,7 @@ const Filters = () => {
 
   return (
     <>
-      <label className='input grow'>
+      <label className='input'>
         <svg
           className='h-[1em] opacity-50'
           xmlns='http://www.w3.org/2000/svg'
@@ -66,6 +68,14 @@ const Filters = () => {
           name='accessType'
           defaultValue={'all'}
           onSelect={(e) => updateSearchParams('access-type', e.target.value)}
+        />
+        <FormSelect
+          label='Status'
+          optionsObj={listingStatusOptions}
+          name='listingStatus'
+          displayAll={true}
+          defaultValue={'all'}
+          onSelect={(e) => updateSearchParams('listing-status', e.target.value)}
         />
       </div>
       <select

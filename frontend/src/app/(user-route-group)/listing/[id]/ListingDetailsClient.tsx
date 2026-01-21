@@ -1,12 +1,11 @@
 'use client';
 
-import { ListingWithStatuses } from '@/feature/listing/types';
 import {
   ListingAlert,
   ListingHeader,
   ListingDescriptions,
 } from './_components';
-import { useListingById } from '@/feature/listing';
+import { useListingById, ListingWithStatuses } from '@/feature/listing';
 import { Loading, ImagePreview } from '@/components/ui';
 import { useEffect, useState } from 'react';
 import { getImageUrl } from '@/lib/supabase/storage';
@@ -19,7 +18,7 @@ const ListingDetailsClient = ({
   id: string;
 }) => {
   const { data: listing, isLoading, error } = useListingById(id, initialData);
-  const [listingImages, setListingImages] = useState<string[]>([]);
+  const [listingImages, setListingImages] = useState<string[] | null>(null);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -42,6 +41,7 @@ const ListingDetailsClient = ({
   if (error || !listing) {
     return <p>Error loading listing: {String(error?.message)}</p>;
   }
+
   const {
     name,
     updatedAt,
@@ -55,10 +55,10 @@ const ListingDetailsClient = ({
     longDescription,
     gettingStartedSteps,
     requestStatus,
-    imagesLink,
     workpaperType,
     entityType,
     contentType,
+    status,
     // isDeleted
   } = listing;
 
@@ -88,11 +88,14 @@ const ListingDetailsClient = ({
       </div>
       {/* LISTING IMAGES */}
       <div
-        className={`overflow-hidden w-full relative h-96 ${isRequested ? 'lg:row-start-2' : 'lg:row-start-1 '}`}
+        className={`overflow-hidden w-full relative h-96 ${isRequested || isInstalled ? 'lg:row-start-2' : 'lg:row-start-1 '}`}
       >
         <ImagePreview
-          imgUrls={listingImages}
-          // setUrls={}
+          imgUrls={
+            listingImages && listingImages.length > 0
+              ? listingImages
+              : ['/undraw_files.svg']
+          }
           showCloseButton={false}
         />
       </div>

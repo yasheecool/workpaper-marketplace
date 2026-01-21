@@ -1,8 +1,8 @@
-import Image from 'next/image';
 import { formatDate } from '@/utils/formatDate';
 import { getVendorProfile } from '@/feature/vendor';
 import Container from '@/components/layout/Container';
 import { notFound } from 'next/navigation';
+import { LogoDisplay } from '../LogoDisplay';
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
@@ -21,15 +21,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
           styles={`flex max-w-5xl flex gap-6 bg-base-100 py-6 px-8 rounded-md border border-gray-300`}
         >
           {/* Vendor Logo */}
-          <div className=' rounded-md overflow-hidden shrink-0 relative w-24 h-24'>
-            <Image
-              alt="Vendor firm's profile image"
-              src={firmLogo || '/undraw_approve.svg'}
-              fill
-              className='object-cover'
-            />
-          </div>
-
+          <LogoDisplay firmLogo={firmLogo} />
           {/* Vendor Info */}
           <div className='flex flex-col justify-center gap-2'>
             <h1 className='text-2xl font-semibold'>{firmName}</h1>

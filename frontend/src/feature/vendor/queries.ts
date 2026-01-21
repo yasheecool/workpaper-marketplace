@@ -1,12 +1,10 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/serverClient';
-import {
-  type VendorProfileRow,
-  mapVendorProfileFromDb,
-} from '@/types/domain/vendor';
 import { getFirmsContext } from '../firm';
 import {
+  VendorProfileRow,
+  mapVendorProfileFromDb,
   mapVendorListingsFromDb,
   type VendorListingFromDb,
   mapListingRequestFromDb,
@@ -40,6 +38,7 @@ export const getVendorListings = async (filters: {
   visibility: string;
   sortBy: string;
   searchQuery: string;
+  listingStatus: string;
 }) => {
   const supabase = await createClient();
   const { currentFirm } = await getFirmsContext();
@@ -64,6 +63,10 @@ export const getVendorListings = async (filters: {
     query.textSearch('name', filters.searchQuery.trim(), {
       type: 'plain',
     });
+  }
+
+  if (filters.listingStatus !== 'all') {
+    query.eq('status', filters.listingStatus);
   }
 
   if (filters.sortBy) {

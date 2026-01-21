@@ -131,7 +131,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
     );
 
     try {
-      const data = await updateUserProfile(snakeCaseChangedFields);
+      await updateUserProfile(snakeCaseChangedFields);
       toast.success('Profile updated successfully!');
     } catch (e) {
       console.error('Error updating profile:', e);

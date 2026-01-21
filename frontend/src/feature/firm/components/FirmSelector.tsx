@@ -1,5 +1,5 @@
 'use client';
-import { Fragment, use, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { type FirmWithVendorFlag } from '@/types/domain/firm';
 import { setFirmInCookies } from '../actions';
 import Form from 'next/form';
@@ -77,4 +77,5 @@ const FirmSelector = ({ firms }: { firms: FirmWithVendorFlag[] }) => {
     </Form>
   );
 };
+
 export default FirmSelector;

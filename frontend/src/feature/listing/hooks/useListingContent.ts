@@ -11,4 +11,4 @@ const useListingContent = (content?: ListingContent[]) => {
   });
 };
 
-export default useListingContent;
+export { useListingContent };

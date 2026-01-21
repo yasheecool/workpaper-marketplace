@@ -1,13 +1,13 @@
 import Dropdown from '@/components/ui/Dropdown';
-import Link from 'next/link';
 import { getUserFromDB } from '../queries';
-import { getFirmsContext } from '@/feature/firm';
+import { getFirmsContext, getCurrentFirm } from '@/feature/firm';
 import { HeaderFirmSelectorLink } from '@/components/ui';
 import { signOut } from '@/feature/auth';
 
 const UserHeaderNav = async () => {
   const user = await getUserFromDB();
-  const { currentFirm, allUserFirms } = await getFirmsContext();
+  const currentFirm = await getCurrentFirm();
+  const { allUserFirms } = await getFirmsContext();
 
   const navList = [
     {
@@ -35,12 +35,6 @@ const UserHeaderNav = async () => {
 
   return (
     <div className='flex items-center gap-1'>
-      {currentFirm && !currentFirm.isVendor && (
-        <Link href={'/vendor-request'} className='text-sm link link-hover'>
-          Become a Vendor
-        </Link>
-      )}
-
       {allUserFirms.length > 1 && (
         <HeaderFirmSelectorLink firmName={currentFirm!.name} />
       )}

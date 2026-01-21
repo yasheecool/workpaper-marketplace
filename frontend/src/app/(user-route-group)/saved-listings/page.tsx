@@ -14,7 +14,7 @@ const SavedListings = async () => {
         {listings?.length === 0 ? (
           <div>
             <p>
-              You don't have any saved listings. Browse the marketplace to get
+              You do not have any saved listings. Browse the marketplace to get
               started!
             </p>
           </div>

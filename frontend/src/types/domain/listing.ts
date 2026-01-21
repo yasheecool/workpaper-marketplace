@@ -41,6 +41,11 @@ export const listingVisibilityOptions: Record<ListingVisibility, string> = {
 
 export type ListingStatus = Database['public']['Enums']['listing_status'];
 
+export const listingStatusOptions: Record<ListingStatus, string> = {
+  active: 'Active',
+  deleted: 'Deleted',
+};
+
 export type Region = Database['public']['Enums']['region'];
 
 export const regionOptions: Record<Region, string> = {

@@ -69,13 +69,18 @@ export const useRequestListingMutation = (id: string) => {
   });
 };
 
-export const useUpdateListingMutation = (id: string) => {
+export const useUpdateListingMutation = () => {
   return useMutation({
-    mutationFn: (updatedData: Partial<ListingWithStatuses>) =>
-      updateListing(id, updatedData),
-
+    mutationFn: ({
+      listingId,
+      data,
+    }: {
+      listingId: string;
+      data: Partial<ListingWithStatuses>;
+    }) => {
+      return updateListing(listingId, data);
+    },
     onSuccess: () => {
-      toast.success(`Listing updated successfully!`);
       getQueryClient().invalidateQueries({ queryKey: ['vendor-listings'] });
     },
     onError: (error: unknown) => {

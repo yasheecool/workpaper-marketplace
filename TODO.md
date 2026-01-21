@@ -1,0 +1,10 @@
+- move repo to frontend folder
+- add listing to landing page as well and enforce protected routes
+- add linting, husky, CI/CD
+- create docs for supabase custom claims
+- create a demo flow and figure out how to manage/seed data
+  -redo landing page - buttons for auth
+- add error boundary
+- fix suspense errors
+- For Docs:
+  - Map type flow from domain to app

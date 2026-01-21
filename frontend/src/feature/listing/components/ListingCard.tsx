@@ -10,7 +10,7 @@ interface ListingCardProps {
 }
 
 const ListingCard = ({ listing }: ListingCardProps) => {
-  const [imagePath, setImagePath] = useState<string[]>([]);
+  const [imagePath, setImagePath] = useState<string[] | null>(null);
 
   useEffect(() => {
     const fetchImageUrl = async () => {
@@ -29,7 +29,10 @@ const ListingCard = ({ listing }: ListingCardProps) => {
 
   return (
     <div className='grid grid-cols-[2fr_3fr_minmax(40px,220px)] gap-4 p-4 border border-gray-300 rounded-md hover:shadow-md transition-shadow ease-in-out bg-white'>
-      <ListingCardImage imagesPath={imagePath} name={listing.name} />
+      <ListingCardImage
+        imagesPath={imagePath || ['/undraw_files.svg']}
+        name={listing.name}
+      />
       <ListingCardInfo
         id={listing.id}
         name={listing.name}

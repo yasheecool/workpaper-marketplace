@@ -1,8 +1,6 @@
 import ContentDisplay from './ContentDisplay';
 import { getAvailableContent } from '@/feature/listing';
 import { Container } from '@/components/layout';
-import { FormSelect } from '@/components/input';
-import { listingTypeOptions } from '@/feature/listing';
 
 const page = async () => {
   const content = await getAvailableContent();

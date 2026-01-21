@@ -57,9 +57,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
   });
 
   const [images, setImages] = useState<ImageObject[]>([]);
-  const { mutate: updateListing } = useUpdateListingMutation(
-    localListingFormData.id
-  );
+  const { mutate: updateListing } = useUpdateListingMutation();
   const { mutate: createListing } = useCreateListingMutation();
 
   const router = useRouter();
@@ -113,7 +111,6 @@ const ListingEditor = ({ listingData, mode }: props) => {
         //find the path from the url
         const url = img.url;
         const urlObj = new URL(url);
-        console.log('URL Object:', urlObj);
         const path = urlObj.pathname.split('/').slice(6).join('/'); // Remove leading '/' and bucket name
         return path;
       });
@@ -162,7 +159,10 @@ const ListingEditor = ({ listingData, mode }: props) => {
 
     if (mode === 'edit') {
       let changedFields = getChangedFields(
-        { ...data, imagesLink: finalImagePaths.length || null } as FieldValues,
+        {
+          ...data,
+          imagesLink: finalImagePaths.length ? finalImagePaths : null,
+        } as FieldValues,
         localListingFormData
       );
       const isEmpty = Object.keys(changedFields).length === 0;
@@ -173,17 +173,23 @@ const ListingEditor = ({ listingData, mode }: props) => {
           imagesLink: finalImagePaths.length ? finalImagePaths : null,
         });
 
-        await updateListing(changedFields, {
-          onSuccess: (updatedListing) => {
-            // immediately sync the form with the fresh server result
-            setLocalListingFormData(updatedListing as ListingInputType);
-
-            // keep caches up to date
-            const client = getQueryClient();
-            client.setQueryData(['listing', updatedListing.id], updatedListing);
-            client.invalidateQueries({ queryKey: ['vendor-listings'] });
-          },
-        });
+        await updateListing(
+          { listingId: localListingFormData.id, data: changedFields },
+          {
+            onSuccess: (updatedListing: Partial<ListingWithStatuses>) => {
+              // immediately sync the form with the fresh server result
+              setLocalListingFormData(updatedListing as ListingInputType);
+              toast.success('Listing updated successfully!');
+              // keep caches up to date
+              const client = getQueryClient();
+              client.setQueryData(
+                ['listing', updatedListing.id],
+                updatedListing
+              );
+              client.invalidateQueries({ queryKey: ['vendor-listings'] });
+            },
+          }
+        );
       } else toast.info('No changes made to the listing');
     }
 
@@ -375,7 +381,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
       <div className='px-4 border-l-3 border-secondary py-2 flex flex-col gap-4'>
         <ImageUpload setImages={handleLocalImageUpload} />
 
-        {!!images.map((img) => img.url).length && (
+        {images.map((img) => img.url).length && (
           <div className='w-75 md:w-125 h-50 rounded'>
             <ImagePreview
               imgUrls={images.map((img) => img.url)}

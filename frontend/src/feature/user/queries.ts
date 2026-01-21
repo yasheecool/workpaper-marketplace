@@ -14,6 +14,11 @@ export const getUserFromDB = async () => {
     .eq('id', userId)
     .single();
 
+  if (error || !userData) {
+    console.error('Error fetching user from DB:', error);
+    throw new Error('An error occurred while fetching user data.');
+  }
+
   const mappedUser = mapUserFromDb(userData as UserRow);
 
   return mappedUser;

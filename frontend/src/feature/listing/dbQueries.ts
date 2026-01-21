@@ -50,6 +50,7 @@ export const getMarketplaceListings = async (params: {
     .select(SELECT_FIELDS, {
       count: 'estimated',
     })
+    .eq('status', 'active')
     .range((pageNum - 1) * PER_PAGE, pageNum * PER_PAGE - 1);
 
   if (search && typeof search === 'string' && search.trim().length > 0) {

@@ -27,7 +27,6 @@ export const GET = async (req: NextRequest) => {
     // Redirect to firm selection on success
     return NextResponse.redirect(new URL('firm-selection', origin));
   } catch (err) {
-    // console.error('Unexpected error during OTP verification:', err);
     return NextResponse.redirect(new URL('login', origin));
   }
 };

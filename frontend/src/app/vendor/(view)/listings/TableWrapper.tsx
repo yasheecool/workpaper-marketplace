@@ -1,15 +1,15 @@
 'use client';
 
-import { TableHeaderRow, Loading } from '@/components/ui';
+import { TableHeaderRow, Loading, Ellipsis } from '@/components/ui';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { VendorListing } from '@/feature/vendor/types';
 import { formatDate } from '@/utils/formatDate';
 import { capitalize } from 'lodash';
-import Ellipsis from '@/components/ui/Ellipsis';
 import { getVendorListings } from '@/feature/vendor';
 import Link from 'next/link';
+import { useUpdateListingMutation } from '@/feature/listing';
 
 const tableHeadings = [
   'No.',
@@ -27,6 +27,7 @@ type Filters = {
   visibility: string;
   sortBy: string;
   searchQuery: string;
+  listingStatus: string;
 };
 
 const TableWrapper = ({
@@ -38,31 +39,31 @@ const TableWrapper = ({
 }) => {
   const router = useRouter();
 
-  const { data, error, isLoading } = useQuery({
+  const { data, error, isLoading, refetch } = useQuery({
     queryKey: ['vendor-listings', filters],
     queryFn: () => getVendorListings(filters),
     initialData,
   });
 
+  const { mutate: updateListing } = useUpdateListingMutation();
+
   const navigateToEditor = (id: string) => {
     router.push(`/vendor/listing/edit/${id}`);
   };
 
-  const restoreDeleteListing = (id: string, isDeleted: boolean) => {
+  const restoreDeleteListing = async (id: string, isDeleted: boolean) => {
     const newStatus = isDeleted ? 'active' : 'deleted';
-    // updateListing(
-    //   {
-    //     listingId: id,
-    //     updatedFields: { status: newStatus },
-    //   },
-    //   {
-    //     onSuccess: () => {
-    //       toast.success(
-    //         `Listing ${isDeleted ? 'restored' : 'deleted'} successfully!`
-    //       );
-    //     },
-    //   }
-    // );
+    await updateListing(
+      { listingId: id, data: { status: newStatus } },
+      {
+        onSuccess: () => {
+          toast.success(
+            `Listing ${isDeleted ? 'restored' : 'deleted'} successfully!`
+          );
+          refetch();
+        },
+      }
+    );
   };
 
   if (isLoading) {
@@ -130,8 +131,7 @@ const TableWrapper = ({
                     },
                     {
                       label: `${isDeleted ? 'Restore' : 'Delete'}`,
-                      action: () =>
-                        restoreDeleteListing(listing.id!, isDeleted),
+                      action: () => restoreDeleteListing(listing.id, isDeleted),
                       className: 'text-red-500',
                     },
                   ]}

@@ -1,7 +1,6 @@
 'use client';
 import { useParams } from 'next/navigation';
-import ListingEditor from '@/feature/listing/components/ListingEditor';
-import useListingContent from '@/feature/listing/hooks/useListingContent';
+import { ListingEditor, useListingContent } from '@/feature/listing';
 import { Tabs, Loading, Breadcrumbs } from '@/components/ui';
 
 //Client component because data already available in query cache, no need to fetch again
