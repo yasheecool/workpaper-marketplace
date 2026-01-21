@@ -1,13 +1,13 @@
 import Dropdown from '@/components/ui/Dropdown';
 import { getUserFromDB } from '../queries';
-import { getFirmsContext, getCurrentFirm } from '@/feature/firm';
+import { getAllFirmsOfUser, getCurrentFirm } from '@/feature/firm';
 import { HeaderFirmSelectorLink } from '@/components/ui';
 import { signOut } from '@/feature/auth';
 
 const UserHeaderNav = async () => {
   const user = await getUserFromDB();
   const currentFirm = await getCurrentFirm();
-  const { allUserFirms } = await getFirmsContext();
+  const { allUserFirms } = await getAllFirmsOfUser();
 
   const navList = [
     {

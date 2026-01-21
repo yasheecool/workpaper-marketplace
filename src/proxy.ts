@@ -2,7 +2,7 @@ import { type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/proxy';
 import { NextResponse } from 'next/server';
 
-const openUrls = ['/login', '/auth', '/'];
+const openUrls = ['/login', '/auth', '/', '/listing', '/vendor-details'];
 
 export async function proxy(request: NextRequest) {
   const { supabaseResponse, userClaims } = await updateSession(request);

@@ -1,13 +1,15 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { type SavedListing } from '@/feature/listing/types';
+import { type SavedListing } from '../types';
+import { useSaveListingMutation } from '@/feature/listing/hooks/useListingMutations';
 import { toast } from 'react-toastify';
 import capitalize from 'lodash/capitalize';
-import { useSaveListingMutation } from '@/feature/listing/hooks/useListingMutations';
-import { refresh } from 'next/cache';
+import { useEffect, useState } from 'react';
+import { getImageUrl } from '@/lib/supabase/storage';
 
 const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
+  const [imagesUrl, setImagesUrl] = useState<string | null>(null);
   const {
     listing: {
       name,
@@ -18,6 +20,17 @@ const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
     },
   } = savedListing;
 
+  useEffect(() => {
+    const fetchImageUrl = async () => {
+      if (imagesLink && imagesLink.length > 0) {
+        const url = await getImageUrl(imagesLink[0], 'LISTING_IMAGES_BUCKET');
+        setImagesUrl(url);
+      }
+    };
+
+    fetchImageUrl();
+  }, [savedListing]);
+
   const { mutate: saveListing, isPending: isSaving } =
     useSaveListingMutation(id);
 
@@ -26,11 +39,14 @@ const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
   };
 
   return (
-    <div className='rounded-md flex flex-col gap-4 shadow-sm hover:shadow-md min-w-62.5 w-80 border border-gray-200 bg-white max-h-80 min-h-75'>
+    <div className='rounded-md flex flex-col gap-2 shadow-md hover:shadow-lg min-w-62.5 w-80 border border-gray-200 bg-white max-h-80 min-h-75'>
       {/* IMAGE */}
-      <div className='relative h-[50%] w-full border-b-[0.25]'>
+      <div className='relative h-[70%] w-full border-b-[0.25]'>
         <Image
-          src={'/undraw_approve.svg'}
+          src={
+            imagesUrl ||
+            '/undraw_approve.svg' /* Placeholder image if none exists */
+          }
           fill
           className='object-cover'
           alt='listing image'
@@ -43,6 +59,9 @@ const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
         <h2 className='text-base font-semibold leading-tight mb-1'>{name}</h2>
 
         <p className='text-xs text-gray-600 '>
+          <span className='badge badge-primary badge-sm opacity-85'>
+            {capitalize(contentType)}
+          </span>{' '}
           By{' '}
           <Link href={`/vendor-details/${firmId}`}>
             <span className='link link-hover font-semibold text-gray-700'>
@@ -54,12 +73,6 @@ const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
 
       {/* Content Type, Price */}
       <div className='flex justify-between items-center gap-4 px-4'>
-        <p className='text-xs text-gray-600 '>
-          Type:{' '}
-          <span className='badge badge-primary badge-sm opacity-75'>
-            {capitalize(contentType)}
-          </span>
-        </p>
         <p className='font-semibold text-gray-700'>FREE</p>
       </div>
 

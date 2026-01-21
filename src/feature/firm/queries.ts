@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/serverClient';
 import { FirmRow, mapFirmsFromDb, FirmFromPayload } from '@/types/domain/firm';
 import { cookies } from 'next/headers';
 
-async function getCurrentFirmIdFromCookies() {
+export async function getCurrentFirmIdFromCookies() {
   const currentFirmIdFromCookies = (await cookies()).get(
     'selected_firm_id'
   )?.value;
@@ -11,7 +11,7 @@ async function getCurrentFirmIdFromCookies() {
   return currentFirmIdFromCookies;
 }
 
-export async function getFirmsContext() {
+export async function getAllFirmsOfUser() {
   const supabase = await createClient();
 
   const { data } = await supabase.auth.getClaims();

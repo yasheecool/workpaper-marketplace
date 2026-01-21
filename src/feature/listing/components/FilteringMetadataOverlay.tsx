@@ -17,7 +17,7 @@ const FilteringMetadataOverlay = ({
   totalPages,
   itemsOnPage,
 }: FilteringMetadataOverlayProps) => {
-  const [showOverlay, setShowOverlay] = useState<Boolean>(false);
+  const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -108,4 +108,5 @@ const FilteringMetadataOverlay = ({
     </>
   );
 };
+
 export default FilteringMetadataOverlay;

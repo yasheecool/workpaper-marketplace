@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 
 const ListingDetailsPage = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
-  const listing = await getListingById(String(id));
+  const listing = await getListingById(String(id), true);
 
   if (!listing) {
     notFound();

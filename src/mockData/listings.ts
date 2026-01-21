@@ -1,4 +1,4 @@
-let listings1 = [
+const listings1 = [
   {
     id: 'e483ff76-77ea-4712-9134-1e1930e3c647',
     ownerFirmId: '6367742e-e1b0-48ec-af5d-da92778e4d13',
@@ -281,8 +281,8 @@ Ideal for junior auditors, reviewers, and quality managers, this checklist refle
     ],
   },
 ];
-//Sky accounting listings
-let listings2 = [
+//Faker&Co listings
+const listings2 = [
   {
     id: '94aad373-719b-4aef-b376-2e7ef51b5290',
     ownerFirmId: '5a694a45-1d17-4b8a-9e41-9ac7f17b96f6',

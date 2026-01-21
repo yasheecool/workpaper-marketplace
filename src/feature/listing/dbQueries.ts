@@ -14,7 +14,7 @@ import {
   mapInstalledListingsFromDb,
 } from './types';
 
-import { getFirmsContext } from '@/feature/firm';
+import { getCurrentFirm } from '@/feature/firm';
 import { mapListingContentFromDb } from './types';
 import { mapListingRequestFromDb } from '../vendor';
 
@@ -22,7 +22,7 @@ export const getMarketplaceListings = async (params: {
   [key: string]: string | string[] | undefined;
 }) => {
   const supabase = await createClient();
-  const { currentFirm } = await getFirmsContext();
+  const currentFirm = await getCurrentFirm();
 
   const { search, page, sort } = params;
   const contentType = params['content-type'];
@@ -101,7 +101,7 @@ export const getMarketplaceListings = async (params: {
   const data = listingsFromDb.map((listing) =>
     mapMarketplaceListingFromDb(
       listing as unknown as MarketplaceListingFromDb,
-      currentFirm!.id
+      currentFirm.id
     )
   );
 
@@ -113,11 +113,12 @@ export const getMarketplaceListings = async (params: {
   };
 };
 
-export const getListingById = async (listingId: string) => {
+export const getListingById = async (
+  listingId: string,
+  getStatuses: boolean
+) => {
   const supabase = await createClient();
-  const { currentFirm } = await getFirmsContext();
-  const currentFirmId = currentFirm!.id;
-
+  const currentFirmId = (await getCurrentFirm()).id;
   const { data: listingFromDb, error } = await supabase
     .from('listing')
     .select(
@@ -139,6 +140,11 @@ export const getListingById = async (listingId: string) => {
       error.message || 'An error occurred while fetching the listing.'
     );
   }
+
+  // if (getStatuses) {
+  //   const currentFirmId = (await getCurrentFirm()).id;
+  // }
+
   const listing = mapListingFromDb(
     listingFromDb as ListingFromDb,
     currentFirmId
@@ -147,8 +153,7 @@ export const getListingById = async (listingId: string) => {
 };
 
 export const getSavedListings = async () => {
-  const firms = await getFirmsContext();
-  const currentFirmId = firms.currentFirm!.id;
+  const currentFirmId = (await getCurrentFirm()).id;
 
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -175,7 +180,7 @@ export const getSavedListings = async () => {
 
 export const getInstalledListings = async () => {
   const supabase = await createClient();
-  const { currentFirm } = await getFirmsContext();
+  const currentFirmId = (await getCurrentFirm()).id;
 
   const { data, error } = await supabase
     .from('installed_listing')
@@ -186,7 +191,7 @@ export const getInstalledListings = async () => {
       listing(id,name,content_type, owned_by_firm(id, name), status)
       `
     )
-    .eq('installed_by_firm', currentFirm!.id);
+    .eq('installed_by_firm', currentFirmId);
 
   if (error) {
     console.error('Error fetching installed listings:', error);
@@ -204,7 +209,7 @@ export const getInstalledListings = async () => {
 
 export const getRequestedListings = async () => {
   const supabase = await createClient();
-  const { currentFirm } = await getFirmsContext();
+  const currentFirmId = (await getCurrentFirm()).id;
 
   const { data, error } = await supabase
     .from('listing_access_control')
@@ -216,7 +221,7 @@ export const getRequestedListings = async () => {
       request_status
       `
     )
-    .eq('requested_by_firm', currentFirm!.id);
+    .eq('requested_by_firm', currentFirmId);
 
   if (error || !data) {
     console.error('Error fetching requested listings:', error);
@@ -234,12 +239,12 @@ export const getRequestedListings = async () => {
 
 export const getAvailableContent = async () => {
   const supabase = await createClient();
-  const { currentFirm } = await getFirmsContext();
+  const currentFirmId = (await getCurrentFirm()).id;
 
   const { data, error } = await supabase
     .from('listing_content')
     .select(`*`)
-    .eq('owned_by_firm', currentFirm!.id);
+    .eq('owned_by_firm', currentFirmId);
 
   if (error || !data) {
     console.error('Error fetching available content:', error);
@@ -292,4 +297,37 @@ export const getListingRequests = async (
   );
 
   return mappedRequests;
+};
+
+export const getFeauturedListings = async () => {
+  const supabase = await createClient();
+
+  const { data: listingsFromDb, error } = await supabase
+    .from('listing')
+    .select(
+      `id,
+      name, 
+      description, 
+      content_type, 
+      updated_at, 
+      images_link,
+      visibility,
+      owned_by_firm:firm!listing_owned_by_firm_fkey(id, name),
+    `
+    )
+    .eq('status', 'active')
+    .order('updated_at', { ascending: false })
+    .limit(5);
+
+  if (error?.code === 'PGRST116') {
+    return null;
+  }
+
+  if (error) {
+    throw new Error(
+      error.message || 'An error occurred while fetching featured listings.'
+    );
+  }
+
+  // const listings = listingsFromDb.map((listing) =>
 };

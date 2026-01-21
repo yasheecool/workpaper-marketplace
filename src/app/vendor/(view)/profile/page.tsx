@@ -1,10 +1,10 @@
-import { getFirmsContext } from '@/feature/firm';
+import { getCurrentFirm } from '@/feature/firm';
 import VendorProfileForm from './VendorProfileForm';
 import { getVendorProfile } from '@/feature/vendor';
 
 const page = async () => {
-  const { currentFirm } = await getFirmsContext();
-  const vendorProfile = await getVendorProfile(currentFirm!.id);
+  const currentFirm = await getCurrentFirm();
+  const vendorProfile = await getVendorProfile(currentFirm.id);
 
   return (
     <div className='px-6 py-4 h-full flex flex-col gap-8'>

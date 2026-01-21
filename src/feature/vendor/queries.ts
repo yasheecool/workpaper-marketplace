@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/serverClient';
-import { getFirmsContext } from '../firm';
+import { getCurrentFirm } from '../firm';
 import {
   VendorProfileRow,
   mapVendorProfileFromDb,
@@ -41,8 +41,8 @@ export const getVendorListings = async (filters: {
   listingStatus: string;
 }) => {
   const supabase = await createClient();
-  const { currentFirm } = await getFirmsContext();
-  const vendorId = currentFirm!.id;
+  const currentFirm = await getCurrentFirm();
+  const vendorId = currentFirm.id;
 
   const query = supabase
     .from('listing')
@@ -91,8 +91,8 @@ export const getVendorListingRequests = async (
   type: 'pending' | 'completed'
 ) => {
   const supabase = await createClient();
-  const { currentFirm } = await getFirmsContext();
-  const vendorId = currentFirm!.id;
+  const currentFirm = await getCurrentFirm();
+  const vendorId = currentFirm.id;
 
   const query = supabase
     .from('listing_access_control')

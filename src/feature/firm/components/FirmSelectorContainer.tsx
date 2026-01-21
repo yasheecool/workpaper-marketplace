@@ -1,8 +1,8 @@
 import FirmSelector from './FirmSelector';
-import { getFirmsContext } from '../queries';
+import { getAllFirmsOfUser } from '../queries';
 
 const FirmSelectorContainer = async () => {
-  const { allUserFirms: firms } = await getFirmsContext();
+  const { allUserFirms: firms } = await getAllFirmsOfUser();
 
   return <FirmSelector firms={firms} />;
 };

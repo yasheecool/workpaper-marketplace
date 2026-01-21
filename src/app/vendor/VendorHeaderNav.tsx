@@ -1,6 +1,6 @@
 import Dropdown from '@/components/ui/Dropdown';
 import { HeaderFirmSelectorLink } from '@/components/ui';
-import { getFirmsContext } from '@/feature/firm';
+import { getCurrentFirm } from '@/feature/firm';
 import { getUserFromDB } from '@/feature/user';
 import { signOut } from '@/feature/auth';
 
@@ -21,12 +21,12 @@ const navList = [
 ];
 
 const VendorHeaderNav = async () => {
-  const { currentFirm } = await getFirmsContext();
+  const currentFirm = await getCurrentFirm();
   const { firstName, lastName } = await getUserFromDB();
 
   return (
     <div className='flex items-center gap-4'>
-      <HeaderFirmSelectorLink firmName={currentFirm!.name} />
+      <HeaderFirmSelectorLink firmName={currentFirm.name} />
 
       <Dropdown
         displayChild={

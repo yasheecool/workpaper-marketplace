@@ -1,16 +1,16 @@
 'use server';
 
 import { getUserClaims } from '../auth';
-import { getFirmsContext } from '../firm';
+import { getCurrentFirm } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
 import { ListingWithStatuses, mapListingFromDb } from './types';
 
 export const installListing = async (listingId: string) => {
   const userClaims = await getUserClaims();
   const { sub: userId } = userClaims;
-  const { currentFirm } = await getFirmsContext();
+  const currentFirm = await getCurrentFirm();
 
-  const firmId = currentFirm!.id;
+  const firmId = currentFirm.id;
 
   const supabase = await createClient();
 
@@ -30,10 +30,10 @@ export const installListing = async (listingId: string) => {
 
 export const uninstallListing = async (listingId: string) => {
   const supabase = await createClient();
-  const { currentFirm } = await getFirmsContext();
+  const currentFirm = await getCurrentFirm();
   const { sub: userId } = await getUserClaims();
 
-  const firmId = currentFirm!.id;
+  const firmId = currentFirm.id;
 
   const { data, error } = await supabase
     .from('installed_listing')
@@ -58,9 +58,9 @@ export const saveListing = async (
   const supabase = await createClient();
 
   const { sub: userId } = await getUserClaims();
-  const { currentFirm } = await getFirmsContext();
+  const currentFirm = await getCurrentFirm();
 
-  const firmId = currentFirm!.id;
+  const firmId = currentFirm.id;
   let response;
 
   if (type === 'save') {
@@ -90,9 +90,9 @@ export const saveListing = async (
 export const requestListing = async (listingId: string) => {
   const userClaims = await getUserClaims();
   const { sub: userId } = userClaims;
-  const { currentFirm } = await getFirmsContext();
+  const currentFirm = await getCurrentFirm();
 
-  const firmId = currentFirm!.id;
+  const firmId = currentFirm.id;
 
   const supabase = await createClient();
 
