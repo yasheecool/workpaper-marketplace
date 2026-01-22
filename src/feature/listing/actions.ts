@@ -1,13 +1,18 @@
 'use server';
 
-import { getUserClaims } from '../auth';
+import { getUserClaimsPublic, getUserClaims } from '../auth';
 import { getCurrentFirm } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
-import { ListingWithStatuses, mapListingFromDb } from './types';
+import { ListingWithStatuses, mapListingBase } from './types';
 
 export const installListing = async (listingId: string) => {
-  const userClaims = await getUserClaims();
-  const { sub: userId } = userClaims;
+  const result = await getUserClaimsPublic();
+
+  if (!result.success) {
+    throw new Error('Please log in to install listings.');
+  }
+
+  const { sub: userId } = result.data;
   const currentFirm = await getCurrentFirm();
 
   const firmId = currentFirm.id;
@@ -53,11 +58,16 @@ export const uninstallListing = async (listingId: string) => {
 
 export const saveListing = async (
   listingId: string,
-  type: 'save' | 'unsave'
+  type: 'save' | 'unsave',
 ) => {
   const supabase = await createClient();
 
-  const { sub: userId } = await getUserClaims();
+  const result = await getUserClaimsPublic();
+
+  if (!result.success) {
+    throw new Error('Please log in to install listings.');
+  }
+  const { sub: userId } = result.data;
   const currentFirm = await getCurrentFirm();
 
   const firmId = currentFirm.id;
@@ -88,8 +98,12 @@ export const saveListing = async (
 };
 
 export const requestListing = async (listingId: string) => {
-  const userClaims = await getUserClaims();
-  const { sub: userId } = userClaims;
+  const result = await getUserClaimsPublic();
+
+  if (!result.success) {
+    throw new Error('Please log in to install listings.');
+  }
+  const { sub: userId } = result.data;
   const currentFirm = await getCurrentFirm();
 
   const firmId = currentFirm.id;
@@ -112,7 +126,7 @@ export const requestListing = async (listingId: string) => {
 
 export const updateListing = async (
   id: string,
-  fields: Partial<ListingWithStatuses>
+  fields: Partial<ListingWithStatuses>,
 ) => {
   const supabase = await createClient();
 
@@ -126,12 +140,12 @@ export const updateListing = async (
     throw new Error(error.message);
   }
 
-  const mappedData = mapListingFromDb(data[0]);
+  const mappedData = mapListingBase(data[0]);
   return mappedData;
 };
 
 export const createListing = async (
-  listingData: Partial<ListingWithStatuses>
+  listingData: Partial<ListingWithStatuses>,
 ) => {
   const supabase = await createClient();
 

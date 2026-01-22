@@ -6,6 +6,7 @@ import { BackgroundGradient } from '@/components/ui/background-gradient';
 export function GradientHeroPart() {
   return (
     <div className='relative flex h-[30rem] items-center justify-center bg-white lg:w-[60%]'>
+      {/* Background grid pattern */}
       <div
         className={cn(
           'absolute inset-0',
@@ -13,10 +14,12 @@ export function GradientHeroPart() {
           '[background-image:linear-gradient(to_right,#6464c0_1px,transparent_1px),linear-gradient(to_bottom,#3434b8_1px,transparent_1px)]',
         )}
       />
-      {/* Radial gradient for the container to give a faded look */}
+      {/* Radial gradient for the container to give a faded look - for the background grid */}
       <div className='pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]'></div>
+
       <BackgroundGradient className='rounded-[22px] bg-white ' animate={true}>
         <div className='relative'>
+          {/* Shadow for the image */}
           <div className='absolute -inset-1 bg-gradient-to-br from-primary via-secondary to-accent rounded-[22px] opacity-20 blur'></div>
 
           <div className='relative bg-white rounded-[22px] overflow-hidden shadow-2xl'>

@@ -10,10 +10,11 @@ import {
   useUpdateListingMutation,
   type ListingContent,
   type ListingWithStatuses,
+  ListingWithoutStatuses,
 } from '@/feature/listing';
 import { LabelText, FormSelect, CheckboxGroup } from '@/components/input';
 import { ImageUpload, ImagePreview } from '@/components/ui';
-import { ListingInputType, listingInputSchema } from '@/types/schema';
+import { ListingInputType, listingInputSchema } from '../schema';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,7 +24,7 @@ import { getQueryClient } from '@/lib/queryClient';
 import { getImageUrl, uploadImage, deleteImage } from '@/lib/supabase/storage';
 
 type props = {
-  listingData: ListingWithStatuses | ListingContent;
+  listingData: ListingWithoutStatuses | ListingContent;
   mode: 'create' | 'edit';
 };
 
@@ -33,7 +34,7 @@ type ImageObject = {
 };
 
 const hasImages = (
-  listingData: ListingInputType | ListingContent
+  listingData: ListingInputType | ListingContent,
 ): listingData is ListingInputType => {
   return 'imagesLink' in listingData;
 };
@@ -80,7 +81,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           localListingFormData.imagesLink!.map(async (url) => ({
             url: await getImageUrl(url, 'LISTING_IMAGES_BUCKET'),
             file: null,
-          }))
+          })),
         );
         setImages(resolvedImages);
       };
@@ -122,13 +123,13 @@ const ListingEditor = ({ listingData, mode }: props) => {
       if (existingImagePaths.length < localListingFormData.imagesLink.length) {
         //some images were removed
         const removedImages = localListingFormData.imagesLink.filter(
-          (imgPath) => !existingImagePaths.includes(imgPath)
+          (imgPath) => !existingImagePaths.includes(imgPath),
         );
         // delete removed images from storage
         await Promise.all(
           removedImages.map((imgPath) =>
-            deleteImage(imgPath, 'LISTING_IMAGES_BUCKET')
-          )
+            deleteImage(imgPath, 'LISTING_IMAGES_BUCKET'),
+          ),
         );
       }
     }
@@ -144,9 +145,9 @@ const ListingEditor = ({ listingData, mode }: props) => {
           uploadImage(
             img.file!,
             localListingFormData.id,
-            'LISTING_IMAGES_BUCKET'
-          )
-        )
+            'LISTING_IMAGES_BUCKET',
+          ),
+        ),
       );
     }
     const finalImagePaths = [...existingImagePaths, ...uploadedImagesPath];
@@ -163,7 +164,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           ...data,
           imagesLink: finalImagePaths.length ? finalImagePaths : null,
         } as FieldValues,
-        localListingFormData
+        localListingFormData,
       );
       const isEmpty = Object.keys(changedFields).length === 0;
 
@@ -184,11 +185,11 @@ const ListingEditor = ({ listingData, mode }: props) => {
               const client = getQueryClient();
               client.setQueryData(
                 ['listing', updatedListing.id],
-                updatedListing
+                updatedListing,
               );
               client.invalidateQueries({ queryKey: ['vendor-listings'] });
             },
-          }
+          },
         );
       } else toast.info('No changes made to the listing');
     }
@@ -381,7 +382,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
       <div className='px-4 border-l-3 border-secondary py-2 flex flex-col gap-4'>
         <ImageUpload setImages={handleLocalImageUpload} />
 
-        {images.map((img) => img.url).length && (
+        {images.map((img) => img.url).length > 0 && (
           <div className='w-75 md:w-125 h-50 rounded'>
             <ImagePreview
               imgUrls={images.map((img) => img.url)}

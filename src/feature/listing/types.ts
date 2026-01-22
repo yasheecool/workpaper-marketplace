@@ -7,6 +7,7 @@ import {
   type ListingContent,
   ListingStatus,
 } from '@/types/domain/listing';
+import { mapStatusesByFirmId } from './utils';
 
 export type FirmReference = {
   id: string;
@@ -61,29 +62,9 @@ export type MarketplaceListing = {
 
 export function mapMarketplaceListingFromDb(
   listing: MarketplaceListingFromDb,
-  currentFirmId: string
+  currentFirmId: string,
 ): MarketplaceListing {
-  const isSaved =
-    Array.isArray(listing.saved_listing) &&
-    listing.saved_listing.some((save) => save.saved_by_firm === currentFirmId);
-
-  const isInstalled =
-    Array.isArray(listing.installed_listing) &&
-    listing.installed_listing.some(
-      (install) => install.installed_by_firm === currentFirmId
-    );
-
-  const isRequested =
-    Array.isArray(listing.listing_access_control) &&
-    listing.listing_access_control.some(
-      (request) => request.requested_by_firm === currentFirmId
-    );
-
-  const requestStatus =
-    listing.listing_access_control?.find(
-      (request) => request.requested_by_firm === currentFirmId
-    )?.request_status || null;
-
+  const statuses = mapStatusesByFirmId(listing, currentFirmId);
   return {
     id: listing.id,
     name: listing.name,
@@ -93,50 +74,34 @@ export function mapMarketplaceListingFromDb(
     imagesLink: listing.images_link,
     visibility: listing.visibility,
     ownedByFirm: listing.owned_by_firm,
-    isSaved,
-    isInstalled,
-    isRequested,
-    requestStatus,
+    ...statuses,
   };
 }
 
 //FULL LISTING TYPES + MAPPERS
-export type ListingFromDb = ListingRow &
+
+// DB TYPES
+export type ListingFromDbWithStatuses = ListingRow &
   ListingStatusesFromDb & {
     owned_by_firm: FirmReference;
   };
 
+export type ListingFromDb = ListingRow & {
+  owned_by_firm: FirmReference;
+};
+
+// APP TYPES
 export type ListingWithStatuses = Omit<Listing, 'ownedByFirm'> &
   ListingStatuses & {
     ownedByFirm: FirmReference;
   };
 
-export function mapListingFromDb(
-  listing: ListingFromDb,
-  currentFirmId?: string
-): ListingWithStatuses {
-  const isSaved =
-    Array.isArray(listing.saved_listing) &&
-    listing.saved_listing.some((save) => save.saved_by_firm === currentFirmId);
+export type ListingWithoutStatuses = Omit<Listing, 'ownedByFirm'> & {
+  ownedByFirm: FirmReference;
+};
 
-  const isInstalled =
-    Array.isArray(listing.installed_listing) &&
-    listing.installed_listing.some(
-      (install) => install.installed_by_firm === currentFirmId
-    );
-
-  const isRequested =
-    Array.isArray(listing.listing_access_control) &&
-    listing.listing_access_control.some(
-      (request) => request.requested_by_firm === currentFirmId
-    );
-
-  const requestStatus =
-    listing.listing_access_control?.find(
-      (request) => request.requested_by_firm === currentFirmId
-    )?.request_status || null;
-
-  return {
+export function mapListingBase(listing: ListingFromDb): ListingWithoutStatuses {
+  const mappedListing = {
     id: listing.id,
     createdAt: listing.created_at,
     updatedAt: listing.updated_at,
@@ -157,10 +122,22 @@ export function mapListingFromDb(
       id: listing.owned_by_firm.id,
       name: listing.owned_by_firm.name,
     },
-    isSaved,
-    isInstalled,
-    isRequested,
-    requestStatus,
+  };
+
+  return mappedListing;
+}
+
+export function mapListingWithStatusesFromDb(
+  listing: ListingFromDbWithStatuses,
+  firmId: string,
+): ListingWithStatuses {
+  const baseListing = mapListingBase(listing);
+
+  const statuses = mapStatusesByFirmId(listing, firmId);
+
+  return {
+    ...baseListing,
+    ...statuses,
   };
 }
 
@@ -198,7 +175,7 @@ export type InstalledListing = {
 };
 
 export function mapInstalledListingsFromDb(
-  installedListing: InstalledListingFromDb[]
+  installedListing: InstalledListingFromDb[],
 ): InstalledListing[] {
   return installedListing.map((item) => ({
     id: item.id,
@@ -238,7 +215,7 @@ export type RequestedListing = Omit<InstalledListing, 'installedByUser'> & {
 };
 
 export function mapRequestedListingsFromDb(
-  listings: RequestedListingFromDb[]
+  listings: RequestedListingFromDb[],
 ): RequestedListing[] {
   return listings.map((listing) => ({
     id: listing.id,
@@ -265,6 +242,7 @@ export type SavedListingFromDb = Omit<SavedListingRow, 'listing'> & {
     name: string;
     content_type: string;
     images_link: string[] | null;
+    description: string;
     owned_by_firm: FirmReference;
   };
 };
@@ -277,6 +255,7 @@ export type SavedListing = {
   listing: {
     id: string;
     name: string;
+    description: string;
     contentType: string;
     imagesLink: string[] | null;
     ownedByFirm: FirmReference;
@@ -284,7 +263,7 @@ export type SavedListing = {
 };
 
 export const mapSavedListingsFromDb = (
-  savedListings: SavedListingFromDb[]
+  savedListings: SavedListingFromDb[],
 ): SavedListing[] => {
   return savedListings.map((savedListing) => ({
     id: savedListing.id,
@@ -292,6 +271,7 @@ export const mapSavedListingsFromDb = (
     savedByFirm: savedListing.saved_by_firm,
     createdAt: savedListing.created_at,
     listing: {
+      description: savedListing.listing.description,
       id: savedListing.listing.id,
       name: savedListing.listing.name,
       contentType: savedListing.listing.content_type,
@@ -301,8 +281,9 @@ export const mapSavedListingsFromDb = (
   }));
 };
 
+// LISTING CONTENT MAPPER
 export const mapListingContentFromDb = (
-  listingContent: ListingContentRow
+  listingContent: ListingContentRow,
 ): ListingContent => {
   return {
     id: listingContent.id,
@@ -316,5 +297,38 @@ export const mapListingContentFromDb = (
     region: listingContent.region,
   };
 };
+export type FeaturedListingFromDb = {
+  id: string;
+  name: string;
+  description: string;
+  content_type: string;
+  images_link: string[] | null;
+  owned_by_firm: FirmReference;
+  visibility: string;
+};
+
+export type FeaturedListing = {
+  id: string;
+  name: string;
+  description: string;
+  contentType: string;
+  imagesLink: string[] | null;
+  ownedByFirm: FirmReference;
+  visibility: string;
+};
+
+export function mapFeaturedListingFromDb(
+  listing: FeaturedListingFromDb,
+): FeaturedListing {
+  return {
+    id: listing.id,
+    name: listing.name,
+    description: listing.description,
+    contentType: listing.content_type,
+    imagesLink: listing.images_link,
+    ownedByFirm: listing.owned_by_firm,
+    visibility: listing.visibility,
+  };
+}
 
 export * from '@/types/domain/listing';

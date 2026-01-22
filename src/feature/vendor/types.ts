@@ -31,7 +31,7 @@ export type VendorListing = {
 };
 
 export function mapVendorListingsFromDb(
-  listings: VendorListingFromDb[]
+  listings: VendorListingFromDb[],
 ): VendorListing[] {
   return listings.map((item) => ({
     id: item.id,

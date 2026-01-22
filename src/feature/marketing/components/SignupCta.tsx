@@ -32,7 +32,7 @@ const SignupCta = () => {
                   xmlns='http://www.w3.org/2000/svg'
                   viewBox='0 0 16 16'
                   fill='currentColor'
-                  className='size-4 text-primary-500'
+                  className='size-4 text-secondary'
                 >
                   <path
                     fillRule='evenodd'
@@ -48,7 +48,7 @@ const SignupCta = () => {
                   xmlns='http://www.w3.org/2000/svg'
                   viewBox='0 0 20 20'
                   fill='currentColor'
-                  className='size-4 text-primary-500'
+                  className='size-4 text-secondary'
                 >
                   <path
                     fillRule='evenodd'
@@ -62,7 +62,7 @@ const SignupCta = () => {
               </li>
             </ul>
           </div>
-          <button className='btn btn-primary'>Sign up</button>
+          {/* <button className='btn btn-primary'>Sign up</button> */}
         </div>
 
         {/* Illustration */}

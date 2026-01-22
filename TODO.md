@@ -1,8 +1,10 @@
-- add listing to landing page as well and enforce protected routes
+- add listing to landing page as well and enforce protected routes - done
 - add linting, husky, CI/CD
 - create docs for supabase custom claims
 - create a demo flow and figure out how to manage/seed data
-  -redo landing page - buttons for auth
 - fix suspense errors
 - For Docs:
   - Map type flow from domain to app
+  - How auth works - how proxy ensures user etc etc
+    -Integrate Sentry
+  - Fix Error handling add types to responses (maybe)

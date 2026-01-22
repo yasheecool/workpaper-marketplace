@@ -13,7 +13,7 @@ const page = async ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const { id } = await params;
-  const listing = await getListingById(id);
+  const listing = await getListingById(id, false);
   const { view = 'editor' } = await searchParams;
 
   if (!listing) {
@@ -32,7 +32,7 @@ const page = async ({
       href: '?view=whitelist',
     },
   ].filter((tab): tab is { label: string; isActive: boolean; href: string } =>
-    Boolean(tab)
+    Boolean(tab),
   );
 
   return (

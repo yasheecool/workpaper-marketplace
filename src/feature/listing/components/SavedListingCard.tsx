@@ -1,35 +1,55 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { type SavedListing } from '../types';
 import { useSaveListingMutation } from '@/feature/listing/hooks/useListingMutations';
 import { toast } from 'react-toastify';
 import capitalize from 'lodash/capitalize';
 import { useEffect, useState } from 'react';
 import { getImageUrl } from '@/lib/supabase/storage';
 
-const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
-  const [imagesUrl, setImagesUrl] = useState<string | null>(null);
+type ListingForCard = {
+  name: string;
+  id: string;
+  contentType: string;
+  description: string;
+  ownedByFirm: {
+    id: string;
+    name: string;
+  };
+  imagesLink: string[] | null;
+};
+
+const SavedListingCard = ({
+  listing,
+  showUnsaveButton,
+}: {
+  listing: ListingForCard;
+  showUnsaveButton: boolean;
+}) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const {
-    listing: {
-      name,
-      id,
-      contentType,
-      ownedByFirm: { id: firmId, name: firmName },
-      imagesLink,
-    },
-  } = savedListing;
+    name,
+    id,
+    contentType,
+    description,
+    ownedByFirm: { id: firmId, name: firmName },
+    imagesLink,
+  } = listing;
 
   useEffect(() => {
     const fetchImageUrl = async () => {
       if (imagesLink && imagesLink.length > 0) {
         const url = await getImageUrl(imagesLink[0], 'LISTING_IMAGES_BUCKET');
-        setImagesUrl(url);
+        setImageUrl(url);
       }
     };
 
     fetchImageUrl();
-  }, [savedListing]);
+  }, [listing]);
+
+  useEffect(() => {
+    console.log('Image URL:', imageUrl);
+  }, [imageUrl]);
 
   const { mutate: saveListing, isPending: isSaving } =
     useSaveListingMutation(id);
@@ -43,12 +63,12 @@ const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
   };
 
   return (
-    <div className='rounded-md flex flex-col gap-2 shadow-md hover:shadow-lg min-w-62.5 w-80 border border-gray-200 bg-white max-h-80 min-h-75'>
+    <div className='rounded-md flex flex-col gap-2 shadow-md hover:shadow-lg min-w-62.5 w-80 border border-gray-200 bg-white min-h-75'>
       {/* IMAGE */}
-      <div className='relative h-[70%] w-full border-b-[0.25]'>
+      <div className='relative min-h-37.5 w-full border-b-[0.25]'>
         <Image
           src={
-            imagesUrl ||
+            imageUrl ||
             '/undraw_approve.svg' /* Placeholder image if none exists */
           }
           fill
@@ -75,21 +95,28 @@ const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
         </p>
       </div>
 
+      <div className='px-4 text-sm text-gray-700'>
+        {description.slice(0, 80).concat('...')}
+      </div>
+
       {/* Unsave and View Buttons */}
-      <div className='flex gap-2 justify-end px-4 pb-4'>
-        <button
-          className='btn btn-sm bg-transparent border-secondary-500 hover:bg-base-300 text-secondary-500'
-          disabled={isSaving}
-          onClick={handleUnsave}
-        >
-          {isSaving ? (
-            <>
-              <span className='loading loading-sm'></span> <p>Unsaving</p>
-            </>
-          ) : (
-            'Unsave'
-          )}
-        </button>
+      <div className='flex gap-2 justify-end px-4 pb-4 mt-auto'>
+        {showUnsaveButton && (
+          <button
+            className='btn btn-sm bg-transparent border-secondary-500 hover:bg-base-300 text-secondary-500'
+            disabled={isSaving}
+            onClick={handleUnsave}
+          >
+            {isSaving ? (
+              <>
+                <span className='loading loading-sm'></span> <p>Unsaving</p>
+              </>
+            ) : (
+              'Unsave'
+            )}
+          </button>
+        )}
+
         <Link href={`/listing/${id}`}>
           <button className='btn btn-sm btn-primary'>View</button>
         </Link>

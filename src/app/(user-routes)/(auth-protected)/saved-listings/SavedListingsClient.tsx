@@ -33,12 +33,19 @@ const SavedListingsClient = ({ listings }: { listings: SavedListing[] }) => {
     );
   }
 
+  const mappedListings = data.map((savedListing) => savedListing.listing);
+
   return (
     <div className='grid grid-cols-[repeat(2,350px)] justify-items-start gap-14 lg:grid-cols-[repeat(3,350px)]'>
-      {data.map((savedListing) => (
-        <SavedListingCard key={savedListing.id} savedListing={savedListing} />
+      {mappedListings.map((listing) => (
+        <SavedListingCard
+          key={listing.id}
+          listing={listing}
+          showUnsaveButton={true}
+        />
       ))}
     </div>
   );
 };
+
 export default SavedListingsClient;

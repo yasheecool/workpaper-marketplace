@@ -2,10 +2,16 @@ import Container from '@/components/layout/Container';
 import { getListingById } from '@/feature/listing';
 import ListingDetailsClient from './ListingDetailsClient';
 import { notFound } from 'next/navigation';
+import { getUserClaimsPublic } from '@/feature/auth';
 
-const ListingDetailsPage = async ({ params }: { params: { id: string } }) => {
+const ListingPage = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
-  const listing = await getListingById(String(id), true);
+  const { success: userLoggedIn } = await getUserClaimsPublic();
+
+  //get the listing with statuses only if user is logged in
+  const listing = userLoggedIn
+    ? await getListingById(String(id), true)
+    : await getListingById(String(id), false);
 
   if (!listing) {
     notFound();
@@ -22,4 +28,4 @@ const ListingDetailsPage = async ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default ListingDetailsPage;
+export default ListingPage;

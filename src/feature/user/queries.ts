@@ -2,11 +2,12 @@
 
 import { createClient } from '@/lib/supabase/serverClient';
 import { mapUserFromDb, UserRow } from '@/types/domain/user';
+import { getUserClaims } from '../auth';
 
 export const getUserFromDB = async () => {
   const supabase = await createClient();
-  const data = await supabase.auth.getClaims();
-  const userId = data?.data?.claims.sub;
+  const data = await getUserClaims();
+  const userId = data.sub;
 
   const { data: userData, error } = await supabase
     .from('user')

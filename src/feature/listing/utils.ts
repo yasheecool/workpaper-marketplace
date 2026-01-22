@@ -1,3 +1,5 @@
+import { type ListingStatusesFromDb, ListingStatuses } from './types';
+
 export const getSavedButtonText = (isSaved: boolean) =>
   isSaved ? 'unsave' : 'save';
 
@@ -5,7 +7,7 @@ export const getInstallButtonText = (
   visibility: string,
   isRequested: boolean,
   requestStatus: string | null,
-  isInstalled: boolean
+  isInstalled: boolean,
 ) => {
   if (isInstalled) return 'Installed';
 
@@ -24,7 +26,7 @@ export const isInstallButtonDisabled = (
   visibility: string,
   isRequested: boolean,
   requestStatus: string | null,
-  isInstalled: boolean
+  isInstalled: boolean,
 ) => {
   if (isInstalled) return true;
 
@@ -43,3 +45,36 @@ export const REQUEST_STATUS_MESSAGES = {
   rejected:
     'The request has been rejected. Please contact the vendor support for more information.',
 } as const;
+
+export const mapStatusesByFirmId = <T extends ListingStatusesFromDb>(
+  listing: T,
+  firmId: string,
+): ListingStatuses => {
+  const isSaved =
+    Array.isArray(listing.saved_listing) &&
+    listing.saved_listing.some((save) => save.saved_by_firm === firmId);
+
+  const isInstalled =
+    Array.isArray(listing.installed_listing) &&
+    listing.installed_listing.some(
+      (install) => install.installed_by_firm === firmId,
+    );
+
+  const isRequested =
+    Array.isArray(listing.listing_access_control) &&
+    listing.listing_access_control.some(
+      (request) => request.requested_by_firm === firmId,
+    );
+
+  const requestStatus =
+    listing.listing_access_control?.find(
+      (request) => request.requested_by_firm === firmId,
+    )?.request_status || null;
+
+  return {
+    isSaved,
+    isInstalled,
+    isRequested,
+    requestStatus,
+  };
+};

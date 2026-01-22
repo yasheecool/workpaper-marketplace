@@ -5,7 +5,7 @@ const SocialProof = () => {
   return (
     <section className='bg-gray-100 py-18'>
       <Container styles='flex flex-col gap-6'>
-        <p className='mx-auto text-lg font-semibold'>
+        <p className='mx-auto text-2xl font-semibold'>
           Trusted by leading companies
         </p>
         <div className='flex flex-row gap-8 items-center justify-between'>

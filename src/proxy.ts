@@ -9,7 +9,6 @@ const publicRoutes = [
   '/auth',
   '/listing', // Public listing view
   '/vendor-details', // Public vendor profile
-  '/marketplace', // Public marketplace browse
 ];
 
 // Routes that require authentication but not firm selection

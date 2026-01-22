@@ -15,7 +15,7 @@ const AuthGuard = async ({
   if (checkIsFirmVendor) {
     const currentFirm = await getCurrentFirm();
 
-    if (currentFirm.isVendor) {
+    if (!currentFirm.isVendor) {
       return <Unauthorized message='You do not have vendor access.' />;
     }
   }

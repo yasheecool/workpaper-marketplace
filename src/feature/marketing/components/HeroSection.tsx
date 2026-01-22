@@ -4,7 +4,7 @@ import { GradientHeroPart } from './GradientHeroPart';
 
 const HeroSection = () => {
   return (
-    <section className='lg:py-36 sm:py-20 lg:flex lg:items-center'>
+    <section className='lg:py-36 py-14 lg:flex lg:items-center'>
       {/* Background Grid Pattern */}
       <Container styles='flex flex-col gap-12 lg:gap-16 lg:flex-row lg:items-center'>
         {/* Left Content */}

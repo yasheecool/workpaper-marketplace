@@ -4,7 +4,7 @@ import LabelText from '@/components/input/LabelText';
 import { useForm, type FieldErrors } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { vendorProfileFormSchema, VendorProfileType } from '@/types/schema';
+import { vendorProfileFormSchema, VendorProfileType } from '@/feature/vendor';
 import { getChangedFields, toSnakeCase } from '@/utils';
 import { toast } from 'react-toastify';
 import { type VendorProfile, updateVendorProfile } from '@/feature/vendor';
@@ -43,7 +43,7 @@ const VendorProfileForm = ({
         getImageUrl(vendorProfile.firmLogo, 'VENDOR_PROFILE_IMAGE_BUCKET').then(
           (url) => {
             setFirmLogo({ url, file: null });
-          }
+          },
         );
       }
     }
@@ -71,7 +71,7 @@ const VendorProfileForm = ({
       const path = await uploadImage(
         firmLogo.file,
         vendorProfile.id,
-        'VENDOR_PROFILE_IMAGE_BUCKET'
+        'VENDOR_PROFILE_IMAGE_BUCKET',
       );
 
       changedFields.firmLogo = path;

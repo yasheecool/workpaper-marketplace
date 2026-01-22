@@ -1,20 +1,29 @@
 'use client';
-
 import {
   ListingAlert,
   ListingHeader,
   ListingDescriptions,
 } from './_components';
-import { useListingById, ListingWithStatuses } from '@/feature/listing';
+import {
+  useListingById,
+  ListingWithStatuses,
+  ListingWithoutStatuses,
+} from '@/feature/listing';
 import { Loading, ImagePreview } from '@/components/ui';
 import { useEffect, useState } from 'react';
 import { getImageUrl } from '@/lib/supabase/storage';
+
+const isListingWithStatuses = (
+  listing: ListingWithStatuses | ListingWithoutStatuses,
+): listing is ListingWithStatuses => {
+  return (listing as ListingWithStatuses).isInstalled !== undefined;
+};
 
 const ListingDetailsClient = ({
   listing: initialData,
   id,
 }: {
-  listing: ListingWithStatuses;
+  listing: ListingWithStatuses | ListingWithoutStatuses;
   id: string;
 }) => {
   const { data: listing, isLoading, error } = useListingById(id, initialData);
@@ -25,8 +34,8 @@ const ListingDetailsClient = ({
       if (listing?.imagesLink && listing.imagesLink.length > 0) {
         const urls = await Promise.all(
           listing.imagesLink.map((path) =>
-            getImageUrl(path, 'LISTING_IMAGES_BUCKET')
-          )
+            getImageUrl(path, 'LISTING_IMAGES_BUCKET'),
+          ),
         );
         setListingImages(urls as string[]);
       }
@@ -46,21 +55,31 @@ const ListingDetailsClient = ({
     name,
     updatedAt,
     visibility,
-    isInstalled,
-    isRequested,
     createdAt,
     ownedByFirm,
-    isSaved,
     description,
     longDescription,
     gettingStartedSteps,
-    requestStatus,
     workpaperType,
     entityType,
     contentType,
     status,
-    // isDeleted
   } = listing;
+
+  let isInstalled, isRequested, isSaved, requestStatus;
+
+  //if listing does not have statuses, set default values - this happens when user is not logged in but actions are protected with necessary checks
+  if (!isListingWithStatuses(listing)) {
+    isInstalled = false;
+    isRequested = false;
+    isSaved = false;
+    requestStatus = null;
+  } else {
+    isInstalled = listing.isInstalled;
+    isRequested = listing.isRequested;
+    isSaved = listing.isSaved;
+    requestStatus = listing.requestStatus;
+  }
 
   const { id: vendorId, name: vendorName } = ownedByFirm;
 
