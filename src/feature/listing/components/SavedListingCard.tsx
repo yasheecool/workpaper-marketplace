@@ -35,7 +35,11 @@ const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
     useSaveListingMutation(id);
 
   const handleUnsave = async () => {
-    await saveListing('unsave');
+    await saveListing('unsave', {
+      onSuccess: (_, variables) => {
+        toast.success(`Listing ${variables}d successfully!`);
+      },
+    });
   };
 
   return (
@@ -69,11 +73,6 @@ const SavedListingCard = ({ savedListing }: { savedListing: SavedListing }) => {
             </span>
           </Link>
         </p>
-      </div>
-
-      {/* Content Type, Price */}
-      <div className='flex justify-between items-center gap-4 px-4'>
-        <p className='font-semibold text-gray-700'>FREE</p>
       </div>
 
       {/* Unsave and View Buttons */}

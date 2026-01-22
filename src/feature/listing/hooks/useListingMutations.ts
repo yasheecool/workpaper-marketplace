@@ -17,13 +17,18 @@ const invalidateListingQueries = (listingId: string) => {
   client.invalidateQueries({ queryKey: ['marketplace-listings'] });
 };
 
+const invalidateSavedListingsQueries = () => {
+  const client = getQueryClient();
+  client.invalidateQueries({ queryKey: ['saved-listings'] });
+};
+
 export const useSaveListingMutation = (id: string) => {
   return useMutation({
     mutationKey: ['save-listing', id],
     mutationFn: (type: 'save' | 'unsave') => saveListing(id, type),
-    onSuccess: (_, variables) => {
-      toast.success(`Listing ${variables}d successfully!`);
+    onSuccess: () => {
       invalidateListingQueries(id);
+      invalidateSavedListingsQueries();
     },
     onError: (error: unknown) => {
       const errorMessage =

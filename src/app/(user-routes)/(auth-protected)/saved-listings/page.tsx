@@ -1,5 +1,5 @@
-import SavedListingCard from '@/feature/listing/components/SavedListingCard';
 import { getSavedListings } from '@/feature/listing';
+import SavedListingsClient from './SavedListingsClient';
 
 const SavedListings = async () => {
   const listings = await getSavedListings();
@@ -10,24 +10,7 @@ const SavedListings = async () => {
         <h1 className='text-2xl font-semibold mb-8 pb-4 border-b-2 border-base-300 '>
           Saved Listings
         </h1>
-
-        {listings?.length === 0 ? (
-          <div>
-            <p>
-              You do not have any saved listings. Browse the marketplace to get
-              started!
-            </p>
-          </div>
-        ) : (
-          <div className='grid grid-cols-[repeat(2,350px)] justify-items-start gap-14 lg:grid-cols-[repeat(3,350px)]'>
-            {listings!.map((savedListing) => (
-              <SavedListingCard
-                key={savedListing.id}
-                savedListing={savedListing}
-              />
-            ))}
-          </div>
-        )}
+        <SavedListingsClient listings={listings} />
       </div>
     </section>
   );
