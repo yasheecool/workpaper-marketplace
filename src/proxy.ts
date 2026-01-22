@@ -2,33 +2,46 @@ import { type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/proxy';
 import { NextResponse } from 'next/server';
 
-//including / in public urls will cause a bug because all urls start with /
-const publicUrls = ['/login', '/auth', '/listing', '/vendor-details'];
+// Routes that don't require authentication
+const publicRoutes = [
+  '/',
+  '/login',
+  '/auth',
+  '/listing', // Public listing view
+  '/vendor-details', // Public vendor profile
+  '/marketplace', // Public marketplace browse
+];
+
+// Routes that require authentication but not firm selection
+const authOnlyRoutes = ['/firm-selection'];
 
 export async function proxy(request: NextRequest) {
   const { supabaseResponse, userClaims } = await updateSession(request);
   const selectedFirm = request.cookies.get('selected_firm_id')?.value;
 
-  //If no user session found, and url is not homepage or public url, redirect to login
-  if (
-    !userClaims &&
-    request.nextUrl.pathname !== '/' &&
-    !publicUrls.some((url) => request.nextUrl.pathname.startsWith(url))
-  ) {
-    console.log('No user session found, will redirect to login');
-    // no user, potentially respond by redirecting the user to the login page
+  const pathname = request.nextUrl.pathname;
+
+  // Check if route is public
+  const isPublicRoute = publicRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + '/'),
+  );
+
+  // Check if route only needs auth (not firm selection)
+  const isAuthOnlyRoute = authOnlyRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + '/'),
+  );
+
+  // No user session and trying to access protected route
+  if (!userClaims && !isPublicRoute) {
+    console.log('No user session, redirecting to login');
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
   }
 
-  //If user is logged in but has not selected a firm, redirect to firm selection page
-  if (
-    userClaims &&
-    !selectedFirm &&
-    request.nextUrl.pathname !== '/firm-selection'
-  ) {
-    console.log('No firm selected');
+  // User logged in but no firm selected (skip for auth-only routes)
+  if (userClaims && !selectedFirm && !isPublicRoute && !isAuthOnlyRoute) {
+    console.log('No firm selected, redirecting to firm selection');
     const url = request.nextUrl.clone();
     url.pathname = '/firm-selection';
     return NextResponse.redirect(url);
