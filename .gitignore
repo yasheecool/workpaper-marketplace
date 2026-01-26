@@ -52,3 +52,6 @@ coverage/
 logs
 *.log
 **/*.log
+
+# Sentry Config File
+.env.sentry-build-plugin
