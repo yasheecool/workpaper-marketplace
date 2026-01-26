@@ -1,5 +1,5 @@
 'use client';
-import { FieldValues, useForm } from 'react-hook-form';
+import { FieldValues, useForm, UseFormRegister } from 'react-hook-form';
 import {
   entityTypeOptions,
   listingTypeOptions,
@@ -223,7 +223,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           label={'Name'}
           type='input'
           name='name'
-          register={register}
+          register={register as unknown as UseFormRegister<FieldValues>}
         />
         {errors.name?.message && (
           <p className='text-red-500 text-xs'>{errors.name.message}</p>
@@ -239,7 +239,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           label={'Description'}
           type='textarea'
           name='description'
-          register={register}
+          register={register as unknown as UseFormRegister<FieldValues>}
         />
         {errors.description?.message && (
           <p className='text-red-500 text-xs'>{errors.description.message}</p>
@@ -255,7 +255,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           label={'Long Description'}
           type='textarea'
           name='longDescription'
-          register={register}
+          register={register as unknown as UseFormRegister<FieldValues>}
         />
         {errors.longDescription?.message && (
           <p className='text-red-500 text-xs'>
@@ -273,7 +273,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           label={'Getting Started Steps'}
           type='textarea'
           name='gettingStartedSteps'
-          register={register}
+          register={register as unknown as UseFormRegister<FieldValues>}
         />
         {errors.gettingStartedSteps?.message && (
           <p className='text-red-500 text-xs'>
@@ -290,7 +290,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           defaultValue=''
           displayAll={false}
           name='contentType'
-          register={register}
+          register={register as unknown as UseFormRegister<FieldValues>}
         />
         {errors.contentType?.message && (
           <p className='text-red-500 text-xs'>{errors.contentType.message}</p>
@@ -305,7 +305,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           displayAll={false}
           label='Region'
           name='region'
-          register={register}
+          register={register as unknown as UseFormRegister<FieldValues>}
         />
         {errors.region?.message && (
           <p className='text-red-500 text-xs'>{errors.region.message}</p>
@@ -319,7 +319,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           optionsObj={workpaperTypeOptions}
           legend='Workpaper Type'
           name='workpaperType'
-          register={register}
+          register={register as unknown as UseFormRegister<FieldValues>}
         />
         {errors.workpaperType?.message && (
           <p className='text-red-500 text-xs'>{errors.workpaperType.message}</p>
@@ -333,7 +333,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
           optionsObj={entityTypeOptions}
           legend='Entity Type'
           name='entityType'
-          register={register}
+          register={register as unknown as UseFormRegister<FieldValues>}
         />
         {errors.entityType?.message && (
           <p className='text-red-500 text-xs'>{errors.entityType.message}</p>
@@ -349,7 +349,7 @@ const ListingEditor = ({ listingData, mode }: props) => {
             defaultValue=''
             displayAll={false}
             name='visibility'
-            register={register}
+            register={register as unknown as UseFormRegister<FieldValues>}
           />
           {errors.visibility?.message && (
             <p className='text-red-500 text-xs'>{errors.visibility.message}</p>

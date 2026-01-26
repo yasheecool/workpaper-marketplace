@@ -1,21 +1,15 @@
-import PendingRequests from './PendingRequests';
-import CompletedRequests from './CompletedRequests';
 import { Tabs } from '@/components/ui';
-import {
-  CompletedListingRequest,
-  getVendorListingRequests,
-  PendingListingRequest,
-} from '@/feature/vendor';
+
+import RequestsWrapper from './RequestsWrapper';
+import { Suspense } from 'react';
+import { Loading } from '@/components/ui';
 
 const ListingRequests = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: Promise<{ [key: string]: string }>;
 }) => {
   const { view = 'pending' } = await searchParams;
-  const requests = await getVendorListingRequests(
-    view === 'pending' ? 'pending' : 'completed'
-  );
 
   const tabs = [
     {
@@ -37,13 +31,9 @@ const ListingRequests = async ({
         <div>
           <Tabs tabs={tabs} />
         </div>
-
-        {view === 'pending' && (
-          <PendingRequests requests={requests as PendingListingRequest[]} />
-        )}
-        {view === 'completed' && (
-          <CompletedRequests requests={requests as CompletedListingRequest[]} />
-        )}
+        <Suspense fallback={<Loading />}>
+          <RequestsWrapper view={view as 'pending' | 'completed'} />
+        </Suspense>
       </div>
     </div>
   );

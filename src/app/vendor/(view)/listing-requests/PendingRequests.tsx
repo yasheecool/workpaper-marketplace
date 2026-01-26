@@ -17,20 +17,22 @@ const PendingRequests = ({
 }: {
   requests: PendingListingRequest[];
 }) => {
-  const [groupedRequests, setGroupedRequests] =
-    useState<GroupedRequests | null>(null);
+  // const [groupedRequests, setGroupedRequests] =
+  //   useState<GroupedRequests | null>(null);
 
   const { data, isLoading, error } = useFirmListingRequests(
     'pending',
-    requests
+    requests,
   );
 
-  useEffect(() => {
-    if (data) {
-      const grouped = groupBy(data, (r) => r.listing.name);
-      setGroupedRequests(grouped as GroupedRequests);
-    }
-  }, [data]);
+  const groupedRequests = data ? groupBy(data, (r) => r.listing.name) : null;
+
+  // useEffect(() => {
+  //   if (data) {
+  //     const grouped = groupBy(data, (r) => r.listing.name);
+  //     setGroupedRequests(grouped as GroupedRequests);
+  //   }
+  // }, [data]);
 
   if (isLoading) {
     return <Loading />;
@@ -110,7 +112,10 @@ const PendingRequests = ({
 
           {groupedRequests &&
             Object.entries(groupedRequests).map(([listingName, requests]) => (
-              <RequestAccordion key={listingName} requests={requests} />
+              <RequestAccordion
+                key={listingName}
+                requests={requests as PendingListingRequest[]}
+              />
             ))}
         </div>
       )}

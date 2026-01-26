@@ -1,5 +1,5 @@
 'use client';
-import { UseFormRegister } from 'react-hook-form';
+import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 //if this component is to be used with react-hook-form, the register prop is required
 const LabelText = ({
@@ -14,8 +14,8 @@ const LabelText = ({
   required: boolean;
   type: 'input' | 'textarea';
   name: string;
-  register?: UseFormRegister<any>;
-  extraProps?: {};
+  register?: UseFormRegister<FieldValues>;
+  extraProps?: object;
 }) => {
   const inputProps = register ? { ...register(name) } : {};
 

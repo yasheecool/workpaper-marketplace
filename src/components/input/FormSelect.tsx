@@ -1,9 +1,9 @@
 'use client';
 
-import { UseFormRegister } from 'react-hook-form';
+import { FieldValues, UseFormRegister } from 'react-hook-form';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 
-const FormSelect = <T,>({
+const FormSelect = ({
   label,
   optionsObj,
   name,
@@ -15,9 +15,9 @@ const FormSelect = <T,>({
   label: string;
   optionsObj: Record<string, string>; //key-value pairs for options
   name: string; //for registering input with React Hook Form
-  register?: UseFormRegister<any>; //for registering input with React Hook Form
+  register?: UseFormRegister<FieldValues>; //for registering input with React Hook Form
   defaultValue: string; //for controlled input
-  setStateValue?: Dispatch<SetStateAction<T>>; //for controlled input
+  setStateValue?: Dispatch<SetStateAction<string>>; //for controlled input
   displayAll: boolean; //for displaying "All" option
   onSelect?: (e: ChangeEvent<HTMLSelectElement>) => void;
 }) => {

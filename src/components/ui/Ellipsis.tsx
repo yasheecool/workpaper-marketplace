@@ -1,4 +1,8 @@
-const Ellipsis = ({ actions }: { actions: Record<string, any> }) => {
+const Ellipsis = ({
+  actions,
+}: {
+  actions: { label: string; action: () => void; className?: string }[];
+}) => {
   return (
     <div className='dropdown dropdown-end px-2 hover:bg-base-300 hover:cursor-pointer rounded-md flex items-center justify-center'>
       <div tabIndex={0} role='button'>
@@ -26,7 +30,7 @@ const Ellipsis = ({ actions }: { actions: Record<string, any> }) => {
         {actions.map(
           (
             action: { label: string; action: () => void; className?: string },
-            index: number
+            index: number,
           ) => (
             <li
               key={index}
@@ -35,7 +39,7 @@ const Ellipsis = ({ actions }: { actions: Record<string, any> }) => {
             >
               {action.label}
             </li>
-          )
+          ),
         )}
       </ul>
     </div>

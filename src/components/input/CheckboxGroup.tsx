@@ -1,11 +1,12 @@
-import { UseFormRegister } from 'react-hook-form';
+import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 type CheckboxGroupProps = {
   legend: string;
   optionsObj: Record<string, string>;
   name: string;
   required?: boolean;
-  register?: UseFormRegister<any>;
+  register?: UseFormRegister<FieldValues>;
+
   stateValue?: string[];
   setterFunction?: (value: string) => void;
   checked?: boolean;

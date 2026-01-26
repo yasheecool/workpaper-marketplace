@@ -30,7 +30,7 @@ const RequestAccordion = ({
 
   const handleRequestUpdate = (
     requestId: string,
-    action: 'approved' | 'rejected'
+    action: 'approved' | 'rejected',
   ) => {
     updateRequest(
       { requestId, action },
@@ -38,7 +38,7 @@ const RequestAccordion = ({
         onSuccess: () => {
           toast.success(`Request ${action} successfully`);
         },
-      }
+      },
     );
   };
 
@@ -47,9 +47,11 @@ const RequestAccordion = ({
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-4 text-sm border-b-[0.5px] border-gray-300 items-center'>
         <div>
           <p className='text-gray-500 text-xs'>Name</p>
-          {/* <Link href={`/vendor/listing/`}> */}
-          <h3 className='font-semibold text-gray-700 truncate'>{name}</h3>
-          {/* </Link> */}
+          <Link
+            href={`/vendor/listing/edit/${requests[0].listing.id}?view=whitelist`}
+          >
+            <h3 className='font-semibold text-gray-700 truncate'>{name}</h3>
+          </Link>
         </div>
 
         <div>
