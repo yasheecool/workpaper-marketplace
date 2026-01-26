@@ -24,8 +24,6 @@ const CheckboxGroup = ({
   optionsObj,
   register,
   name,
-  // stateValue = [],
-  // setterFunction,
   selectedValues,
   onToggle,
 }: CheckboxGroupProps) => {
@@ -58,9 +56,6 @@ const CheckboxGroup = ({
             {val}
           </label>
         );
-        {
-          /* {error && <p className='text-red-500 text-sm'>{}</p>} */
-        }
       })}
     </fieldset>
   );

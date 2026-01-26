@@ -18,7 +18,7 @@ const page = () => {
               Log In
             </button>
           </Link>
-          <button className='btn btn-primary ease-in-out'>Sign Up</button>
+          <button className='btn btn-primary ease-in-out'>Try Demo</button>
         </div>
       </Header>
 

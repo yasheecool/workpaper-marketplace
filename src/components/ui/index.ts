@@ -10,3 +10,4 @@ export { default as Pagination } from './Pagination';
 export { default as UnauthorizedPage } from './Unauthorized';
 export { default as ImagePreview } from './ImagePreview';
 export { default as ImageUpload } from './ImageUpload';
+export { default as SummaryCard } from './SummaryCard';

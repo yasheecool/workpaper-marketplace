@@ -24,8 +24,9 @@ const HeroSection = () => {
           {/* Buttons */}
           <div className='flex flex-col sm:flex-row gap-3'>
             <button className='btn btn-primary px-8 py-3 text-base font-semibold'>
-              Sign Up
+              Try Demo
             </button>
+
             <Link href='/login'>
               <button className='btn btn-outline btn-primary px-8 py-3 text-base font-semibold w-full sm:w-auto'>
                 Log In

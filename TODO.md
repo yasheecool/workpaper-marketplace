@@ -1,5 +1,4 @@
-- add listing to landing page as well and enforce protected routes - done
-- add linting, husky, CI/CD
+- add husky, CI/CD
 - create docs for supabase custom claims
 - create a demo flow and figure out how to manage/seed data
 - For Docs:

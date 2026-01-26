@@ -1,38 +1,24 @@
 'use client';
 
 import RequestAccordion from './RequestAccordion';
-import SummaryCard from '@/components/ui/SummaryCard';
-import { useState, useEffect } from 'react';
-import { PendingListingRequest } from '@/feature/vendor';
+import { Loading, SummaryCard } from '@/components/ui';
+import {
+  type PendingListingRequest,
+  useFirmListingRequests,
+} from '@/feature/vendor';
 import { groupBy } from 'lodash';
-import Loading from '@/components/ui/Loading';
-import { useFirmListingRequests } from '@/feature/vendor';
-
-type GroupedRequests = {
-  [listingName: string]: PendingListingRequest[];
-};
 
 const PendingRequests = ({
   requests,
 }: {
   requests: PendingListingRequest[];
 }) => {
-  // const [groupedRequests, setGroupedRequests] =
-  //   useState<GroupedRequests | null>(null);
-
   const { data, isLoading, error } = useFirmListingRequests(
     'pending',
     requests,
   );
 
   const groupedRequests = data ? groupBy(data, (r) => r.listing.name) : null;
-
-  // useEffect(() => {
-  //   if (data) {
-  //     const grouped = groupBy(data, (r) => r.listing.name);
-  //     setGroupedRequests(grouped as GroupedRequests);
-  //   }
-  // }, [data]);
 
   if (isLoading) {
     return <Loading />;
