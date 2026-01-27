@@ -1,8 +1,11 @@
-import Link from 'next/link';
 import Container from '@/components/layout/Container';
 import { GradientHeroPart } from './GradientHeroPart';
+import { getUserClaimsPublic, TryDemoButton } from '@/feature/auth';
+import Link from 'next/link';
 
-const HeroSection = () => {
+const HeroSection = async () => {
+  const isLoggedIn = (await getUserClaimsPublic()).success;
+
   return (
     <section className='lg:py-36 py-14 lg:flex lg:items-center'>
       {/* Background Grid Pattern */}
@@ -23,15 +26,21 @@ const HeroSection = () => {
 
           {/* Buttons */}
           <div className='flex flex-col sm:flex-row gap-3'>
-            <button className='btn btn-primary px-8 py-3 text-base font-semibold'>
-              Try Demo
-            </button>
+            {isLoggedIn ? (
+              <Link href='/firm-selection' className={`btn btn-primary`}>
+                Enter App
+              </Link>
+            ) : (
+              <>
+                <TryDemoButton styles='btn btn-primary px-8 py-3 text-base font-semibold' />
 
-            <Link href='/login'>
-              <button className='btn btn-outline btn-primary px-8 py-3 text-base font-semibold w-full sm:w-auto'>
-                Log In
-              </button>
-            </Link>
+                <Link href='/login'>
+                  <button className='btn btn-outline btn-primary px-8 py-3 text-base font-semibold w-full sm:w-auto'>
+                    Log In
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 

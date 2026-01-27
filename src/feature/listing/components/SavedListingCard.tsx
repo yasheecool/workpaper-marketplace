@@ -47,10 +47,6 @@ const SavedListingCard = ({
     fetchImageUrl();
   }, [listing]);
 
-  useEffect(() => {
-    console.log('Image URL:', imageUrl);
-  }, [imageUrl]);
-
   const { mutate: saveListing, isPending: isSaving } =
     useSaveListingMutation(id);
 

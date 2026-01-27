@@ -9,6 +9,7 @@ const publicRoutes = [
   '/auth',
   '/listing', // Public listing view
   '/vendor-details', // Public vendor profile
+  '/monitoring', // Public monitoring page
 ];
 
 // Routes that require authentication but not firm selection
@@ -19,7 +20,6 @@ export async function proxy(request: NextRequest) {
   const selectedFirm = request.cookies.get('selected_firm_id')?.value;
 
   const pathname = request.nextUrl.pathname;
-
   // Check if route is public
   const isPublicRoute = publicRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + '/'),
@@ -32,15 +32,20 @@ export async function proxy(request: NextRequest) {
 
   // No user session and trying to access protected route
   if (!userClaims && !isPublicRoute) {
-    console.log('No user session, redirecting to login');
-    const url = request.nextUrl.clone();
+    console.log(
+      'No user session, and not a public route, redirecting to login',
+    );
+
+    const url = new URL(request.url);
     url.pathname = '/login';
     return NextResponse.redirect(url);
   }
 
-  // User logged in but no firm selected (skip for auth-only routes)
-  if (userClaims && !selectedFirm && !isPublicRoute && !isAuthOnlyRoute) {
-    console.log('No firm selected, redirecting to firm selection');
+  // User logged in but no firm, not on public or auth-only route
+  if (userClaims && !selectedFirm && !isAuthOnlyRoute) {
+    console.log(
+      'User logged in but no firm selected, redirecting to firm selection',
+    );
     const url = request.nextUrl.clone();
     url.pathname = '/firm-selection';
     return NextResponse.redirect(url);
