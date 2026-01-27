@@ -29,7 +29,7 @@ export default async function HomePage() {
               >
                 Log In
               </Link>
-              <TryDemoButton styles={`btn-md`} />
+              <TryDemoButton styles={`btn btn-primary`} />
             </>
           )}
         </div>

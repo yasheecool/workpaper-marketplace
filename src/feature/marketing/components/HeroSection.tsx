@@ -32,7 +32,9 @@ const HeroSection = async () => {
               </Link>
             ) : (
               <>
-                <TryDemoButton styles='btn btn-primary px-8 py-3 text-base font-semibold' />
+                <button className='btn btn-primary px-8 py-3 text-base font-semibold'>
+                  <TryDemoButton styles='' />
+                </button>
 
                 <Link href='/login'>
                   <button className='btn btn-outline btn-primary px-8 py-3 text-base font-semibold w-full sm:w-auto'>

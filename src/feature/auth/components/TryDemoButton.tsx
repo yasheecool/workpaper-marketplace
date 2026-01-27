@@ -3,7 +3,7 @@
 import { useActionState } from 'react';
 import { signInDemoUser } from '../actions';
 
-const TryDemoButton = ({ styles }: { styles?: string }) => {
+const TryDemoButton = ({ styles }: { styles: string }) => {
   const [state, formAction, isPending] = useActionState(signInDemoUser, {
     success: false,
     message: '',
@@ -11,11 +11,7 @@ const TryDemoButton = ({ styles }: { styles?: string }) => {
 
   return (
     <form action={formAction}>
-      <button
-        type='submit'
-        disabled={isPending}
-        className={`btn btn-primary ${styles}`}
-      >
+      <button type='submit' disabled={isPending} className={styles}>
         {isPending && <span className='loading loading-xs' />}
         Try Demo
       </button>
