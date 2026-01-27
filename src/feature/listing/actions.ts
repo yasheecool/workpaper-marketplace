@@ -3,7 +3,7 @@
 import { getUserClaimsPublic, getUserClaims } from '../auth';
 import { getCurrentFirm } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
-import { ListingWithStatuses, mapListingBase } from './types';
+import { Listing, mapListingBase } from './types';
 
 export const installListing = async (listingId: string) => {
   const result = await getUserClaimsPublic();
@@ -124,10 +124,7 @@ export const requestListing = async (listingId: string) => {
   return { data };
 };
 
-export const updateListing = async (
-  id: string,
-  fields: Partial<ListingWithStatuses>,
-) => {
+export const updateListing = async (id: string, fields: Partial<Listing>) => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -144,9 +141,7 @@ export const updateListing = async (
   return mappedData;
 };
 
-export const createListing = async (
-  listingData: Partial<ListingWithStatuses>,
-) => {
+export const createListing = async (listingData: Partial<Listing>) => {
   const supabase = await createClient();
 
   const response = await supabase.from('listing').upsert({ ...listingData });

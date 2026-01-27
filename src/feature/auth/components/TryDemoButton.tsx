@@ -10,12 +10,14 @@ const TryDemoButton = ({ styles }: { styles: string }) => {
   });
 
   return (
-    <form action={formAction}>
-      <button type='submit' disabled={isPending} className={styles}>
-        {isPending && <span className='loading loading-xs' />}
-        Try Demo
-      </button>
-    </form>
+    <div>
+      <form action={formAction} className='w-full'>
+        <button type='submit' disabled={isPending} className={styles}>
+          {isPending && <span className='loading loading-xs' />}
+          Try Demo
+        </button>
+      </form>
+    </div>
   );
 };
 

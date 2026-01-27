@@ -4,16 +4,25 @@ import FilteringMetadataOverlay from './FilteringMetadataOverlay';
 import Listings from './Listings';
 import Pagination from '@/components/ui/Pagination';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'next/navigation';
 
-const ListingsDisplay = ({
-  params,
-}: {
-  params: { [key: string]: string | string[] | undefined };
-  initialData?: Awaited<ReturnType<typeof getMarketplaceListings>>;
-}) => {
+const ListingsDisplay = () => {
+  const searchParams = useSearchParams();
+
+  const workpaperType = searchParams.getAll('workpaper-type');
+  const entityType = searchParams.getAll('entity-type');
+  const contentType = searchParams.getAll('content-type');
+
+  const paramsWithDefaults = {
+    sort: searchParams.get('sort') || 'name',
+    page: searchParams.get('page') || '1',
+    ['workpaper-type']: workpaperType.length ? workpaperType : undefined,
+    ['entity-type']: entityType.length ? entityType : undefined,
+    ['content-type']: contentType.length ? contentType : undefined,
+  };
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['marketplace-listings', { ...params, page: params.page || '1' }],
-    queryFn: () => getMarketplaceListings(params),
+    queryKey: ['marketplace-listings', paramsWithDefaults],
+    queryFn: () => getMarketplaceListings(paramsWithDefaults),
   });
 
   if (isLoading) {

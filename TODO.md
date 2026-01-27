@@ -1,6 +1,5 @@
 - add husky, CI/CD
 - create docs for supabase custom claims
-- create a demo flow and figure out how to manage/seed data
 - For Docs:
   - Map type flow from domain to app
   - How auth works - how proxy ensures user etc etc

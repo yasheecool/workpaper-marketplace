@@ -1,7 +1,12 @@
 'use client';
 
 import { LabelText } from '@/components/input';
-import { useForm, FieldErrors } from 'react-hook-form';
+import {
+  useForm,
+  FieldErrors,
+  FieldValues,
+  UseFormRegister,
+} from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -38,7 +43,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
   };
 
   const [userProfileImage, setUserProfileImage] = useState<ImageObject | null>(
-    null
+    null,
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,7 +67,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
   };
 
   const handleServerImageUpload = async (
-    changedFields: Record<string, string | null>
+    changedFields: Record<string, string | null>,
   ) => {
     //case 1: user had no image, and uploaded one
     if (userProfile.profileImage === null && userProfileImage) {
@@ -70,7 +75,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
       const url = await uploadImage(
         userProfileImage.file as File,
         userProfile.id,
-        'USER_PROFILE_IMAGE_BUCKET'
+        'USER_PROFILE_IMAGE_BUCKET',
       );
       changedFields.profileImage = url;
     }
@@ -89,7 +94,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
       const url = await uploadImage(
         userProfileImage.file as File,
         userProfile.id,
-        'USER_PROFILE_IMAGE_BUCKET'
+        'USER_PROFILE_IMAGE_BUCKET',
       );
       changedFields.profileImage = url;
     }
@@ -105,7 +110,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
       toast.error(
         e instanceof Error
           ? e.message
-          : 'An error occurred while uploading the profile image.'
+          : 'An error occurred while uploading the profile image.',
       );
       return;
     }
@@ -122,12 +127,12 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
       (key) => {
         const snakeCaseKey = key.replace(
           /[A-Z]/g,
-          (letter) => `_${letter.toLowerCase()}`
+          (letter) => `_${letter.toLowerCase()}`,
         );
         snakeCaseChangedFields[snakeCaseKey] = changedFields[key] as
           | string
           | null;
-      }
+      },
     );
 
     try {
@@ -138,7 +143,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
       toast.error(
         e instanceof Error
           ? e.message
-          : 'An error occurred while updating the profile.'
+          : 'An error occurred while updating the profile.',
       );
       return;
     }
@@ -150,7 +155,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
         (url) => {
           console.log('Fetched profile image URL:', url);
           setUserProfileImage({ url, file: null });
-        }
+        },
       );
     }
   }, [userProfile.profileImage]);
@@ -222,7 +227,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
               label={'First Name'}
               type='input'
               name='firstName'
-              register={register}
+              register={register as unknown as UseFormRegister<FieldValues>}
             />
           </div>
 
@@ -232,7 +237,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
               label={'Last Name'}
               type='input'
               name='lastName'
-              register={register}
+              register={register as unknown as UseFormRegister<FieldValues>}
             />
           </div>
         </div>
@@ -244,7 +249,7 @@ const UserProfileForm = ({ userProfile }: { userProfile: User }) => {
             required={true}
             label={'Email'}
             type='input'
-            register={register}
+            register={register as unknown as UseFormRegister<FieldValues>}
             name='email'
           />
         </div>

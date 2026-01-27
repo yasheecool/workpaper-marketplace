@@ -1,7 +1,7 @@
 import { AuthGuard, Header } from '@/components/layout';
 import VendorHeaderNav from './VendorHeaderNav';
 
-const VendorLayout = ({ children }: { children: React.ReactElement }) => {
+const VendorLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <AuthGuard checkIsFirmVendor={true}>

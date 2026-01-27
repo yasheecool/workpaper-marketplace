@@ -10,6 +10,7 @@ import {
 import { updateListingRequest } from '@/feature/vendor';
 import { getQueryClient } from '@/lib/queryClient';
 import { ListingWithStatuses } from '../types';
+import { type Listing } from '../types';
 
 const invalidateListingQueries = (listingId: string) => {
   const client = getQueryClient();
@@ -81,7 +82,7 @@ export const useUpdateListingMutation = () => {
       data,
     }: {
       listingId: string;
-      data: Partial<ListingWithStatuses>;
+      data: Partial<Listing>;
     }) => {
       return updateListing(listingId, data);
     },
@@ -101,8 +102,7 @@ export const useUpdateListingMutation = () => {
 export const useCreateListingMutation = () => {
   return useMutation({
     mutationKey: ['create-listing'],
-    mutationFn: (newData: Partial<ListingWithStatuses>) =>
-      createListing(newData),
+    mutationFn: (newData: Partial<Listing>) => createListing(newData),
     onSuccess: () => {
       toast.success(`Listing created successfully!`);
       const client = getQueryClient();

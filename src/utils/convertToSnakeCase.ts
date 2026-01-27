@@ -1,15 +1,18 @@
-export function toSnakeCase(
-  obj: Record<string, unknown>
-): Record<string, unknown> {
-  if (Array.isArray(obj)) {
-    return obj.map(toSnakeCase);
-  } else if (obj !== null && typeof obj === 'object') {
-    return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => [
+export function toSnakeCase<T>(input: T): T {
+  if (Array.isArray(input)) {
+    return input.map((item) => toSnakeCase(item)) as unknown as T;
+  }
+
+  if (input !== null && typeof input === 'object') {
+    const entries = Object.entries(input as Record<string, unknown>).map(
+      ([key, value]) => [
         key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`),
         toSnakeCase(value),
-      ])
+      ],
     );
+
+    return Object.fromEntries(entries) as T;
   }
-  return obj;
+
+  return input;
 }

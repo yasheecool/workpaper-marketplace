@@ -3,6 +3,8 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { getQueryClient } from '@/lib/queryClient';
+import { Suspense } from 'react';
+// import { Suspense } from 'react';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // NOTE: Avoid useState when initializing the query client if you don't
@@ -12,9 +14,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-right' />
-      {children}
-    </QueryClientProvider>
+    <Suspense fallback={null}>
+      <QueryClientProvider client={queryClient}>
+        {process.env.NODE_ENV === 'development' && (
+          <ReactQueryDevtools
+            initialIsOpen={false}
+            buttonPosition='bottom-right'
+          />
+        )}
+        {children}
+      </QueryClientProvider>
+    </Suspense>
   );
 }

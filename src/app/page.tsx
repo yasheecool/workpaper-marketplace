@@ -36,7 +36,8 @@ export default async function HomePage() {
       </Header>
 
       <main className='min-h-[calc(100vh-70px)]'>
-        <HeroSection />
+        <HeroSection isLoggedIn={isLoggedIn} />
+
         <SocialProof />
         <Suspense fallback={<Loading />}>
           <FeaturedListings />

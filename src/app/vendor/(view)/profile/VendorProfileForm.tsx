@@ -1,7 +1,12 @@
 'use client';
 
 import LabelText from '@/components/input/LabelText';
-import { useForm, type FieldErrors } from 'react-hook-form';
+import {
+  useForm,
+  type FieldErrors,
+  type UseFormRegister,
+  type FieldValues,
+} from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { vendorProfileFormSchema, VendorProfileType } from '@/feature/vendor';
@@ -179,7 +184,7 @@ const VendorProfileForm = ({
             <LabelText
               required={true}
               label={'About your firm'}
-              register={register}
+              register={register as unknown as UseFormRegister<FieldValues>}
               name='description'
               type='textarea'
             />
@@ -192,7 +197,7 @@ const VendorProfileForm = ({
             required={true}
             label={'Contact Email'}
             type='input'
-            register={register}
+            register={register as unknown as UseFormRegister<FieldValues>}
             name='firmEmail'
           />
         </div>
@@ -203,7 +208,7 @@ const VendorProfileForm = ({
             required={true}
             label={'Website URL'}
             type='input'
-            register={register}
+            register={register as unknown as UseFormRegister<FieldValues>}
             name='websiteUrl'
           />
         </div>

@@ -15,16 +15,17 @@ import {
   type RequestedListing,
 } from '@/feature/listing';
 import { getQueryClient } from '@/lib/queryClient';
+import { useSearchParams } from 'next/navigation';
 
 type ResponseType = InstalledListing[] | RequestedListing[];
-type Props = {
-  filters: {
-    status: 'installed' | 'requested';
-  };
-};
 
-const TableWrapper = ({ filters }: Props) => {
-  const { status } = filters;
+const TableWrapper = () => {
+  const searchParams = useSearchParams();
+
+  const statusFromParams = searchParams.get('status') as
+    | 'installed'
+    | 'requested';
+  const status = statusFromParams || 'installed';
 
   const queryFn =
     status === 'installed' ? getInstalledListings : getRequestedListings;
@@ -45,7 +46,7 @@ const TableWrapper = ({ filters }: Props) => {
       toast.error(
         `Error uninstalling listing: ${
           error?.message || 'Please try again later.'
-        }`
+        }`,
       );
     },
   });

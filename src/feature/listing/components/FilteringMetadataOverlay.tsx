@@ -15,7 +15,6 @@ const FilteringMetadataOverlay = ({
   count,
   currentPage,
   totalPages,
-  itemsOnPage,
 }: FilteringMetadataOverlayProps) => {
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const router = useRouter();

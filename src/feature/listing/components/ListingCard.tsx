@@ -15,10 +15,9 @@ const ListingCard = ({ listing }: ListingCardProps) => {
   useEffect(() => {
     const fetchImageUrl = async () => {
       if (listing.imagesLink && listing.imagesLink.length > 0) {
-        console.log(listing.imagesLink);
         const url = await getImageUrl(
           listing.imagesLink[0],
-          'LISTING_IMAGES_BUCKET'
+          'LISTING_IMAGES_BUCKET',
         );
         setImagePath([url]);
       }
