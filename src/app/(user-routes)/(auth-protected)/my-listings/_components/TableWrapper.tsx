@@ -38,10 +38,6 @@ const TableWrapper = () => {
   const { mutate: uninstallListing, isPending } = useMutation({
     mutationKey: ['uninstall-listing'],
     mutationFn: (listingId: string) => uninstallListingAction(listingId),
-    onSuccess: (name: string) => {
-      toast.success(`Successfully uninstalled listing: ${name}`);
-      getQueryClient().invalidateQueries({ queryKey: ['installed-listings'] });
-    },
     onError: (error) => {
       toast.error(
         `Error uninstalling listing: ${
@@ -51,9 +47,16 @@ const TableWrapper = () => {
     },
   });
 
-  const handleUninstall = (listingId: string) => {
+  const handleUninstall = (listingId: string, name: string) => {
     if (isPending) return;
-    uninstallListing(listingId);
+    uninstallListing(listingId, {
+      onSuccess: () => {
+        toast.success(`Successfully uninstalled ${name}`);
+        getQueryClient().invalidateQueries({
+          queryKey: [`${status}-listings`],
+        });
+      },
+    });
   };
 
   const tableHeadings = [
@@ -167,7 +170,7 @@ const TableWrapper = () => {
                                   ? 'pointer-events-none opacity-50'
                                   : ''
                               }`,
-                              action: () => handleUninstall(listingId),
+                              action: () => handleUninstall(listingId, name),
                             },
                           ]}
                         />
