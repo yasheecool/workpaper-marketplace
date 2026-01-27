@@ -4,5 +4,4 @@
 - For Docs:
   - Map type flow from domain to app
   - How auth works - how proxy ensures user etc etc
-    -Integrate Sentry
   - Fix Error handling add types to responses (maybe)
