@@ -4,12 +4,13 @@ import { getUserClaimsPublic, getUserClaims } from '../auth';
 import { getCurrentFirm } from '../firm';
 import { createClient } from '@/lib/supabase/serverClient';
 import { Listing, mapListingBase } from './types';
+import { generateSuccessResult, generateErrorResult } from '@/types/types';
 
 export const installListing = async (listingId: string) => {
   const result = await getUserClaimsPublic();
 
   if (!result.success) {
-    throw new Error('Please log in to install listings.');
+    return generateErrorResult('Please log in to install listings.');
   }
 
   const { sub: userId } = result.data;
@@ -30,7 +31,7 @@ export const installListing = async (listingId: string) => {
     throw new Error(error.message);
   }
 
-  return { data };
+  return generateSuccessResult(data);
 };
 
 export const uninstallListing = async (listingId: string) => {
@@ -65,7 +66,7 @@ export const saveListing = async (
   const result = await getUserClaimsPublic();
 
   if (!result.success) {
-    throw new Error('Please log in to install listings.');
+    return generateErrorResult('Please log in to save listings.');
   }
   const { sub: userId } = result.data;
   const currentFirm = await getCurrentFirm();
@@ -94,7 +95,7 @@ export const saveListing = async (
     throw new Error(response.error.message);
   }
 
-  return response;
+  return generateSuccessResult(response);
 };
 
 export const requestListing = async (listingId: string) => {

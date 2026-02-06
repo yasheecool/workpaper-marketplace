@@ -26,7 +26,13 @@ const invalidateSavedListingsQueries = () => {
 export const useSaveListingMutation = (id: string) => {
   return useMutation({
     mutationKey: ['save-listing', id],
-    mutationFn: (type: 'save' | 'unsave') => saveListing(id, type),
+    mutationFn: async (type: 'save' | 'unsave') => {
+      const result = await saveListing(id, type);
+      if (!result.success) return toast.error(result.error);
+      toast.success(`Listing installed successfully!`);
+
+      return result.data;
+    },
     onSuccess: () => {
       invalidateListingQueries(id);
       invalidateSavedListingsQueries();
@@ -43,9 +49,13 @@ export const useSaveListingMutation = (id: string) => {
 
 export const useInstallListingMutation = (id: string) => {
   return useMutation({
-    mutationFn: () => installListing(id),
-    onSuccess: () => {
+    mutationFn: async () => {
+      const result = await installListing(id);
+      if (!result.success) return toast.error(result.error);
       toast.success(`Listing installed successfully!`);
+      return result.data;
+    },
+    onSuccess: () => {
       invalidateListingQueries(id);
     },
     onError: (error: unknown) => {
