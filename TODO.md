@@ -1,6 +1,2 @@
 - add husky, CI/CD
 - create docs for supabase custom claims
-- For Docs:
-  - Map type flow from domain to app
-  - How auth works - how proxy ensures user etc etc
-  - Fix Error handling add types to responses (maybe)
