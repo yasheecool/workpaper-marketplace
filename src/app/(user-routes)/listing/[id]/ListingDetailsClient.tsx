@@ -22,11 +22,17 @@ const isListingWithStatuses = (
 const ListingDetailsClient = ({
   listing: initialData,
   id,
+  userLoggedIn,
 }: {
   listing: ListingWithStatuses | ListingWithoutStatuses;
   id: string;
+  userLoggedIn: boolean;
 }) => {
-  const { data: listing, isLoading, error } = useListingById(id, initialData);
+  const {
+    data: listing,
+    isLoading,
+    error,
+  } = useListingById(id, userLoggedIn, initialData);
   const [listingImages, setListingImages] = useState<string[] | null>(null);
 
   useEffect(() => {

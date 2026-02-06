@@ -22,7 +22,11 @@ const ListingPage = async ({ params }: { params: { id: string } }) => {
       <Container
         styles={`grid gap-6 grid-rows-[auto_auto_1fr_auto] grid-cols-1 lg:grid-cols-[7fr_minmax(70,3fr)] items-start`}
       >
-        <ListingDetailsClient listing={listing} id={String(id)} />
+        <ListingDetailsClient
+          listing={listing}
+          id={String(id)}
+          userLoggedIn={userLoggedIn}
+        />
       </Container>
     </section>
   );

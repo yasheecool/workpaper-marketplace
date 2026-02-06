@@ -119,14 +119,6 @@ export const getMarketplaceListings = async (params: {
 };
 
 export async function getListingById(
-  listing: string,
-  getStatuses: false,
-): Promise<ListingWithoutStatuses | null>;
-export async function getListingById(
-  listingId: string,
-  getStatuses: true,
-): Promise<ListingWithStatuses | null>;
-export async function getListingById(
   listingId: string,
   getStatuses: boolean,
 ): Promise<ListingWithoutStatuses | ListingWithStatuses | null> {
@@ -177,11 +169,11 @@ export async function getListingById(
 
     const listing = mapListingWithStatusesFromDb(listingFromDb, currentFirmId);
 
-    return listing;
+    return listing as ListingWithStatuses;
   }
 
   const listing = mapListingBase(listingFromDb);
-  return listing;
+  return listing as ListingWithoutStatuses;
 }
 
 export const getSavedListings = async () => {
